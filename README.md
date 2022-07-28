@@ -6,8 +6,8 @@ code: https://github.com/go-kratos/kratos
 
 ## Build && Run
 ```
-go build -o ./bin/server ./...
-./bin/server -conf ../../configs
+go build -o ./bin ./...
+./bin/server -conf ./configs
 ```
 
 ## Docker

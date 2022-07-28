@@ -3,22 +3,23 @@ package tokenlist
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-redis/redis"
-	"github.com/shopspring/decimal"
-	"go.uber.org/zap"
-	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 	"io/fs"
-	v1 "node-proxy/api/tokenlist/v1"
-	"node-proxy/internal/conf"
-	"node-proxy/internal/data/models"
-	"node-proxy/pkg/token-list/types"
-	"node-proxy/pkg/token-list/utils"
 	"os"
 	"path/filepath"
 	"sync/atomic"
 	"time"
+
+	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-redis/redis"
+	"github.com/shopspring/decimal"
+	v1 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
+	"gitlab.bixin.com/mili/node-proxy/internal/conf"
+	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
+	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/types"
+	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/utils"
+	"go.uber.org/zap"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"strings"
 	"sync"
@@ -32,7 +33,7 @@ type config struct {
 }
 
 const REDIS_PRICE_KEY = "tokenlist:price:"
-const REDIS_LIST_KEY = "tokenlsit:list:"
+const REDIS_LIST_KEY = "tokenlist:list:"
 
 var c config
 

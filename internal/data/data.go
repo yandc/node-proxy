@@ -2,17 +2,18 @@ package data
 
 import (
 	"fmt"
+
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-redis/redis"
 	"github.com/google/wire"
+	"gitlab.bixin.com/mili/node-proxy/internal/conf"
+	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"node-proxy/internal/conf"
-	"node-proxy/internal/data/models"
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewDB, NewRedis, NewGreeterRepo, NewTokenListRepo)
+var ProviderSet = wire.NewSet(NewData, NewDB, NewRedis, NewTokenListRepo)
 
 // Data .
 type Data struct {

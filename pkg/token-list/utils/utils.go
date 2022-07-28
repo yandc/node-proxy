@@ -3,16 +3,17 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"math/big"
+	"net/http"
+	"os"
+	"strings"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/rpc"
-	"io/ioutil"
-	"math/big"
-	"net/http"
-	"node-proxy/pkg/token-list/types"
-	"os"
-	"strings"
+	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/types"
 )
 
 var platformMap = map[string]string{

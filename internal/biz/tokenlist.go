@@ -2,7 +2,8 @@ package biz
 
 import (
 	"context"
-	v1 "node-proxy/api/tokenlist/v1"
+
+	v1 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 
 	"github.com/go-kratos/kratos/v2/log"
 )

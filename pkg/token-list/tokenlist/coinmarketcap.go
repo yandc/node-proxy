@@ -3,14 +3,15 @@ package tokenlist
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/go-kratos/kratos/v2/log"
-	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
-	"node-proxy/internal/data/models"
-	"node-proxy/pkg/token-list/types"
-	"node-proxy/pkg/token-list/utils"
 	"strings"
 	"time"
+
+	"github.com/go-kratos/kratos/v2/log"
+	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
+	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/types"
+	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/utils"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type cmcConf struct {

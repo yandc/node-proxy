@@ -1,17 +1,17 @@
 package server
 
 import (
-	v1 "node-proxy/api/helloworld/v1"
-	"node-proxy/internal/conf"
-	"node-proxy/internal/service"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	tl "node-proxy/api/tokenlist/v1"
+
+	v1 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
+	"gitlab.bixin.com/mili/node-proxy/internal/conf"
+	"gitlab.bixin.com/mili/node-proxy/internal/service"
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(c *conf.Server, greeter *service.GreeterService, tokenList *service.TokenlsitService, logger log.Logger) *grpc.Server {
+func NewGRPCServer(c *conf.Server, tokenList *service.TokenlistService, logger log.Logger) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
@@ -27,7 +27,6 @@ func NewGRPCServer(c *conf.Server, greeter *service.GreeterService, tokenList *s
 		opts = append(opts, grpc.Timeout(c.Grpc.Timeout.AsDuration()))
 	}
 	srv := grpc.NewServer(opts...)
-	v1.RegisterGreeterServer(srv, greeter)
-	tl.RegisterTokenlsitServer(srv, tokenList)
+	v1.RegisterTokenlistServer(srv, tokenList)
 	return srv
 }

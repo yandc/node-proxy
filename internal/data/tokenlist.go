@@ -3,14 +3,15 @@ package data
 import (
 	"context"
 	"encoding/json"
+	"strings"
+
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-redis/redis"
+	v1 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
+	"gitlab.bixin.com/mili/node-proxy/internal/biz"
+	"gitlab.bixin.com/mili/node-proxy/internal/conf"
+	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/tokenlist"
 	"gorm.io/gorm"
-	v1 "node-proxy/api/tokenlist/v1"
-	"node-proxy/internal/biz"
-	"node-proxy/internal/conf"
-	"node-proxy/pkg/token-list/tokenlist"
-	"strings"
 )
 
 type tokenListRepo struct {

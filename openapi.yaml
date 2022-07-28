@@ -28,8 +28,8 @@ paths:
     /tokenlist:
         get:
             tags:
-                - Tokenlsit
-            operationId: Tokenlsit_GetTokenList
+                - Tokenlist
+            operationId: Tokenlist_GetTokenList
             parameters:
                 - name: chain
                   in: query
@@ -44,8 +44,8 @@ paths:
                                 $ref: '#/components/schemas/api.tokenlist.v1.GetTokenListResp'
         post:
             tags:
-                - Tokenlsit
-            operationId: Tokenlsit_CreateTokenList
+                - Tokenlist
+            operationId: Tokenlist_CreateTokenList
             requestBody:
                 content:
                     application/json:
@@ -62,8 +62,8 @@ paths:
     /tokenlist/price:
         get:
             tags:
-                - Tokenlsit
-            operationId: Tokenlsit_GetPrice
+                - Tokenlist
+            operationId: Tokenlist_GetPrice
             parameters:
                 - name: coinNames
                   in: query
@@ -133,4 +133,4 @@ components:
 tags:
     - name: Greeter
       description: The greeting service definition.
-    - name: Tokenlsit
+    - name: Tokenlist
