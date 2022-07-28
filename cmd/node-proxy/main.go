@@ -2,9 +2,9 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 
-	"node-proxy/internal/conf"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
@@ -12,6 +12,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	"node-proxy/internal/conf"
 )
 
 // go build -ldflags "-X main.Version=x.y.z"
@@ -70,8 +71,8 @@ func main() {
 	if err := c.Scan(&bc); err != nil {
 		panic(err)
 	}
-
-	app, cleanup, err := wireApp(bc.Server, bc.Data, logger)
+	fmt.Println("db:", bc.Data.Database.String(), bc.TokenList.String())
+	app, cleanup, err := wireApp(bc.Server, bc.Data, bc.TokenList, logger)
 	if err != nil {
 		panic(err)
 	}
