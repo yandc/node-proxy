@@ -1,0 +1,53 @@
+package data
+
+import (
+	"context"
+	"encoding/json"
+	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-redis/redis"
+	"gorm.io/gorm"
+	v1 "node-proxy/api/tokenlist/v1"
+	"node-proxy/internal/biz"
+	"node-proxy/internal/conf"
+	"node-proxy/pkg/token-list/tokenlist"
+	"strings"
+)
+
+type tokenListRepo struct {
+	log *log.Helper
+}
+
+// NewTokenListRepo .
+func NewTokenListRepo(conf *conf.TokenList, db *gorm.DB, client *redis.Client, logger log.Logger) biz.TokenListRepo {
+	tokenlist.InitTokenList(conf, db, client, logger)
+	return &tokenListRepo{
+		log: log.NewHelper(logger),
+	}
+}
+
+func (r *tokenListRepo) GetPrice(ctx context.Context, coinName, coinAddress, currency string) ([]byte, error) {
+	r.log.WithContext(ctx).Infof("GetPrice", coinName, coinAddress, currency)
+	var address, chainName []string
+	if len(coinAddress) > 0 {
+		address = strings.Split(coinAddress, ",")
+	}
+	if len(coinName) > 0 {
+		chainName = strings.Split(coinName, ",")
+	}
+	price := tokenlist.GetTokenListPrice(chainName, address, currency)
+	b, err := json.Marshal(price)
+	if err != nil {
+		r.log.WithContext(ctx).Error("marshal error", err)
+	}
+	return b, nil
+}
+
+func (r *tokenListRepo) CreateTokenList(ctx context.Context) {
+	r.log.WithContext(ctx).Infof("CreateTokenList")
+	tokenlist.CreateTokenList()
+}
+
+func (r *tokenListRepo) GetTokenList(ctx context.Context, chain string) ([]*v1.GetTokenListResp_Data, error) {
+	r.log.WithContext(ctx).Infof("GetTokenList", chain)
+	return tokenlist.GetTokenList(chain)
+}
