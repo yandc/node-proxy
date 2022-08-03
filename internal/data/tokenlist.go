@@ -43,12 +43,17 @@ func (r *tokenListRepo) GetPrice(ctx context.Context, coinName, coinAddress, cur
 	return b, nil
 }
 
-func (r *tokenListRepo) CreateTokenList(ctx context.Context) {
-	r.log.WithContext(ctx).Infof("CreateTokenList")
-	tokenlist.CreateTokenList()
-}
+//func (r *tokenListRepo) CreateTokenList(ctx context.Context) {
+//	r.log.WithContext(ctx).Infof("CreateTokenList")
+//	//tokenlist.CreateTokenList()
+//}
 
 func (r *tokenListRepo) GetTokenList(ctx context.Context, chain string) ([]*v1.GetTokenListResp_Data, error) {
 	r.log.WithContext(ctx).Infof("GetTokenList", chain)
 	return tokenlist.GetTokenList(chain)
+}
+
+func (r *tokenListRepo) AutoUpdateTokenList(ctx context.Context) {
+	r.log.WithContext(ctx).Infof("AutoUpdateTokenList")
+	tokenlist.AutoUpdateTokenList()
 }

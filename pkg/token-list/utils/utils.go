@@ -78,6 +78,15 @@ var platformMap = map[string]string{
 	"terra-luna": "terra",
 }
 
+var CMCNameChainMap = map[string]string{
+	"Milkomeda":               "milkomeda-cardano",
+	"BNB Beacon Chain (BEP2)": "binancecoin",
+}
+
+var CGCNameChainMap = map[string]string{
+	"defi-kingdoms-blockchain": "avalanche",
+}
+
 var handlerNameMap = map[string]string{
 	"ethereum":  "ethereum",
 	"heco":      "huobi-token",
@@ -286,19 +295,12 @@ func GetBatchDecimals(chain string, tokens []string) map[string]int {
 	}
 	fmt.Println("GetBatchDecimals:", chain, len(tokens))
 	rpcClient.BatchCall(be)
-	//if err != nil {
-	//	//log.Info("errorInfo", zap.Any("chain", chain), zap.Any("tokens", tokens))
-	//	//fmt.Println("error:", err, chain)
-	//}
 	for index, b := range be {
 		hexAmount := b.Result.(*string)
 		bi := new(big.Int)
 		bi.SetBytes(common.FromHex(*hexAmount))
-		result[chain+":"+tokenAddrs[index]] = bi.Sign()
+		result[chain+":"+tokenAddrs[index]] = int(bi.Int64())
 	}
-	//if err != nil {
-	//	//log.Info("errorInfo", zap.Any("result", result))
-	//}
 	return result
 }
 

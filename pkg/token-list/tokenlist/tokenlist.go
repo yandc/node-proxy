@@ -1,16 +1,13 @@
 package tokenlist
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
-	"io/fs"
-	"os"
-	"path/filepath"
-	"sync/atomic"
-	"time"
-
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-redis/redis"
+	"github.com/qiniu/go-sdk/v7/auth/qbox"
+	"github.com/qiniu/go-sdk/v7/storage"
 	"github.com/shopspring/decimal"
 	v1 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/conf"
@@ -20,6 +17,11 @@ import (
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"io/fs"
+	"os"
+	"path/filepath"
+	"sync/atomic"
+	"time"
 
 	"strings"
 	"sync"
@@ -30,6 +32,7 @@ type config struct {
 	log         *log.Helper
 	redisClient *redis.Client
 	logoPrefix  string
+	qiniu       types.QiNiuConf
 }
 
 const REDIS_PRICE_KEY = "tokenlist:price:"
@@ -44,7 +47,14 @@ func InitTokenList(conf *conf.TokenList, db *gorm.DB, client *redis.Client, logg
 		log:         log,
 		redisClient: client,
 		logoPrefix:  conf.LogoPrefix,
+		qiniu: types.QiNiuConf{
+			AccessKey: conf.Qiniu.AccessKey,
+			SecretKey: conf.Qiniu.SecretKey,
+			Bucket:    conf.Qiniu.Bucket,
+			KeyPrefix: conf.Qiniu.KeyPrefix,
+		},
 	}
+
 	InitCG(conf.Coingecko.BaseURL, db, logger)
 	InitCMC(conf.Coinmarketcap.BaseURL, conf.Coinmarketcap.Key, db, logger)
 }
@@ -81,6 +91,9 @@ func CreateTokenList() {
 		json.Unmarshal([]byte(cg.Platform), &platform)
 		for key, value := range platform {
 			if key != "" && value != "" {
+				if cgcValue, cgcOk := utils.CGCNameChainMap[key]; cgcOk {
+					key = cgcValue
+				}
 				chain := utils.GetPlatform(key)
 				var address string
 				if strings.HasPrefix(value.(string), "0x") {
@@ -117,14 +130,18 @@ func CreateTokenList() {
 		json.Unmarshal([]byte(cmc.Platform), &platform)
 		for _, p := range platform {
 			if p.ContractAddress != "" {
-				var address string
+				var address, chain string
 				if strings.HasPrefix(p.ContractAddress, "0x") {
 					address = strings.ToLower(p.ContractAddress)
 				} else {
 					address = p.ContractAddress
 				}
 
-				chain := utils.GetPlatform(p.Platform.Coin.Slug)
+				if value, ok := utils.CMCNameChainMap[p.Platform.Name]; ok {
+					chain = value
+				} else {
+					chain = utils.GetPlatform(p.Platform.Coin.Slug)
+				}
 				key := chain + ":" + address
 				if value, ok := tokenListMap[key]; ok {
 					value.CmcId = cmc.Id
@@ -442,46 +459,6 @@ func GetDecimalsInfo() map[string]types.TokenInfo {
 	return result
 }
 
-func DownLoadImages() {
-	var tokenLists []models.TokenList
-	err := c.db.Find(&tokenLists).Error
-	if err != nil {
-		c.log.Error("find token list error:", err)
-	}
-	var wg sync.WaitGroup
-	var count int32 = 0
-	for _, t := range tokenLists {
-		var image string
-		if t.CgId != "" && t.CmcId == 0 {
-			var cgImage map[string]string
-			json.Unmarshal([]byte(t.Logo), &cgImage)
-			if value, ok := cgImage["small"]; ok {
-				image = value
-			}
-		} else {
-			image = t.Logo
-		}
-		if image != "" {
-			path := "./images/" + t.Chain
-			exist, _ := utils.PathExists(path)
-			if !exist {
-				os.MkdirAll(path, 0777)
-			}
-			fileName := path + "/" + t.Chain + "_" + t.Address + ".png"
-			wg.Add(1)
-			go func() {
-				defer wg.Done()
-				err := utils.DownLoad(fileName, image)
-				if err == nil {
-					atomic.AddInt32(&count, 1)
-				}
-			}()
-
-		}
-	}
-	wg.Wait()
-}
-
 const imageHex = "https://static.openblock.com/download/token/"
 
 func InsertLogURI() {
@@ -508,4 +485,279 @@ func InsertLogURI() {
 	})
 
 	fmt.Println("count==", count)
+}
+
+func AutoUpdateTokenList() {
+	coinMarketCaps := UpdateCoinMarketCap()
+	coinGeckos := UpdateCoinGecko()
+	decimalsInfo := GetDecimalsInfo()
+	tempDBTokenList, err := GetAllTokenList()
+	if err != nil {
+		c.log.Error("get all token list error:", err)
+	}
+	tempDBTokenListMap := make(map[string]struct{}, len(tempDBTokenList))
+	tokenListMap := make(map[string]*models.TokenList)
+	noDecimals := make(map[string][]string)
+	for _, t := range tempDBTokenList {
+		tempDBTokenListMap[t.Chain+":"+t.Address] = struct{}{}
+	}
+	for _, cgc := range coinGeckos {
+		var platform map[string]interface{}
+		json.Unmarshal([]byte(cgc.Platform), &platform)
+		for key, value := range platform {
+			if key != "" && value != "" {
+				if cgcValue, cgcOk := utils.CGCNameChainMap[key]; cgcOk {
+					key = cgcValue
+				}
+				chain := utils.GetPlatform(key)
+				var address string
+				if strings.HasPrefix(value.(string), "0x") {
+					address = strings.ToLower(value.(string))
+				} else {
+					address = value.(string)
+				}
+				dbKey := chain + ":" + address
+				if _, dbOk := tempDBTokenListMap[dbKey]; !dbOk {
+					var decimals int
+					if tokenInfo, ok := decimalsInfo[key]; ok {
+						decimals = tokenInfo.Decimals
+					}
+
+					if decimals == 0 {
+						noDecimals[chain] = append(noDecimals[chain], address)
+					}
+					tokenListMap[chain+":"+address] = &models.TokenList{
+						CgId:        cgc.Id,
+						Name:        cgc.Name,
+						Symbol:      strings.ToUpper(cgc.Symbol),
+						WebSite:     cgc.Homepage,
+						Description: cgc.Description,
+						Chain:       chain,
+						Address:     address,
+						Logo:        cgc.Image,
+						Decimals:    decimals,
+					}
+				}
+
+			}
+		}
+	}
+
+	for _, cmc := range coinMarketCaps {
+		var platform []types.Platform
+		json.Unmarshal([]byte(cmc.Platform), &platform)
+		for _, p := range platform {
+			if p.ContractAddress != "" {
+				var address, chain string
+				if strings.HasPrefix(p.ContractAddress, "0x") {
+					address = strings.ToLower(p.ContractAddress)
+				} else {
+					address = p.ContractAddress
+				}
+				if value, ok := utils.CMCNameChainMap[p.Platform.Name]; ok {
+					chain = value
+				} else {
+					chain = utils.GetPlatform(p.Platform.Coin.Slug)
+				}
+				key := chain + ":" + address
+				if _, dbOk := tempDBTokenListMap[key]; !dbOk {
+					if value, ok := tokenListMap[key]; ok {
+						value.CmcId = cmc.Id
+						value.Logo = cmc.Logo
+						value.WebSite = cmc.WebSite
+						//count++
+					} else {
+						var decimals int
+						if tokenInfo, tok := decimalsInfo[chain+":"+address]; tok {
+							decimals = tokenInfo.Decimals
+						}
+						if decimals == 0 {
+							noDecimals[chain] = append(noDecimals[chain], address)
+						}
+						tokenListMap[key] = &models.TokenList{
+							CmcId:       cmc.Id,
+							Name:        cmc.Name,
+							Symbol:      strings.ToUpper(cmc.Symbol),
+							Logo:        cmc.Logo,
+							Description: cmc.Description,
+							WebSite:     cmc.WebSite,
+							Chain:       chain,
+							Address:     address,
+							Decimals:    decimals,
+						}
+					}
+				}
+			}
+		}
+	}
+
+	for key, token := range decimalsInfo {
+		if _, dbOk := tempDBTokenListMap[key]; !dbOk {
+			if _, ok := tokenListMap[key]; !ok {
+				chain := strings.Split(key, ":")[0]
+				tokenListMap[key] = &models.TokenList{
+					Name:     token.Name,
+					Address:  token.Address,
+					Chain:    chain,
+					Symbol:   strings.ToUpper(token.Symbol),
+					Logo:     token.LogoURI,
+					Decimals: token.Decimals,
+				}
+			}
+		}
+	}
+
+	decimalsMap := utils.GetDecimalsByMap(noDecimals)
+	tokenLists := make([]models.TokenList, 0, len(tokenListMap))
+	for _, value := range tokenListMap {
+		if decimal, ok := decimalsMap[value.Chain+":"+value.Address]; ok && decimal > 0 {
+			value.Decimals = decimal
+
+		}
+		tokenLists = append(tokenLists, *value)
+	}
+	if len(tokenLists) > 0 {
+		patchSize := 1000
+		end := 0
+		for i := 0; i < len(tokenLists); i += patchSize {
+			if i+patchSize > len(tokenLists) {
+				end = len(tokenLists)
+			} else {
+				end = i + patchSize
+			}
+			temp := tokenLists[i:end]
+			result := c.db.Clauses(clause.OnConflict{
+				UpdateAll: true,
+			}).Create(&temp)
+			if result.Error != nil {
+				c.log.Error("create token list error:", result.Error)
+			}
+			c.log.Info("insert token list db length:", result.RowsAffected)
+		}
+
+		//download images
+		DownLoadImages(tokenLists)
+
+		//upload images
+		UpLoadImages()
+
+		//update logo uri
+		InsertLogoURI()
+
+		//delete images path
+		err := os.RemoveAll("images")
+		if err != nil {
+			c.log.Error("delete images path:", err)
+		}
+	}
+
+}
+
+func DownLoadImages(tokenLists []models.TokenList) {
+	var wg sync.WaitGroup
+	var count int32 = 0
+	var noCount int32 = 0
+	c.log.Info("DownLoadImages start:length", len(tokenLists))
+	for _, t := range tokenLists {
+		var image string
+		if t.CgId != "" && t.CmcId == 0 {
+			var cgImage map[string]string
+			json.Unmarshal([]byte(t.Logo), &cgImage)
+			if value, ok := cgImage["small"]; ok {
+				image = value
+			}
+		} else {
+			image = t.Logo
+		}
+		if image != "" {
+			path := "./images/" + t.Chain
+			exist, _ := utils.PathExists(path)
+			if !exist {
+				os.MkdirAll(path, 0777)
+			}
+			fileName := path + "/" + t.Chain + "_" + t.Address + ".png"
+			wg.Add(1)
+			go func(f, i string) {
+				defer wg.Done()
+				err := utils.DownLoad(f, i)
+				if err == nil {
+					atomic.AddInt32(&count, 1)
+				} else {
+					c.log.Error("download error:", err, ",fileName:", f, ",image:", i)
+				}
+			}(fileName, image)
+
+		} else {
+			atomic.AddInt32(&noCount, 1)
+		}
+
+	}
+	wg.Wait()
+	c.log.Info("DownLoadImages End count:", count, noCount)
+}
+
+func UpLoadImages() {
+	mac := qbox.NewMac(c.qiniu.AccessKey, c.qiniu.SecretKey)
+	putPolicy := storage.PutPolicy{
+		Scope: c.qiniu.Bucket,
+	}
+	upToken := putPolicy.UploadToken(mac)
+	cfg := storage.Config{
+		UseHTTPS: true,
+	}
+	bucketManager := storage.NewBucketManager(mac, &cfg)
+	formUploader := storage.NewFormUploader(&cfg)
+	ret := types.MyPutRet{}
+	putExtra := storage.PutExtra{
+		Params: map[string]string{
+			"x:name": "github logo",
+		},
+	}
+	filepath.Walk("images", func(path string, info fs.FileInfo, err error) error {
+		if !info.IsDir() && strings.HasSuffix(info.Name(), ".png") {
+			key := c.qiniu.KeyPrefix + path
+			err = formUploader.PutFile(context.Background(), &ret, upToken, key, path, &putExtra)
+			if err != nil {
+				c.log.Error("PutFile Error:", err)
+			}
+			err = bucketManager.Prefetch(c.qiniu.Bucket, path)
+			if err != nil {
+				c.log.Error("fetch error:", err)
+			}
+			c.log.Info("upload info:", ret.Bucket, ret.Key, ret.Fsize, ret.Hash, ret.Name)
+		}
+		return nil
+	})
+}
+
+func InsertLogoURI() {
+	count := 0
+	filepath.Walk("images", func(path string, info fs.FileInfo, err error) error {
+		if !info.IsDir() && strings.HasSuffix(info.Name(), ".png") {
+			logoURI := path
+			fileName := info.Name()[:len(info.Name())-4]
+			chainAddress := strings.Split(fileName, "_")
+			if len(chainAddress) == 2 {
+				chain := chainAddress[0]
+				address := chainAddress[1]
+				err := c.db.Model(&models.TokenList{}).Where("chain = ? AND address = ?", chain, address).Update("logo_uri", logoURI).Error
+				if err != nil {
+					c.log.Error("update token logo uri error:", err, ",logoURI:", logoURI, ",infoName:", info.Name())
+				} else {
+					count++
+				}
+			}
+
+		}
+
+		return nil
+	})
+	c.log.Info("InsertLogoURI count:", count)
+}
+
+func GetAllTokenList() ([]models.TokenList, error) {
+	var tokenList []models.TokenList
+	err := c.db.Find(&tokenList).Error
+
+	return tokenList, err
 }

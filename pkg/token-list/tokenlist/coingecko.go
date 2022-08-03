@@ -3,6 +3,7 @@ package tokenlist
 import (
 	"encoding/json"
 	"fmt"
+	"go.uber.org/zap"
 	"strings"
 	"sync"
 	"time"
@@ -149,35 +150,112 @@ func CreateCoinGecko() {
 	}
 }
 
-//func GetCoinGeckoPlatform() {
-//	var coinGeckos []models.CoinGecko
-//	result := c.db.Find(&coinGeckos)
-//	fmt.Println("result-", result.RowsAffected, len(coinGeckos))
-//	fileName := "coingecko.txt"
-//	file, err := os.Create(fileName)
-//	if err != nil {
-//		fmt.Println("error:", err)
-//	}
-//	defer file.Close()
-//	platforms := make(map[string]struct{})
-//	for _, c := range coinGeckos {
-//		var platform map[string]interface{}
-//		json.Unmarshal([]byte(c.Platform), &platform)
-//		for key, _ := range platform {
-//			if key != "" {
-//				platforms[key] = struct{}{}
-//			}
-//		}
-//	}
-//	fmt.Println("platforms length:", len(platforms))
-//	for key, _ := range platforms {
-//		file.WriteString(key + "\n")
-//	}
-//
-//}
-
 func GetAllCoinGecko() ([]models.CoinGecko, error) {
 	var coinGeckos []models.CoinGecko
 	err := c.db.Find(&coinGeckos).Error
 	return coinGeckos, err
+}
+
+func UpdateCoinGecko() (coinGeckos []models.CoinGecko) {
+	c.log.Info("UpdateCoinGecko start")
+	//get coin list
+	coinsList, err := CGCoinsList()
+	if err != nil {
+		log.Error("CreateCoinGecko error", zap.Error(err))
+		for err != nil {
+			time.Sleep(1 * time.Minute)
+			coinsList, err = CGCoinsList()
+		}
+	}
+
+	cgcDBList, err := GetAllCoinGecko()
+	if err != nil {
+		c.log.Error("get all coin gecko error:", err)
+	}
+	c.log.Info("source length:", len(coinsList), ",db length:", len(cgcDBList))
+	cgcDBMap := make(map[string]struct{}, len(cgcDBList))
+	for _, cgc := range cgcDBList {
+		cgcDBMap[cgc.Id] = struct{}{}
+	}
+	tempCoinsList := make([]types.CoinsListItem, 0, len(coinsList))
+	for i := 0; i < len(coinsList); i++ {
+		if _, ok := cgcDBMap[coinsList[i].ID]; !ok {
+			tempCoinsList = append(tempCoinsList, coinsList[i])
+		}
+	}
+
+	if len(tempCoinsList) > 0 {
+		coinGeckos = make([]models.CoinGecko, 0, len(tempCoinsList))
+		var ids [][]types.CoinsListItem
+		pageSize := 50
+		pageEndIndex := 0
+		for i := 0; i < len(tempCoinsList); i += pageSize {
+			if i+pageSize > len(tempCoinsList) {
+				pageEndIndex = len(tempCoinsList)
+			} else {
+				pageEndIndex = i + pageSize
+			}
+			ids = append(ids, tempCoinsList[i:pageEndIndex])
+		}
+		for i := 0; i < len(ids); i++ {
+			errorItems, tempUpdateCgc := PatchCreateCGC(ids[i])
+			coinGeckos = append(coinGeckos, tempUpdateCgc...)
+			for len(errorItems) != 0 {
+				time.Sleep(70 * time.Second)
+				errorItems, tempUpdateCgc = PatchCreateCGC(ids[i])
+				coinGeckos = append(coinGeckos, tempUpdateCgc...)
+			}
+			time.Sleep(70 * time.Second)
+		}
+	}
+	c.log.Info("UpdateCoinGecko end.result length:", len(coinGeckos))
+	return
+}
+
+func PatchCreateCGC(items []types.CoinsListItem) (errorItems []types.CoinsListItem, coinGeckos []models.CoinGecko) {
+	coinGeckos = make([]models.CoinGecko, 0, len(items))
+	var wg sync.WaitGroup
+	var lock sync.RWMutex
+	for _, value := range items {
+		wg.Add(1)
+		go func(item types.CoinsListItem) {
+			defer wg.Done()
+			coinsId, err := CGCoinsId(item.ID)
+			if err != nil {
+				c.log.Error("coinsId error:", err)
+				return
+			}
+			if len(coinsId.ID) == 0 {
+				lock.Lock()
+				defer lock.Unlock()
+				errorItems = append(errorItems, item)
+				return
+			}
+			p, _ := json.Marshal(coinsId.Platforms)
+			image, _ := json.Marshal(coinsId.Image)
+			b, _ := json.Marshal(coinsId.Description)
+			var homepage string
+			if value, ok := coinsId.Links["homepage"]; ok {
+				homepage = value.([]interface{})[0].(string)
+			}
+			lock.Lock()
+			defer lock.Unlock()
+			coinGeckos = append(coinGeckos, models.CoinGecko{
+				Id:            coinsId.ID,
+				Symbol:        coinsId.Symbol,
+				Name:          coinsId.Name,
+				Platform:      string(p),
+				Image:         string(image),
+				Description:   string(b),
+				Homepage:      homepage,
+				CoinGeckoRank: coinsId.CoinGeckoRank,
+			})
+		}(value)
+	}
+	wg.Wait()
+	c.log.Info("cingecko insert db:", len(coinGeckos))
+	c.db.Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Create(&coinGeckos)
+	return
 }
