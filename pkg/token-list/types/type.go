@@ -107,5 +107,20 @@ type ImageItem struct {
 	Large string `json:"large"`
 }
 
+type MyPutRet struct {
+	Key    string
+	Hash   string
+	Fsize  int
+	Bucket string
+	Name   string
+}
+
+type QiNiuConf struct {
+	AccessKey string
+	SecretKey string
+	Bucket    string
+	KeyPrefix string
+}
+
 type DescriptionItem map[string]string
 type LinksItem map[string]interface{}

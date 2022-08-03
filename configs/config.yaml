@@ -12,11 +12,14 @@ data:
     read_timeout: 0.2s
     write_timeout: 0.2s
 tokenList:
-  logoPrefix: https://static.openblock.com/download/token/
+  logoPrefix: https://obstatic.243096.com/download/token/
   coingecko:
     baseURL: https://api.coingecko.com/api/v3
   coinmarketcap:
     baseURL: https://pro-api.coinmarketcap.com/v1
     key: 4a77c975-64ff-4c2e-8f70-b195bfb07be5
-
-
+  qiniu:
+    accessKey: EaebIDbEDcyKefx72vRpG3-JDa5Hd9YInXYRiTst
+    secretKey: OYNl6ub3YfNI2hVOJ-h6KqRFuwPpUeL4MmVDU9Ia
+    bucket: obstatic
+    keyPrefix: download/token/

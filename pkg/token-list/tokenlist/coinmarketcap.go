@@ -3,6 +3,7 @@ package tokenlist
 import (
 	"encoding/json"
 	"fmt"
+	"go.uber.org/zap"
 	"strings"
 	"time"
 
@@ -128,32 +129,83 @@ func CreateCoinMarketCap() {
 	}
 }
 
-//func GetCoinMarketCapPlatform() {
-//	var cmcs []models.CoinMarketCap
-//	result := c.db.Find(&cmcs)
-//	fmt.Println("result-", result.RowsAffected, len(cmcs))
-//	fileName := "cmc.txt"
-//	file, err := os.Create(fileName)
-//	if err != nil {
-//		fmt.Println("error:", err)
-//	}
-//	defer file.Close()
-//	platforms := make(map[string]struct{})
-//	for _, c := range cmcs {
-//		var platform []types.Platform
-//		json.Unmarshal([]byte(c.Platform), &platform)
-//		for _, p := range platform {
-//			if p.ContractAddress != "" {
-//				platforms[strings.ToLower(p.Platform.Coin.Name)] = struct{}{}
-//			}
-//		}
-//	}
-//	fmt.Println("platforms length:", len(platforms))
-//	for key, _ := range platforms {
-//		file.WriteString(key + "\n")
-//	}
-//
-//}
+func UpdateCoinMarketCap() (result []models.CoinMarketCap) {
+	c.log.Info("UpdateCoinMarketCap start")
+	coinsList, err := CMCCoinsList()
+	if err != nil {
+		log.Error("UpdateCoinMarketCap coinsList error:", zap.Error(err))
+		for err != nil {
+			coinsList, err = CMCCoinsList()
+			time.Sleep(1 * time.Minute)
+		}
+	}
+	cmcDBList, err := GetAllCoinMarketCap()
+	if err != nil {
+		c.log.Error("get all coin market cap error:", err)
+	}
+	c.log.Info("source length:", len(coinsList.Data), ",db length:", len(cmcDBList))
+	cmcDBMap := make(map[int]struct{}, len(cmcDBList))
+	for _, cmc := range cmcDBList {
+		cmcDBMap[cmc.Id] = struct{}{}
+	}
+	tempCoinsList := make([]types.CMCListItem, 0, len(coinsList.Data))
+	for i := 0; i < len(coinsList.Data); i++ {
+		if _, ok := cmcDBMap[coinsList.Data[i].ID]; !ok {
+			tempCoinsList = append(tempCoinsList, coinsList.Data[i])
+		}
+	}
+	if len(tempCoinsList) > 0 {
+		result = make([]models.CoinMarketCap, 0, len(tempCoinsList))
+		var allIds []string
+		pageEndIndex := 0
+		pageSize := 800
+		for i := 0; i < len(tempCoinsList); i += pageSize {
+			if i+pageSize >= len(tempCoinsList) {
+				pageEndIndex = len(tempCoinsList)
+			} else {
+				pageEndIndex = i + pageSize
+			}
+			allIds = append(allIds, GetCoinsId(tempCoinsList[i:pageEndIndex]))
+		}
+		for _, ids := range allIds {
+			coinsId, err := CMCCoinsId(ids)
+			if err != nil {
+				c.log.Error("CMC coins id error", err)
+				for err != nil {
+					time.Sleep(1 * time.Minute)
+					coinsId, err = CMCCoinsId(ids)
+				}
+			}
+			if coinsId != nil {
+				coinMarketCaps := make([]models.CoinMarketCap, 0, len(coinsId.Data))
+				for _, value := range coinsId.Data {
+					contractAddress, _ := json.Marshal(value.ContractAddress)
+					twitter, _ := json.Marshal(value.Urls.Twitter)
+					website, _ := json.Marshal(value.Urls.Website)
+					coinMarketCaps = append(coinMarketCaps, models.CoinMarketCap{
+						Id:          value.ID,
+						Symbol:      value.Symbol,
+						Name:        value.Symbol,
+						Platform:    string(contractAddress),
+						Category:    value.Category,
+						Twitter:     string(twitter),
+						Logo:        value.Logo,
+						WebSite:     string(website),
+						Description: value.Description,
+					})
+				}
+				c.log.Info("cmc insert db:", len(coinMarketCaps))
+				c.db.Clauses(clause.OnConflict{
+					UpdateAll: true,
+				}).Create(&coinMarketCaps)
+				result = append(result, coinMarketCaps...)
+			}
+			time.Sleep(60 * time.Second)
+		}
+	}
+	c.log.Info("UpdateCoinMarketCap length:", len(result))
+	return
+}
 
 func GetAllCoinMarketCap() ([]models.CoinMarketCap, error) {
 	var coinMarketCaps []models.CoinMarketCap

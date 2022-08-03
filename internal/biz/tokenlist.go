@@ -2,6 +2,7 @@ package biz
 
 import (
 	"context"
+	"time"
 
 	v1 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 
@@ -10,8 +11,9 @@ import (
 
 type TokenListRepo interface {
 	GetPrice(ctx context.Context, coinName, coinAddress, currency string) ([]byte, error)
-	CreateTokenList(ctx context.Context)
+	//CreateTokenList(ctx context.Context)
 	GetTokenList(ctx context.Context, chain string) ([]*v1.GetTokenListResp_Data, error)
+	AutoUpdateTokenList(ctx context.Context)
 }
 
 type TokenListUsecase struct {
@@ -28,10 +30,20 @@ func (uc *TokenListUsecase) GetPrice(ctx context.Context, coinName, coinAddress,
 	return uc.repo.GetPrice(ctx, coinName, coinAddress, currency)
 }
 
-func (uc *TokenListUsecase) CreateTokenList(ctx context.Context) {
-	uc.repo.CreateTokenList(ctx)
-}
+//func (uc *TokenListUsecase) CreateTokenList(ctx context.Context) {
+//	uc.repo.CreateTokenList(ctx)
+//}
 
 func (uc *TokenListUsecase) GetTokenList(ctx context.Context, chain string) ([]*v1.GetTokenListResp_Data, error) {
 	return uc.repo.GetTokenList(ctx, chain)
+}
+
+func (uc *TokenListUsecase) AutoUpdateTokenList(ctx context.Context) {
+	transactionPlan := time.NewTicker(24 * time.Hour)
+	for true {
+		select {
+		case <-transactionPlan.C:
+			uc.repo.AutoUpdateTokenList(ctx)
+		}
+	}
 }
