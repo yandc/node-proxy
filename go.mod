@@ -3,7 +3,8 @@ module gitlab.bixin.com/mili/node-proxy
 go 1.17
 
 require (
-	github.com/ethereum/go-ethereum v1.10.20
+	github.com/btcsuite/btcutil v1.0.3-0.20201208143702-a53e38424cce
+	github.com/ethereum/go-ethereum v1.10.13
 	github.com/go-kratos/kratos/v2 v2.4.0
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/google/wire v0.5.0
@@ -13,15 +14,14 @@ require (
 	google.golang.org/protobuf v1.28.0
 	gorm.io/driver/postgres v1.3.8
 	gorm.io/gorm v1.23.8
-	github.com/btcsuite/btcutil v1.0.3-0.20201208143702-a53e38424cce
 )
+
+require github.com/btcsuite/btcd v0.20.1-beta // indirect
 
 require (
 	github.com/BurntSushi/toml v1.1.0 // indirect
 	github.com/StackExchange/wmi v1.2.1 // indirect
-	github.com/btcsuite/btcd/btcec/v2 v2.2.0 // indirect
 	github.com/deckarep/golang-set v1.8.0 // indirect
-	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.0.1 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
@@ -64,5 +64,4 @@ require (
 	google.golang.org/genproto v0.0.0-20220719170305-83ca9fad585f // indirect
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	honnef.co/go/tools v0.1.3 // indirect
 )
