@@ -23,3 +23,172 @@ tokenList:
     secretKey: OYNl6ub3YfNI2hVOJ-h6KqRFuwPpUeL4MmVDU9Ia
     bucket: obstatic
     keyPrefix: download/token/
+
+platform:
+  - chain: Cronos
+    type: EVM
+    rpcURL:
+      - https://evm.cronos.org
+      - https://rpc.artemisone.org/cronos
+      - https://rpc.vvs.finance/
+  - chain: BSC
+    type: EVM
+    rpcURL:
+      - https://rpc.ankr.com/bsc
+      - https://bsc-dataseed.binance.org/
+      - https://bsc-dataseed1.binance.org
+      - https://bsc-dataseed2.binance.org
+      - https://bsc-dataseed3.binance.org
+      - https://bsc-dataseed4.binance.org
+      - https://bsc-dataseed1.ninicoin.io
+      - https://bsc-dataseed2.ninicoin.io
+      - https://bsc-dataseed3.ninicoin.io
+      - https://bsc-dataseed4.ninicoin.io
+      - https://bsc-dataseed1.defibit.io
+      - https://bsc-dataseed2.defibit.io
+      - https://bsc-dataseed3.defibit.io
+      - https://bsc-dataseed4.defibit.io
+      - https://binance.ankr.com
+      - https://rpc.onekey.so/bsc
+  - chain: BTC
+    type: BTC
+    rpcURL:
+      - https://api.blockcypher.com/v1/btc/main
+      - https://chain.so
+      - https://blockstream.info
+  - chain: Cronos
+    type: EVM
+    rpcURL:
+      - https://evm.cronos.org
+      - https://rpc.artemisone.org/cronos
+      - https://rpc.vvs.finance/
+  - chain: ETH
+    type: EVM
+    rpcURL:
+      - https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161
+      - https://geth.mytokenpocket.vip
+      - https://rpc.onekey.so/eth
+      - https://eth626892d.jccdex.cn
+      - https://web3.mytokenpocket.vip
+      - https://rpc.flashbots.net
+      - https://web3os.tokenpocket.pro
+      - https://rpc.ankr.com/eth
+  - chain: Fantom
+    type: EVM
+    rpcURL:
+      - https://rpc.ftm.tools/
+      - https://rpcapi.fantom.network
+      - https://rpc.ankr.com/fantom
+  - chain: HECO
+    type: EVM
+    rpcURL:
+      - https://http-mainnet.hecochain.com/
+      - https://http-mainnet-node.defibox.com
+  - chain: Klaytn
+    type: EVM
+    rpcURL:
+      - https://public-node-api.klaytnapi.com/v1/cypress
+      - https://klaytn01.fandom.finance/
+      - https://klaytn02.fandom.finance/
+      - https://klaytn03.fandom.finance/
+      - https://klaytn04.fandom.finance/
+      - https://klaytn05.fandom.finance/
+  - chain: OEC
+    type: EVM
+    rpcURL:
+      - https://exchainrpc.okex.org/
+      - https://okchain.mytokenpocket.vip/
+  - chain: Avalanche
+    type: EVM
+    rpcURL:
+      - https://exchainrpc.okex.org/
+      - https://okchain.mytokenpocket.vip/
+  - chain: Optimism
+    type: EVM
+    rpcURL:
+      - https://mainnet.optimism.io
+      - https://optimism-mainnet.public.blastapi.io
+      - https://optimism-mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161
+  - chain: Polygon
+    type: EVM
+    rpcURL:
+      - https://rpc-mainnet.maticvigil.com/
+      - https://polygon-rpc.com
+      - https://matic-mainnet.chainstacklabs.com
+      - https://rpc-mainnet.matic.quiknode.pro
+      - https://matic-mainnet-archive-rpc.bwarelabs.com
+      - https://matic.mytokenpocket.vip
+      - https://rpc.ankr.com/polygon
+  - chain: STC
+    type: STC
+    rpcURL:
+      - https://main-seed.starcoin.org
+  - chain: TRX
+    type: TVM
+    rpcURL:
+      - https://api.trongrid.io
+      - https://api.tronstack.io
+
+  - chain: AvalancheTEST
+    type: EVM
+    rpcURL:
+      - https://api.avax-test.network/ext/bc/C/rpc
+  - chain: BSCTEST
+    type: EVM
+    rpcURL:
+      - https://data-seed-prebsc-1-s1.binance.org:8545
+      - https://data-seed-prebsc-1-s2.binance.org:8545
+      - https://data-seed-prebsc-1-s3.binance.org:8545
+      - https://data-seed-prebsc-2-s1.binance.org:8545
+      - https://data-seed-prebsc-2-s2.binance.org:8545
+      - https://data-seed-prebsc-2-s3.binance.org:8545
+  - chain: BTCTEST
+    type: BTC
+    rpcURL:
+      - https://api.blockcypher.com/v1/btc/test3
+  - chain: CronosTEST
+    type: EVM
+    rpcURL:
+      - https://evm-t3.cronos.org/
+      - https://cronos-testnet-3.crypto.org:8545
+  - chain: ETHTEST
+    type: EVM
+    rpcURL:
+      - https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161
+  - chain: FantomTEST
+    type: EVM
+    rpcURL:
+      - https://xapi.testnet.fantom.network/lachesis
+  - chain: HECOTEST
+    type: EVM
+    rpcURL:
+      - https://http-testnet.hecochain.com/
+  - chain: KlaytnTEST
+    type: EVM
+    rpcURL:
+      - https://public-node-api.klaytnapi.com/v1/baobab
+      - https://baobab01.fandom.finance
+      - https://baobab02.fandom.finance
+  - chain: OECTEST
+    type: EVM
+    rpcURL:
+      - https://exchaintestrpc.okex.org
+  - chain: OptimismTEST
+    type: EVM
+    rpcURL:
+      - https://kovan.optimism.io
+      - https://optimism-kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161
+  - chain: PolygonTEST
+    type: EVM
+    rpcURL:
+      - https://rpc-mumbai.matic.today
+      - https://rpc.ankr.com/polygon_mumbai
+      - https://matic-testnet-archive-rpc.bwarelabs.com
+      - https://rpc-mumbai.maticvigil.com
+      - https://polygontestapi.terminet.io/rpc
+      - https://matic-mumbai.chainstacklabs.com
+  - chain: TRXTEST
+    type: TVM
+    rpcURL:
+      - https://api.shasta.trongrid.io
+
