@@ -13,6 +13,7 @@ require (
 	google.golang.org/protobuf v1.28.0
 	gorm.io/driver/postgres v1.3.8
 	gorm.io/gorm v1.23.8
+	github.com/btcsuite/btcutil v1.0.3-0.20201208143702-a53e38424cce
 )
 
 require (

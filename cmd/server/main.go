@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"os"
 
 	"gitlab.bixin.com/mili/node-proxy/internal/conf"
@@ -70,8 +69,8 @@ func main() {
 	if err := c.Scan(&bc); err != nil {
 		panic(err)
 	}
-	fmt.Println("db:", bc.Data.Database.String(), bc.TokenList.String())
-	app, cleanup, err := wireApp(bc.Server, bc.Data, bc.TokenList, logger)
+	//fmt.Println("db:", bc.Data.Database.String(), bc.TokenList.String(), bc.Platform)
+	app, cleanup, err := wireApp(bc.Server, bc.Data, bc.TokenList, bc.Platform, logger)
 	if err != nil {
 		panic(err)
 	}

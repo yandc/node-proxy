@@ -7,51 +7,58 @@ import "google/protobuf/duration.proto";
 option go_package = "gitlab.bixin.com/mili/node-proxy/internal/conf;conf";
 
 message Bootstrap {
-    Server server = 1;
-    Data data = 2;
-    TokenList tokenList = 3;
+  Server server = 1;
+  Data data = 2;
+  TokenList tokenList = 3;
+  repeated Platform platform = 4;
 }
 
 message Server {
-    message GRPC {
-        string network = 1;
-        string addr = 2;
-        google.protobuf.Duration timeout = 3;
-    }
-    GRPC grpc = 1;
+  message GRPC {
+    string network = 1;
+    string addr = 2;
+    google.protobuf.Duration timeout = 3;
+  }
+  GRPC grpc = 1;
 }
 
 message Data {
-    message Database {
-        string driver = 1;
-        string source = 2;
-    }
-    message Redis {
-        int64 db = 1;
-        string addr = 2;
-        google.protobuf.Duration read_timeout = 3;
-        google.protobuf.Duration write_timeout = 4;
-    }
-    Database database = 1;
-    Redis redis = 2;
+  message Database {
+    string driver = 1;
+    string source = 2;
+  }
+  message Redis {
+    int64 db = 1;
+    string addr = 2;
+    google.protobuf.Duration read_timeout = 3;
+    google.protobuf.Duration write_timeout = 4;
+  }
+  Database database = 1;
+  Redis redis = 2;
 }
 
 message TokenList {
-    message CoinGecko {
-        string baseURL = 1;
-    }
-    message CoinMarketCap {
-        string baseURL = 1;
-        string key = 2;
-    }
-    message QiNiu {
-        string accessKey = 1;
-        string secretKey = 2;
-        string bucket = 3;
-        string keyPrefix = 4;
-    }
-    CoinGecko coingecko = 1;
-    CoinMarketCap coinmarketcap = 2;
-    string logoPrefix = 3;
-    QiNiu qiniu = 4;
+  message CoinGecko {
+    string baseURL = 1;
+  }
+  message CoinMarketCap {
+    string baseURL = 1;
+    string key = 2;
+  }
+  message QiNiu {
+    string accessKey = 1;
+    string secretKey = 2;
+    string bucket = 3;
+    string keyPrefix = 4;
+  }
+  CoinGecko coingecko = 1;
+  CoinMarketCap coinmarketcap = 2;
+  string logoPrefix = 3;
+  QiNiu qiniu = 4;
+}
+
+message Platform  {
+  string chain = 1;
+  string type = 2;
+  repeated string rpcURL = 3;
 }

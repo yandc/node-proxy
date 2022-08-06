@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package api.platform.v1;
+
+option go_package = "gitlab.bixin.com/mili/node-proxy/api/platform/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.platform.v1";
+
+service Platform {
+  rpc GetBalance (GetBalanceRequest) returns (GetBalanceReply);
+}
+
+message GetBalanceRequest{
+  string chain = 1;
+  string address = 2;
+  string tokenAddress = 3;
+  string decimals = 4;
+}
+
+message GetBalanceReply{
+  string balance = 1;
+}
