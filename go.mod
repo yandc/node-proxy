@@ -16,11 +16,10 @@ require (
 	gorm.io/gorm v1.23.8
 )
 
-require github.com/btcsuite/btcd v0.20.1-beta // indirect
-
 require (
 	github.com/BurntSushi/toml v1.1.0 // indirect
 	github.com/StackExchange/wmi v1.2.1 // indirect
+	github.com/btcsuite/btcd v0.20.1-beta // indirect
 	github.com/deckarep/golang-set v1.8.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
