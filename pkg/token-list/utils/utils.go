@@ -3,11 +3,14 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/go-redis/redis"
 	"io/ioutil"
 	"math/big"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -15,6 +18,11 @@ import (
 	"github.com/ethereum/go-ethereum/rpc"
 	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/types"
 )
+
+const REDIS_PRICE_PRICE = "price"
+const REDIS_PRICE_TIMESTAMP = "timestamp"
+const REDIS_PRICE_INTERVAL = 60
+const STARCOIN_CHAIN = "starcoin"
 
 var platformMap = map[string]string{
 	"aurora":      "aurora",
@@ -186,12 +194,8 @@ func ParseTokenListFile() map[string][]types.TokenInfo {
 		for _, url := range urls {
 			out := &types.Token{}
 			HttpsGetForm(url, nil, out)
-			//if err != nil {
-			//	fmt.Println("ParseTokenListFile error", err, chain, url)
-			//}
-			//fmt.Println("chain=", chain, "url=", url, "length:", len(out.Tokens))
 			for _, t := range out.Tokens {
-				if strings.HasPrefix(t.Address, "0x") {
+				if strings.HasPrefix(t.Address, "0x") && chain != STARCOIN_CHAIN {
 					t.Address = strings.ToLower(t.Address)
 				}
 				tokenInfos = append(tokenInfos, t)
@@ -219,7 +223,7 @@ func PraseKlaytnFile(urls []string) []types.TokenInfo {
 			fmt.Println("error:", err)
 		}
 		for _, t := range out {
-			if strings.HasPrefix(t.Address, "0x") {
+			if strings.HasPrefix(t.Address, "0x"){
 				t.Address = strings.ToLower(t.Address)
 			}
 			result = append(result, types.TokenInfo{
@@ -231,10 +235,7 @@ func PraseKlaytnFile(urls []string) []types.TokenInfo {
 				LogoURI:  t.Icon,
 			})
 		}
-
-		//fmt.Println("chain=", chain, "url=", url, "length:", len(out))
 	}
-	//fmt.Println("PraseKlaytnFile length:", len(result))
 	return result
 }
 
@@ -388,11 +389,38 @@ func ParseCoinAddress(coinAddress []string) map[string]string {
 		addressInfo := strings.Split(chainAddress, "_")
 		chain := GetChainNameByPlatform(addressInfo[0])
 		address := addressInfo[1]
-		if strings.HasPrefix(address, "0x") {
+		if strings.HasPrefix(address, "0x") && chain != STARCOIN_CHAIN {
 			address = strings.ToLower(address)
 		}
 		key := fmt.Sprintf("%s_%s", chain, address)
 		result[key] = chainAddress
 	}
 	return result
+}
+
+// GetPriceRedisValueByKey get price,whether update
+func GetPriceRedisValueByKey(redisClient *redis.Client, key string) (string, bool, error) {
+	result, err := redisClient.HGetAll(key).Result()
+	if err != nil || len(result) == 0 {
+		return "", true, err
+	}
+	flag := true
+	price := result[REDIS_PRICE_PRICE]
+	val := result[REDIS_PRICE_TIMESTAMP]
+	timestamp, err := strconv.ParseInt(val, 10, 64)
+	if err != nil {
+		return price, flag, err
+	}
+	if time.Now().Unix()-timestamp < REDIS_PRICE_INTERVAL {
+		flag = false
+	}
+	return price, flag, nil
+}
+
+func SetPriceRedisKey(redisClient *redis.Client, key, price string) error {
+	fields := map[string]interface{}{
+		REDIS_PRICE_PRICE:     price,
+		REDIS_PRICE_TIMESTAMP: time.Now().Unix(),
+	}
+	return redisClient.HMSet(key, fields).Err()
 }
