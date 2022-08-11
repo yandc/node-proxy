@@ -247,23 +247,24 @@ func GetTokenListPrice(chains, addresses []string, currency string) map[string]m
 		for _, chain := range tempChain {
 			//get id by chain
 			key := REDIS_PRICE_KEY + fmt.Sprintf("%s:%s", chain, strings.ToLower(currency))
-			price, err := c.redisClient.Get(key).Result()
+			//price, err := c.redisClient.Get(key).Result()
+			price, updateFlag, err := utils.GetPriceRedisValueByKey(c.redisClient, key)
 			if err != nil {
 				c.log.Error("get redis cache error:", err, key)
 			}
 			if price != "" {
 				var resultKey string
-
 				if value, ok := chainMap[chain]; ok {
 					resultKey = value
 				} else {
 					resultKey = chain
 				}
-
 				result[resultKey] = map[string]string{
 					currency: price,
 				}
-
+				if updateFlag {
+					needUpdateChain = append(needUpdateChain, chain)
+				}
 			} else {
 				needUpdateChain = append(needUpdateChain, chain)
 			}
@@ -273,29 +274,7 @@ func GetTokenListPrice(chains, addresses []string, currency string) map[string]m
 			if err != nil {
 				c.log.Error("CGSimplePrice Error:", err)
 			}
-			for address, prices := range pricesMap {
-				var p string
-				if value, ok := prices[strings.ToLower(currency)]; ok {
-					p = decimal.NewFromFloat32(value).String()
-				}
-				tempKey := REDIS_PRICE_KEY + fmt.Sprintf("%s:%s", address, strings.ToLower(currency))
-				err := c.redisClient.Set(tempKey, p, 1*time.Minute).Err()
-				if err != nil {
-					c.log.Error("set redisClient cache error:", err, tempKey)
-				}
-				var resultKey string
-
-				if value, ok := chainMap[address]; ok {
-					resultKey = value
-
-				} else {
-					resultKey = address
-				}
-
-				result[resultKey] = map[string]string{
-					currency: p,
-				}
-			}
+			handlerPriceMap(pricesMap, map[string]string{}, chainMap, currency, result, true)
 		}
 	}
 	if len(addresses) > 0 {
@@ -305,14 +284,18 @@ func GetTokenListPrice(chains, addresses []string, currency string) map[string]m
 		needUpdateAddress := make([]string, 0, len(addresses))
 		for chainAddress, _ := range newAddressMap {
 			key := REDIS_PRICE_KEY + fmt.Sprintf("%s:%s", chainAddress, strings.ToLower(currency))
-			price, err := c.redisClient.Get(key).Result()
+			//price, err := c.redisClient.Get(key).Result()
+			price, updateFlag, err := utils.GetPriceRedisValueByKey(c.redisClient, key)
 			if err != nil {
 				c.log.Error("get redis cache error:", err, key)
 			}
 			if price != "" {
 				result[newAddressMap[chainAddress]] = map[string]string{currency: price}
+				if updateFlag {
+					needUpdateAddress = append(needUpdateAddress, chainAddress)
+				}
 			} else {
-				fmt.Println("add address", chainAddress)
+				//fmt.Println("add address", chainAddress)
 				needUpdateAddress = append(needUpdateAddress, chainAddress)
 				//addressMap[address] = addresses[i]
 			}
@@ -356,23 +339,9 @@ func GetTokenListPrice(chains, addresses []string, currency string) map[string]m
 				cgPricesMap, err := CGSimplePrice(cgIds, currency)
 				if err != nil {
 					c.log.Error("CGSimplePrice Error:", err)
-				}
-				for id, prices := range cgPricesMap {
-					var price string
-					if value, ok := prices[strings.ToLower(currency)]; ok {
-						price = decimal.NewFromFloat32(value).String()
-					}
-					address := addressIdMap[id]
-					key := REDIS_PRICE_KEY + fmt.Sprintf("%s:%s", address, strings.ToLower(currency))
-					err := c.redisClient.Set(key, price, 1*time.Minute).Err()
-					if err != nil {
-						c.log.Error("set redisClient error:", err, key)
-					}
-					if value, ok := newAddressMap[address]; ok {
-						result[value] = map[string]string{currency: price}
-					} else {
-						result[address] = map[string]string{currency: price}
-					}
+				} else {
+					handlerPriceMap(cgPricesMap, addressIdMap, newAddressMap, currency, result, true)
+
 				}
 			}
 
@@ -380,23 +349,8 @@ func GetTokenListPrice(chains, addresses []string, currency string) map[string]m
 				cmcPriceMap, err := CMCSimplePrice(cmcIds, currency)
 				if err != nil {
 					c.log.Error("get cmc price error:", err)
-				}
-				for id, prices := range cmcPriceMap {
-					address := addressIdMap[id]
-					var price string
-					if value, ok := prices[currency]; ok {
-						price = decimal.NewFromFloat32(value).String()
-					}
-					key := REDIS_PRICE_KEY + fmt.Sprintf("%s:%s", address, strings.ToLower(currency))
-					err := c.redisClient.Set(key, price, 1*time.Minute).Err()
-					if err != nil {
-						c.log.Error("set redisClient error:", err, key)
-					}
-					if value, ok := newAddressMap[address]; ok {
-						result[value] = map[string]string{currency: price}
-					} else {
-						result[address] = map[string]string{currency: price}
-					}
+				} else {
+					handlerPriceMap(cmcPriceMap, addressIdMap, newAddressMap, currency, result, false)
 				}
 			}
 
@@ -404,6 +358,37 @@ func GetTokenListPrice(chains, addresses []string, currency string) map[string]m
 	}
 
 	return result
+}
+
+func handlerPriceMap(priceMap map[string]map[string]float32, addressIdMap, newAddressMap map[string]string,
+	currency string, result map[string]map[string]string, isCG bool) {
+	for id, prices := range priceMap {
+		var address string
+		if value, ok := addressIdMap[id]; ok {
+			address = value
+		} else {
+			address = id
+		}
+		var price string
+		priceCurrency := currency
+		if isCG {
+			priceCurrency = strings.ToLower(currency)
+		}
+		if value, ok := prices[priceCurrency]; ok {
+			price = decimal.NewFromFloat32(value).String()
+		}
+		key := REDIS_PRICE_KEY + fmt.Sprintf("%s:%s", address, strings.ToLower(currency))
+		//err := c.redisClient.Set(key, price, 1*time.Minute).Err()
+		err := utils.SetPriceRedisKey(c.redisClient, key, price)
+		if err != nil {
+			c.log.Error("set redisClient error:", err, key)
+		}
+		if value, ok := newAddressMap[address]; ok {
+			result[value] = map[string]string{currency: price}
+		} else {
+			result[address] = map[string]string{currency: price}
+		}
+	}
 }
 
 func GetTokenList(chain string) ([]*v1.GetTokenListResp_Data, error) {
@@ -450,7 +435,7 @@ func GetDecimalsInfo() map[string]types.TokenInfo {
 	tokens := utils.ParseTokenListFile()
 	for chain, token := range tokens {
 		for _, t := range token {
-			if strings.HasPrefix(t.Address, "0x") {
+			if strings.HasPrefix(t.Address, "0x") && chain != utils.STARCOIN_CHAIN {
 				t.Address = strings.ToLower(t.Address)
 			}
 			result[chain+":"+t.Address] = t
@@ -487,14 +472,36 @@ func InsertLogURI() {
 	fmt.Println("count==", count)
 }
 
-func AutoUpdateTokenList() {
-	coinMarketCaps := UpdateCoinMarketCap()
-	coinGeckos := UpdateCoinGecko()
-	decimalsInfo := GetDecimalsInfo()
-	tempDBTokenList, err := GetAllTokenList()
-	if err != nil {
-		c.log.Error("get all token list error:", err)
+func AutoUpdateTokenList(cmcFlag, cgFlag, jsonFlag bool) {
+	var wg sync.WaitGroup
+	var coinMarketCaps []models.CoinMarketCap
+	var coinGeckos []models.CoinGecko
+	var tempDBTokenList []models.TokenList
+	var decimalsInfo map[string]types.TokenInfo
+
+	if cmcFlag {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			coinMarketCaps = UpdateCoinMarketCap()
+		}()
 	}
+	if cgFlag {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			coinGeckos = UpdateCoinGecko()
+		}()
+	}
+	if jsonFlag {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			decimalsInfo = GetDecimalsInfo()
+		}()
+	}
+	tempDBTokenList, _ = GetAllTokenList()
+	wg.Wait()
 	tempDBTokenListMap := make(map[string]struct{}, len(tempDBTokenList))
 	tokenListMap := make(map[string]*models.TokenList)
 	noDecimals := make(map[string][]string)
@@ -511,7 +518,7 @@ func AutoUpdateTokenList() {
 				}
 				chain := utils.GetPlatform(key)
 				var address string
-				if strings.HasPrefix(value.(string), "0x") {
+				if strings.HasPrefix(value.(string), "0x") && chain != utils.STARCOIN_CHAIN {
 					address = strings.ToLower(value.(string))
 				} else {
 					address = value.(string)
@@ -549,7 +556,7 @@ func AutoUpdateTokenList() {
 		for _, p := range platform {
 			if p.ContractAddress != "" {
 				var address, chain string
-				if strings.HasPrefix(p.ContractAddress, "0x") {
+				if strings.HasPrefix(p.ContractAddress, "0x") && chain != utils.STARCOIN_CHAIN {
 					address = strings.ToLower(p.ContractAddress)
 				} else {
 					address = p.ContractAddress
