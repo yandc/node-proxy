@@ -43,7 +43,7 @@ message TokenList {
   }
   message CoinMarketCap {
     string baseURL = 1;
-    string key = 2;
+    repeated string key = 2;
   }
   message QiNiu {
     string accessKey = 1;
