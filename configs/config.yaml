@@ -17,7 +17,14 @@ tokenList:
     baseURL: https://api.coingecko.com/api/v3
   coinmarketcap:
     baseURL: https://pro-api.coinmarketcap.com/v1
-    key: 4a77c975-64ff-4c2e-8f70-b195bfb07be5
+    key:
+      - 411e33ba-1371-4068-874d-6128776c8dd3
+      - 4a77c975-64ff-4c2e-8f70-b195bfb07be5
+      - 954fb4aa-a1ab-42e2-8476-685832faeda4
+      - 4a77c975-64ff-4c2e-8f70-b195bfb07be5
+      - 9f36b36d-97aa-48f5-9a20-a41bf6888396
+      - dd8eb4f4-922b-43a1-bd2c-671925ca3ed3
+      - 03eca6eb-77f9-4ce7-b265-ee408b424d45
   qiniu:
     accessKey: EaebIDbEDcyKefx72vRpG3-JDa5Hd9YInXYRiTst
     secretKey: OYNl6ub3YfNI2hVOJ-h6KqRFuwPpUeL4MmVDU9Ia

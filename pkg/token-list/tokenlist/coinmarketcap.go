@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"go.uber.org/zap"
+	"math/rand"
 	"strings"
 	"time"
 
@@ -17,17 +18,17 @@ import (
 
 type cmcConf struct {
 	baseUrl string
-	key     string
+	key     []string
 	db      *gorm.DB
 	log     *log.Helper
 }
 
 var cmc = cmcConf{
 	baseUrl: "https://pro-api.coinmarketcap.com/v1",
-	key:     "4a77c975-64ff-4c2e-8f70-b195bfb07be5",
+	key:     []string{"4a77c975-64ff-4c2e-8f70-b195bfb07be5"},
 }
 
-func InitCMC(baseURL, key string, db *gorm.DB, logger log.Logger) {
+func InitCMC(baseURL string, key []string, db *gorm.DB, logger log.Logger) {
 	log := log.NewHelper(log.With(logger, "module", "tokenlist/InitCMC"))
 	cmc = cmcConf{
 		baseUrl: baseURL,
@@ -39,11 +40,18 @@ func InitCMC(baseURL, key string, db *gorm.DB, logger log.Logger) {
 
 func CMCCoinsList() (*types.CMCList, error) {
 	url := fmt.Sprintf("%s/cryptocurrency/map", cmc.baseUrl)
+	index := rand.Intn(len(cmc.key))
 	params := map[string]string{
-		"CMC_PRO_API_KEY": cmc.key,
+		"CMC_PRO_API_KEY": cmc.key[index],
 	}
 	out := &types.CMCList{}
 	err := utils.HttpsGetForm(url, params, out)
+	if err != nil {
+		for i := 0; i < len(cmc.key) && err != nil; i++ {
+			params["CMC_PRO_API_KEY"] = cmc.key[i]
+			err = utils.HttpsGetForm(url, params, out)
+		}
+	}
 	return out, err
 }
 
@@ -52,12 +60,19 @@ func CMCCoinsId(id string) (*types.CMCCoinsID, error) {
 		return nil, fmt.Errorf("id is required")
 	}
 	url := fmt.Sprintf("%s/cryptocurrency/info", cmc.baseUrl)
+	index := rand.Intn(len(cmc.key))
 	params := map[string]string{
-		"CMC_PRO_API_KEY": cmc.key,
+		"CMC_PRO_API_KEY": cmc.key[index],
 		"id":              id,
 	}
 	out := &types.CMCCoinsID{}
 	err := utils.HttpsGetForm(url, params, out)
+	if err != nil {
+		for i := 0; i < len(cmc.key) && err != nil; i++ {
+			params["CMC_PRO_API_KEY"] = cmc.key[i]
+			err = utils.HttpsGetForm(url, params, out)
+		}
+	}
 	return out, err
 }
 
@@ -229,14 +244,20 @@ func CMCSimplePrice(ids []string, currency string) (map[string]map[string]float3
 
 func getCmcPrice(id string, currency string) (float32, error) {
 	url := fmt.Sprintf("%s/tools/price-conversion", cmc.baseUrl)
+	index := rand.Intn(len(cmc.key))
 	params := map[string]string{
-		"CMC_PRO_API_KEY": cmc.key,
+		"CMC_PRO_API_KEY": cmc.key[index],
 		"id":              id,
 		"amount":          "1",
 		"convert":         currency,
 	}
 	out := &types.CMCPriceResp{}
 	err := utils.HttpsGetForm(url, params, out)
-
+	if err != nil {
+		for i := 0; i < len(cmc.key) && err != nil; i++ {
+			params["CMC_PRO_API_KEY"] = cmc.key[i]
+			err = utils.HttpsGetForm(url, params, out)
+		}
+	}
 	return out.Data.Quote[currency].Price, err
 }
