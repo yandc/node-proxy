@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	pb "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
@@ -35,6 +36,17 @@ func (s *TokenlistService) GetTokenList(ctx context.Context, req *pb.GetTokenLis
 
 	data, err := s.uc.GetTokenList(subctx, req.Chain)
 	return &pb.GetTokenListResp{
+		Data: data,
+	}, err
+}
+
+func (s *TokenlistService) GetTokenInfo(ctx context.Context, req *pb.GetTokenInfoReq) (*pb.GetTokenInfoResp, error) {
+	// 设置接口 3s 超时
+	subctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+	fmt.Println(subctx, len(req.Data))
+	data, err := s.uc.GetTokenInfo(ctx, req.Data)
+	return &pb.GetTokenInfoResp{
 		Data: data,
 	}, err
 }
