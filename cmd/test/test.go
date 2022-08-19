@@ -44,6 +44,8 @@ func main() {
 		testGetBalance()
 	case "tokenList":
 		testAutoUpdateTokenList()
+	case "tokenInfo":
+		testGetTokenInfo()
 	}
 	fmt.Println("test main end")
 	//testGetPrice()
@@ -99,6 +101,28 @@ func testGetBalance() {
 		fmt.Println("get balacne error", err)
 	}
 	fmt.Println("result:", resp.Balance)
+}
+
+func testGetTokenInfo() {
+	conn, err := grpc.Dial("127.0.0.1:9001", grpc.WithInsecure())
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+	defer conn.Close()
+	c := v1.NewTokenlistClient(conn)
+	data := []*v1.GetTokenInfoReq_Data{
+		{Chain: "ETH", Address: "0x31903E333809897eE57Af57567f4377a1a78756c"},
+		{Chain: "ETH", Address: "0x0000000DE40dfa9B17854cBC7869D80f9F98D823"},
+		{Chain: "HECO", Address: "0x0298c2b32eae4da002a15f36fdf7615bea3da047"},
+	}
+	req := &v1.GetTokenInfoReq{
+		Data: data,
+	}
+	resp, err := c.GetTokenInfo(context.Background(), req)
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+	fmt.Println(resp)
 }
 
 func testGetPrice() {

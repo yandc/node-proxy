@@ -57,3 +57,9 @@ func (r *tokenListRepo) AutoUpdateTokenList(ctx context.Context) {
 	r.log.WithContext(ctx).Infof("AutoUpdateTokenList")
 	tokenlist.AutoUpdateTokenList(true, true, true)
 }
+
+func (r *tokenListRepo) GetTokenInfo(ctx context.Context, addressInfo []*v1.GetTokenInfoReq_Data) (
+	[]*v1.GetTokenInfoResp_Data, error) {
+	r.log.WithContext(ctx).Infof("GetTokenInfo", addressInfo)
+	return tokenlist.GetTokenInfo(addressInfo)
+}

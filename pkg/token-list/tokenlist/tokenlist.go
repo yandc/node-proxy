@@ -20,11 +20,9 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"sync/atomic"
-	"time"
-
 	"strings"
 	"sync"
+	"sync/atomic"
 )
 
 type config struct {
@@ -394,7 +392,8 @@ func handlerPriceMap(priceMap map[string]map[string]float32, addressIdMap, newAd
 func GetTokenList(chain string) ([]*v1.GetTokenListResp_Data, error) {
 	chain = utils.GetChainNameByChain(chain)
 	key := REDIS_LIST_KEY + chain
-	str, err := c.redisClient.Get(key).Result()
+	//str, err := c.redisClient.Get(key).Result()
+	str, updateFlag, err := utils.GetTokenListRedisValueByKey(c.redisClient, key)
 	if err != nil {
 		c.log.Error("get token list key error:", err, key)
 	}
@@ -404,6 +403,9 @@ func GetTokenList(chain string) ([]*v1.GetTokenListResp_Data, error) {
 		if err != nil {
 			c.log.Error("unmarshal error:", err)
 		}
+	}
+
+	if !updateFlag {
 		return result, nil
 	}
 
@@ -423,7 +425,8 @@ func GetTokenList(chain string) ([]*v1.GetTokenListResp_Data, error) {
 		}
 	}
 	b, _ := json.Marshal(result)
-	err = c.redisClient.Set(key, string(b), 24*time.Hour).Err()
+	//err = c.redisClient.Set(key, string(b), 24*time.Hour).Err()
+	err = utils.SetTokenListRedisKey(c.redisClient, key, string(b))
 	if err != nil {
 		c.log.Error("set redisClient cache error:", err)
 	}
@@ -442,6 +445,44 @@ func GetDecimalsInfo() map[string]types.TokenInfo {
 		}
 	}
 	return result
+}
+
+func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoResp_Data, error) {
+	tokenInfos := make([]*v1.GetTokenInfoResp_Data, 0, len(addressInfos))
+	params := make([][]interface{}, 0, len(addressInfos))
+	addressMap := make(map[string]string, len(addressInfos))
+	for _, addressInfo := range addressInfos {
+		chain := utils.GetChainNameByChain(addressInfo.Chain)
+		address := addressInfo.Address
+		if strings.HasPrefix(addressInfo.Address, "0x") && chain != utils.STARCOIN_CHAIN {
+			address = strings.ToLower(addressInfo.Address)
+		}
+		params = append(params, []interface{}{chain, address})
+		addressMap[chain+":"+address] = addressInfo.Chain + ":" + addressInfo.Address
+	}
+
+	// get token list
+	var tokenLists []models.TokenList
+	err := c.db.Where("(chain, address) IN ?", params).Find(&tokenLists).Error
+	if err != nil {
+		c.log.Error("get token list error:", err)
+	}
+	for _, tokenList := range tokenLists {
+		chain := tokenList.Chain
+		address := tokenList.Address
+		if value, ok := addressMap[chain+":"+address]; ok {
+			addressInfo := strings.Split(value, ":")
+			chain, address = addressInfo[0], addressInfo[1]
+		}
+		tokenInfos = append(tokenInfos, &v1.GetTokenInfoResp_Data{
+			Chain:    chain,
+			Address:  address,
+			Decimals: uint32(tokenList.Decimals),
+			Symbol:   tokenList.Symbol,
+			Name:     tokenList.Name,
+		})
+	}
+	return tokenInfos, nil
 }
 
 const imageHex = "https://static.openblock.com/download/token/"

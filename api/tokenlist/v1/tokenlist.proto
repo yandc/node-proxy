@@ -7,32 +7,52 @@ option java_multiple_files = true;
 option java_package = "api.tokenlist.v1";
 
 service Tokenlist {
-    rpc GetPrice (PriceReq) returns (PriceResp);
-    rpc GetTokenList (GetTokenListReq) returns (GetTokenListResp);
+  rpc GetPrice (PriceReq) returns (PriceResp);
+  rpc GetTokenList (GetTokenListReq) returns (GetTokenListResp);
+  rpc GetTokenInfo (GetTokenInfoReq) returns (GetTokenInfoResp);
 }
 
 message GetTokenListReq {
-    string chain = 1;
+  string chain = 1;
 }
 
 message GetTokenListResp {
-    message Data {
-        uint32 chainId = 1;
-        string name = 2;
-        string address = 3;
-        uint32 decimals = 4;
-        string symbol = 5;
-        string logoURI = 6;
-    }
-    repeated Data data = 1;
+  message Data {
+    uint32 chainId = 1;
+    string name = 2;
+    string address = 3;
+    uint32 decimals = 4;
+    string symbol = 5;
+    string logoURI = 6;
+  }
+  repeated Data data = 1;
 }
 
 message PriceReq {
-    string coin_names = 1;
-    string coin_addresses = 2;
-    string currency = 3;
+  string coin_names = 1;
+  string coin_addresses = 2;
+  string currency = 3;
 }
 
 message PriceResp {
-    bytes data = 1;
+  bytes data = 1;
+}
+
+message GetTokenInfoReq {
+  message Data {
+    string chain = 1;
+    string address = 2;
+  }
+  repeated Data data = 1;
+}
+
+message GetTokenInfoResp {
+  message Data {
+    string chain = 1;
+    string name = 2;
+    string address = 3;
+    uint32 decimals = 4;
+    string symbol = 5;
+  }
+  repeated Data data = 1;
 }
