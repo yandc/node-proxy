@@ -218,7 +218,7 @@ func GetTokenListPrice(chains, addresses []string, currency string) map[string]m
 	//native price
 	if len(chains) > 0 {
 		var cmLists []models.CoinGecko
-		chainMap := make(map[string]string)
+		chainMap := make(map[string][]string)
 		for i := 0; i < len(chains); i++ {
 			if chains[i] == "Huobi-Token" {
 				chains[i] = "Huobi"
@@ -233,9 +233,9 @@ func GetTokenListPrice(chains, addresses []string, currency string) map[string]m
 			for _, cm := range cmLists {
 				tempChain = append(tempChain, cm.Id)
 				if cm.Name == "Huobi" {
-					chainMap[cm.Id] = "Huobi-Token"
+					chainMap[cm.Id] = append(chainMap[cm.Id], "Huobi-Token")
 				} else {
-					chainMap[cm.Id] = cm.Name
+					chainMap[cm.Id] = append(chainMap[cm.Id], cm.Name)
 				}
 			}
 		} else {
@@ -251,14 +251,16 @@ func GetTokenListPrice(chains, addresses []string, currency string) map[string]m
 				c.log.Error("get redis cache error:", err, key)
 			}
 			if price != "" {
-				var resultKey string
 				if value, ok := chainMap[chain]; ok {
-					resultKey = value
+					for _, addr := range value {
+						result[addr] = map[string]string{
+							currency: price,
+						}
+					}
 				} else {
-					resultKey = chain
-				}
-				result[resultKey] = map[string]string{
-					currency: price,
+					result[chain] = map[string]string{
+						currency: price,
+					}
 				}
 				if updateFlag {
 					needUpdateChain = append(needUpdateChain, chain)
@@ -288,7 +290,10 @@ func GetTokenListPrice(chains, addresses []string, currency string) map[string]m
 				c.log.Error("get redis cache error:", err, key)
 			}
 			if price != "" {
-				result[newAddressMap[chainAddress]] = map[string]string{currency: price}
+				for _, addr := range newAddressMap[chainAddress] {
+					result[addr] = map[string]string{currency: price}
+				}
+
 				if updateFlag {
 					needUpdateAddress = append(needUpdateAddress, chainAddress)
 				}
@@ -298,7 +303,6 @@ func GetTokenListPrice(chains, addresses []string, currency string) map[string]m
 				//addressMap[address] = addresses[i]
 			}
 		}
-
 		if len(needUpdateAddress) > 0 {
 			//get redisClient price
 			tokenList := make([]models.TokenList, 0, len(needUpdateAddress))
@@ -310,16 +314,16 @@ func GetTokenListPrice(chains, addresses []string, currency string) map[string]m
 					err := c.db.Where("chain = ? AND address = ?", chain, address).First(&tempTokenList).Error
 					if err != nil {
 						c.log.Error("get token list error:", err)
-						result[newAddressMap[chainAddress]] = map[string]string{currency: "0"}
+						for _, addr := range newAddressMap[chainAddress] {
+							result[addr] = map[string]string{currency: "0"}
+						}
 						continue
 					}
 					//addressMap[tempTokenList.CgId] = chainAddress
 					tokenList = append(tokenList, tempTokenList)
 				}
 			}
-
 			var cgIds, cmcIds []string
-
 			addressIdMap := make(map[string]string, len(tokenList))
 			for _, t := range tokenList {
 				var id string
@@ -354,11 +358,10 @@ func GetTokenListPrice(chains, addresses []string, currency string) map[string]m
 
 		}
 	}
-
 	return result
 }
 
-func handlerPriceMap(priceMap map[string]map[string]float32, addressIdMap, newAddressMap map[string]string,
+func handlerPriceMap(priceMap map[string]map[string]float32, addressIdMap map[string]string, newAddressMap map[string][]string,
 	currency string, result map[string]map[string]string, isCG bool) {
 	for id, prices := range priceMap {
 		var address string
@@ -382,7 +385,9 @@ func handlerPriceMap(priceMap map[string]map[string]float32, addressIdMap, newAd
 			c.log.Error("set redisClient error:", err, key)
 		}
 		if value, ok := newAddressMap[address]; ok {
-			result[value] = map[string]string{currency: price}
+			for _, addr := range value {
+				result[addr] = map[string]string{currency: price}
+			}
 		} else {
 			result[address] = map[string]string{currency: price}
 		}
@@ -746,36 +751,39 @@ func DownLoadImages(tokenLists []models.TokenList) {
 
 func UpLoadImages() {
 	mac := qbox.NewMac(c.qiniu.AccessKey, c.qiniu.SecretKey)
-	putPolicy := storage.PutPolicy{
-		Scope: c.qiniu.Bucket,
-	}
-	upToken := putPolicy.UploadToken(mac)
-	cfg := storage.Config{
-		UseHTTPS: true,
-	}
-	bucketManager := storage.NewBucketManager(mac, &cfg)
-	formUploader := storage.NewFormUploader(&cfg)
-	ret := types.MyPutRet{}
-	putExtra := storage.PutExtra{
-		Params: map[string]string{
-			"x:name": "github logo",
-		},
-	}
-	filepath.Walk("images", func(path string, info fs.FileInfo, err error) error {
-		if !info.IsDir() && strings.HasSuffix(info.Name(), ".png") {
-			key := c.qiniu.KeyPrefix + path
-			err = formUploader.PutFile(context.Background(), &ret, upToken, key, path, &putExtra)
-			if err != nil {
-				c.log.Error("PutFile Error:", err)
-			}
-			err = bucketManager.Prefetch(c.qiniu.Bucket, path)
-			if err != nil {
-				c.log.Error("fetch error:", err)
-			}
-			c.log.Info("upload info:", ret.Bucket, ret.Key, ret.Fsize, ret.Hash, ret.Name)
+	for _, bucket := range c.qiniu.Bucket {
+		putPolicy := storage.PutPolicy{
+			Scope: bucket,
 		}
-		return nil
-	})
+		upToken := putPolicy.UploadToken(mac)
+		cfg := storage.Config{
+			UseHTTPS: true,
+		}
+		bucketManager := storage.NewBucketManager(mac, &cfg)
+		formUploader := storage.NewFormUploader(&cfg)
+		ret := types.MyPutRet{}
+		putExtra := storage.PutExtra{
+			Params: map[string]string{
+				"x:name": "github logo",
+			},
+		}
+		filepath.Walk("images", func(path string, info fs.FileInfo, err error) error {
+			if !info.IsDir() && strings.HasSuffix(info.Name(), ".png") {
+				key := c.qiniu.KeyPrefix + path
+				err = formUploader.PutFile(context.Background(), &ret, upToken, key, path, &putExtra)
+				if err != nil {
+					c.log.Error("PutFile Error:", err)
+				}
+				err = bucketManager.Prefetch(bucket, path)
+				if err != nil {
+					c.log.Error("fetch error:", err)
+				}
+				c.log.Info("upload info:", ret.Bucket, ret.Key, ret.Fsize, ret.Hash, ret.Name)
+			}
+			return nil
+		})
+	}
+
 }
 
 func InsertLogoURI() {

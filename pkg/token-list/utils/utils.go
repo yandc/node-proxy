@@ -382,11 +382,11 @@ func PathExists(path string) (bool, error) {
 	return false, err //如果有错误了，但是不是不存在的错误，所以把这个错误原封不动的返回
 }
 
-func ParseCoinAddress(coinAddress []string) map[string]string {
-	result := make(map[string]string, len(coinAddress))
+func ParseCoinAddress(coinAddress []string) map[string][]string {
+	result := make(map[string][]string, len(coinAddress))
 	for _, chainAddress := range coinAddress {
 		if !strings.Contains(chainAddress, "_") {
-			result[chainAddress] = chainAddress
+			result[chainAddress] = append(result[chainAddress], chainAddress)
 			continue
 		}
 		addressInfo := strings.Split(chainAddress, "_")
@@ -396,7 +396,7 @@ func ParseCoinAddress(coinAddress []string) map[string]string {
 			address = strings.ToLower(address)
 		}
 		key := fmt.Sprintf("%s_%s", chain, address)
-		result[key] = chainAddress
+		result[key] = append(result[key], chainAddress)
 	}
 	return result
 }

@@ -48,7 +48,7 @@ message TokenList {
   message QiNiu {
     string accessKey = 1;
     string secretKey = 2;
-    string bucket = 3;
+    repeated string bucket = 3;
     string keyPrefix = 4;
   }
   CoinGecko coingecko = 1;

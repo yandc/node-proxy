@@ -28,7 +28,9 @@ tokenList:
   qiniu:
     accessKey: EaebIDbEDcyKefx72vRpG3-JDa5Hd9YInXYRiTst
     secretKey: OYNl6ub3YfNI2hVOJ-h6KqRFuwPpUeL4MmVDU9Ia
-    bucket: obstatic
+    bucket:
+      - obstatic
+      - obstatic-sgaws
     keyPrefix: download/token/
 
 platform:
