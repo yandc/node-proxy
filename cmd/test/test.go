@@ -132,7 +132,7 @@ func testGetPrice() {
 	}
 	defer conn.Close()
 	c := v1.NewTokenlistClient(conn)
-	reqs := make([]*v1.PriceReq, 4)
+	reqs := make([]*v1.PriceReq, 5)
 	//coin name
 	reqs[0] = &v1.PriceReq{
 		CoinNames: "ethereum",
@@ -142,21 +142,27 @@ func testGetPrice() {
 	reqs[1] = &v1.PriceReq{
 		CoinNames:     "ethereum",
 		Currency:      "USD",
-		CoinAddresses: "ethereum_0x1a986F1659e11E2AE7CC6543F307bAE5cDe1C761,ethereum_0xdac17f958d2ee523a2206206994597c13d831ec7,ethereum_0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+		CoinAddresses: "ethereum_0x31903E333809897eE57Af57567f4377a1a78756c,ethereum_0xdac17f958d2ee523a2206206994597c13d831ec7,ethereum_0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
 	}
 
 	//coin name and coin address
 	reqs[2] = &v1.PriceReq{
 		CoinNames:     "ethereum",
 		Currency:      "USD",
-		CoinAddresses: "ethereum_0x1a986F1659e11E2AE7CC6543F307bAE5cDe1C761",
+		CoinAddresses: "ethereum_0x31903E333809897eE57Af57567f4377a1a78756c",
 	}
 
 	//coin name and coin address
 	reqs[3] = &v1.PriceReq{
-		CoinNames:     "ethereum,Huobi-Token",
+		CoinNames:     "ethereum,huobi-token",
 		Currency:      "USD",
-		CoinAddresses: "ethereum_0x1a986F1659e11E2AE7CC6543F307bAE5cDe1C761,ethereum_0xdac17f958d2ee523a2206206994597c13d831ec7",
+		CoinAddresses: "ethereum_0x31903E333809897eE57Af57567f4377a1a78756c,ethereum_0x31903e333809897ee57af57567f4377a1a78756c",
+	}
+
+	reqs[4] = &v1.PriceReq{
+		CoinNames:     "ethereum,huobi-token",
+		Currency:      "USD",
+		CoinAddresses: "ethereum_0x1a986F1659e11E2AE7CC6543F307bAE5cDe1C761,ethereum_0x1a986f1659e11e2ae7cc6543f307bae5cde1c761",
 	}
 	for _, req := range reqs {
 		resp, err := c.GetPrice(context.Background(), req)

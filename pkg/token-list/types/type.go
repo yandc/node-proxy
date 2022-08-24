@@ -118,7 +118,7 @@ type MyPutRet struct {
 type QiNiuConf struct {
 	AccessKey string
 	SecretKey string
-	Bucket    string
+	Bucket    []string
 	KeyPrefix string
 }
 
