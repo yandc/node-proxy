@@ -741,7 +741,7 @@ func UpLoadJsonToCDN(chains []string) {
 			Symbol:   t.Symbol,
 			Decimals: t.Decimals,
 			Name:     t.Name,
-			LogoURI:  c.qiniu.KeyPrefix + t.LogoURI,
+			LogoURI:  c.logoPrefix + t.LogoURI,
 		}
 		chainTokenList[chain] = append(chainTokenList[chain], tokenInfo)
 		if chain != t.Chain {
@@ -798,15 +798,14 @@ func UpLoadJsonToCDN(chains []string) {
 
 func UpLoadToken() {
 	mac := qbox.NewMac(c.qiniu.AccessKey, c.qiniu.SecretKey)
+	cdnManager := cdn.NewCdnManager(mac)
 	for _, bucket := range c.qiniu.Bucket {
-		putPolicy := storage.PutPolicy{
-			Scope: bucket,
-		}
-		upToken := putPolicy.UploadToken(mac)
+		//upToken := putPolicy.UploadToken(mac)
 		cfg := storage.Config{
 			UseHTTPS: true,
 		}
-		bucketManager := storage.NewBucketManager(mac, &cfg)
+		//bucketManager := storage.NewBucketManager(mac, &cfg)
+
 		formUploader := storage.NewFormUploader(&cfg)
 		ret := types.MyPutRet{}
 		putExtra := storage.PutExtra{
@@ -817,13 +816,18 @@ func UpLoadToken() {
 		filepath.Walk("tokenlist", func(path string, info fs.FileInfo, err error) error {
 			if !info.IsDir() {
 				key := c.qiniu.KeyPrefix + path
+				putPolicy := storage.PutPolicy{
+					Scope: fmt.Sprintf("%s:%s", bucket, key),
+				}
+				upToken := putPolicy.UploadToken(mac)
 				err = formUploader.PutFile(context.Background(), &ret, upToken, key, path, &putExtra)
 				if err != nil {
 					c.log.Error("PutFile Error:", err)
 				}
-				err = bucketManager.Prefetch(bucket, key)
+				url := c.logoPrefix + path
+				_, err := cdnManager.RefreshUrls([]string{url})
 				if err != nil {
-					c.log.Error("fetch error:", err)
+					c.log.Error("refresh urls error", err)
 				}
 				c.log.Info("upload info:", ret.Bucket, ret.Key, ret.Fsize, ret.Hash, ret.Name)
 			}
@@ -831,8 +835,7 @@ func UpLoadToken() {
 		})
 	}
 
-	cdnManager := cdn.NewCdnManager(mac)
-	_, err := cdnManager.RefreshDirs([]string{c.logoPrefix + c.qiniu.KeyPrefix + "tokenlist/"})
+	_, err := cdnManager.RefreshDirs([]string{c.logoPrefix + "tokenlist/"})
 	if err != nil {
 		c.log.Error("fetch dirs error:", err)
 	}
@@ -883,15 +886,11 @@ func DownLoadImages(tokenLists []models.TokenList) {
 
 func UpLoadImages() {
 	mac := qbox.NewMac(c.qiniu.AccessKey, c.qiniu.SecretKey)
+	cdnManager := cdn.NewCdnManager(mac)
 	for _, bucket := range c.qiniu.Bucket {
-		putPolicy := storage.PutPolicy{
-			Scope: bucket,
-		}
-		upToken := putPolicy.UploadToken(mac)
 		cfg := storage.Config{
 			UseHTTPS: true,
 		}
-		bucketManager := storage.NewBucketManager(mac, &cfg)
 		formUploader := storage.NewFormUploader(&cfg)
 		ret := types.MyPutRet{}
 		putExtra := storage.PutExtra{
@@ -902,18 +901,28 @@ func UpLoadImages() {
 		filepath.Walk("images", func(path string, info fs.FileInfo, err error) error {
 			if !info.IsDir() && strings.HasSuffix(info.Name(), ".png") {
 				key := c.qiniu.KeyPrefix + path
+				putPolicy := storage.PutPolicy{
+					Scope: fmt.Sprintf("%s:%s", bucket, key),
+				}
+				upToken := putPolicy.UploadToken(mac)
 				err = formUploader.PutFile(context.Background(), &ret, upToken, key, path, &putExtra)
 				if err != nil {
 					c.log.Error("PutFile Error:", err)
 				}
-				err = bucketManager.Prefetch(bucket, key)
+				url := c.logoPrefix + path
+				_, err := cdnManager.RefreshUrls([]string{url})
 				if err != nil {
-					c.log.Error("fetch error:", err)
+					c.log.Error("refresh urls error", err)
 				}
 				c.log.Info("upload info:", ret.Bucket, ret.Key, ret.Fsize, ret.Hash, ret.Name)
 			}
 			return nil
 		})
+	}
+
+	_, err := cdnManager.RefreshDirs([]string{c.logoPrefix + "images/"})
+	if err != nil {
+		c.log.Error("fetch dirs error:", err)
 	}
 
 }
