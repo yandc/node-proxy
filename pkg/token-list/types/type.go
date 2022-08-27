@@ -13,6 +13,12 @@ type TokenInfo struct {
 	LogoURI  string `json:"logoURI"`
 }
 
+type TokenInfoVersion struct {
+	Chain   string
+	URL     string
+	Version int64
+}
+
 type KlaytnTokenInfo struct {
 	Id       int    `json:"id"`
 	Address  string `json:"address"`
@@ -120,6 +126,19 @@ type QiNiuConf struct {
 	SecretKey string
 	Bucket    []string
 	KeyPrefix string
+}
+
+type TronTokenInfo struct {
+	Data []struct {
+		TokenInfo struct {
+			TokenID      string `json:"tokenId"`
+			TokenAbbr    string `json:"tokenAbbr"`
+			TokenName    string `json:"tokenName"`
+			TokenDecimal int    `json:"tokenDecimal"`
+			TokenCanShow int    `json:"tokenCanShow"`
+			TokenType    string `json:"tokenType"`
+		} `json:"tokenInfo"`
+	} `json:"data"`
 }
 
 type DescriptionItem map[string]string
