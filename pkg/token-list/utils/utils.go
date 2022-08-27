@@ -149,6 +149,24 @@ var chainNameMap = map[string]string{
 	"STCTEST":       "starcoin",
 }
 
+var db2Chain = map[string]string{
+	"ethereum":            "ETH",
+	"huobi-token":         "HECO",
+	"okex-chain":          "OEC",
+	"binance-smart-chain": "BSC",
+	"polygon-pos":         "Polygon",
+	"fantom":              "Fantom",
+	"avalanche":           "Avalanche",
+	"cronos":              "Cronos",
+	"arbitrum-one":        "Arbitrum",
+	"klay-token":          "Klaytn",
+	"aurora":              "Aurora",
+	"optimistic-ethereum": "Optimism",
+	"oasis":               "Oasis",
+	"tron":                "TRX",
+	"starcoin":            "STC",
+}
+
 var TokenFileMap = map[string][]string{
 	"ethereum":            {"https://api.coinmarketcap.com/data-api/v3/uniswap/all.json", "https://bxhp.243096.com/mili/tokens/eth.json"},
 	"binance-smart-chain": {"https://tokens.pancakeswap.finance/coingecko.json", "https://bxhp.243096.com/mili/tokens/bsc.json"},
@@ -247,14 +265,19 @@ func GetDecimalsByMap(noDecimals map[string][]string) map[string]int {
 	result := make(map[string]int)
 	pageSize := 500
 	for chain, tokenAddress := range noDecimals {
-		endIndex := 0
-		for i := 0; i < len(tokenAddress); i += pageSize {
-			if i+pageSize > len(tokenAddress) {
-				endIndex = len(tokenAddress)
-			} else {
-				endIndex = i + pageSize
+		var decimals map[string]int
+		if chain == "tron" {
+			decimals = GetTronBatchDecimals(chain, tokenAddress)
+		} else {
+			endIndex := 0
+			for i := 0; i < len(tokenAddress); i += pageSize {
+				if i+pageSize > len(tokenAddress) {
+					endIndex = len(tokenAddress)
+				} else {
+					endIndex = i + pageSize
+				}
+				decimals = GetBatchDecimals(chain, tokenAddress[i:endIndex])
 			}
-			decimals := GetBatchDecimals(chain, tokenAddress[i:endIndex])
 			for key, decimal := range decimals {
 				if _, ok := result[key]; !ok {
 					result[key] = decimal
@@ -262,7 +285,6 @@ func GetDecimalsByMap(noDecimals map[string][]string) map[string]int {
 			}
 		}
 	}
-	//fmt.Println("GetDecimalsByMap length:", len(result))
 	return result
 }
 
@@ -306,6 +328,38 @@ func GetBatchDecimals(chain string, tokens []string) map[string]int {
 		result[chain+":"+tokenAddrs[index]] = int(bi.Int64())
 	}
 	return result
+}
+
+func GetTronBatchDecimals(chain string, tokens []string) map[string]int {
+	result := make(map[string]int, len(tokens))
+
+	for _, token := range tokens {
+		decimal, err := GetTronDecimals(token)
+		if err != nil {
+			continue
+		}
+		result[chain+":"+token] = decimal
+	}
+	return result
+}
+
+func GetTronDecimals(token string) (int, error) {
+
+	url := "https://apilist.tronscan.org/api/contract"
+	out := &types.TronTokenInfo{}
+
+	params := map[string]string{
+		"contract": token,
+	}
+	err := HttpsGetForm(url, params, out)
+	if err != nil {
+		return 0, err
+	}
+	if len(out.Data) == 0 {
+		return 0, err
+	}
+
+	return out.Data[0].TokenInfo.TokenDecimal, nil
 }
 
 func HttpsGetForm(url string, params map[string]string, out interface{}) error {
@@ -453,4 +507,11 @@ func SetTokenListRedisKey(redisClient *redis.Client, key, tokenList string) erro
 		REDIS_TOKENLIST_TIMESTAMP: time.Now().Unix(),
 	}
 	return redisClient.HMSet(key, fields).Err()
+}
+
+func GetChainByDBChain(dbChain string) string {
+	if value, ok := db2Chain[dbChain]; ok {
+		return value
+	}
+	return dbChain
 }

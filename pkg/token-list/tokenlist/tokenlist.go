@@ -7,6 +7,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-redis/redis"
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
+	"github.com/qiniu/go-sdk/v7/cdn"
 	"github.com/qiniu/go-sdk/v7/storage"
 	"github.com/shopspring/decimal"
 	v1 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
@@ -23,6 +24,7 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
+	"time"
 )
 
 type config struct {
@@ -524,7 +526,6 @@ func AutoUpdateTokenList(cmcFlag, cgFlag, jsonFlag bool) {
 	var coinGeckos []models.CoinGecko
 	var tempDBTokenList []models.TokenList
 	var decimalsInfo map[string]types.TokenInfo
-
 	if cmcFlag {
 		wg.Add(1)
 		go func() {
@@ -662,14 +663,21 @@ func AutoUpdateTokenList(cmcFlag, cgFlag, jsonFlag bool) {
 
 	decimalsMap := utils.GetDecimalsByMap(noDecimals)
 	tokenLists := make([]models.TokenList, 0, len(tokenListMap))
+	updateTokenListMap := make(map[string]struct{})
 	for _, value := range tokenListMap {
 		if decimal, ok := decimalsMap[value.Chain+":"+value.Address]; ok && decimal > 0 {
 			value.Decimals = decimal
 
 		}
+		updateTokenListMap[value.Chain] = struct{}{}
 		tokenLists = append(tokenLists, *value)
 	}
 	if len(tokenLists) > 0 {
+		for i := 0; i < len(tokenLists); i++ {
+			if tokenLists[i].Address != "" {
+				tokenLists[i].Address = strings.Trim(tokenLists[i].Address, " ")
+			}
+		}
 		patchSize := 1000
 		end := 0
 		for i := 0; i < len(tokenLists); i += patchSize {
@@ -702,8 +710,132 @@ func AutoUpdateTokenList(cmcFlag, cgFlag, jsonFlag bool) {
 		if err != nil {
 			c.log.Error("delete images path:", err)
 		}
+		upLoadchains := make([]string, 0, len(updateTokenListMap))
+		for chain, _ := range updateTokenListMap {
+			upLoadchains = append(upLoadchains, chain)
+		}
+		//upload token list json to cdn
+		UpLoadJsonToCDN(upLoadchains)
 	}
 
+}
+
+func UpLoadJsonToCDN(chains []string) {
+	var tokenLists []models.TokenList
+	var err error
+	if len(chains) > 0 {
+		err = c.db.Where("chain in ?", chains).Find(&tokenLists).Error
+	} else {
+		err = c.db.Find(&tokenLists).Error
+	}
+	if err != nil {
+		c.log.Error("get token list error:", err)
+		return
+	}
+	chainTokenList := make(map[string][]types.TokenInfo, len(tokenLists))
+	for _, t := range tokenLists {
+		chain := utils.GetChainByDBChain(t.Chain)
+		tokenInfo := types.TokenInfo{
+			ChainId:  0,
+			Address:  t.Address,
+			Symbol:   t.Symbol,
+			Decimals: t.Decimals,
+			Name:     t.Name,
+			LogoURI:  c.qiniu.KeyPrefix + t.LogoURI,
+		}
+		chainTokenList[chain] = append(chainTokenList[chain], tokenInfo)
+		if chain != t.Chain {
+			testChain := chain + "TEST"
+			chainTokenList[testChain] = append(chainTokenList[testChain], tokenInfo)
+		}
+	}
+
+	path := "tokenlist"
+	exist, _ := utils.PathExists(path)
+	if exist {
+		err = os.RemoveAll(path)
+	}
+	os.MkdirAll(path, 0777)
+	//tokenList.json
+
+	tokenVersions := make([]types.TokenInfoVersion, 0, len(chainTokenList))
+	for chain, tokenInfo := range chainTokenList {
+		fileName := fmt.Sprintf("%s/%s.json", path, chain)
+		file, err := os.OpenFile(fileName, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0777)
+		if err != nil {
+
+		}
+		encoder := json.NewEncoder(file)
+
+		err = encoder.Encode(tokenInfo)
+
+		if err != nil {
+			c.log.Error("编码错误", err.Error())
+		}
+
+		tokenVersions = append(tokenVersions, types.TokenInfoVersion{
+			Chain:   chain,
+			URL:     c.logoPrefix + fileName,
+			Version: time.Now().Unix(),
+		})
+	}
+	if len(chains) == 0 {
+		listFile, _ := os.OpenFile(path+"/tokenlist.json", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0777)
+		defer listFile.Close()
+		encoder := json.NewEncoder(listFile)
+		err = encoder.Encode(tokenVersions)
+	}
+
+	UpLoadToken()
+
+	//删除目录
+	//delete token path
+	err = os.RemoveAll(path)
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+}
+
+func UpLoadToken() {
+	mac := qbox.NewMac(c.qiniu.AccessKey, c.qiniu.SecretKey)
+	for _, bucket := range c.qiniu.Bucket {
+		putPolicy := storage.PutPolicy{
+			Scope: bucket,
+		}
+		upToken := putPolicy.UploadToken(mac)
+		cfg := storage.Config{
+			UseHTTPS: true,
+		}
+		bucketManager := storage.NewBucketManager(mac, &cfg)
+		formUploader := storage.NewFormUploader(&cfg)
+		ret := types.MyPutRet{}
+		putExtra := storage.PutExtra{
+			Params: map[string]string{
+				"x:name": "github logo",
+			},
+		}
+		filepath.Walk("tokenlist", func(path string, info fs.FileInfo, err error) error {
+			if !info.IsDir() {
+				key := c.qiniu.KeyPrefix + path
+				err = formUploader.PutFile(context.Background(), &ret, upToken, key, path, &putExtra)
+				if err != nil {
+					c.log.Error("PutFile Error:", err)
+				}
+				err = bucketManager.Prefetch(bucket, key)
+				if err != nil {
+					c.log.Error("fetch error:", err)
+				}
+				c.log.Info("upload info:", ret.Bucket, ret.Key, ret.Fsize, ret.Hash, ret.Name)
+			}
+			return nil
+		})
+	}
+
+	cdnManager := cdn.NewCdnManager(mac)
+	_, err := cdnManager.RefreshDirs([]string{c.logoPrefix + c.qiniu.KeyPrefix + "tokenlist/"})
+	if err != nil {
+		c.log.Error("fetch dirs error:", err)
+	}
 }
 
 func DownLoadImages(tokenLists []models.TokenList) {
@@ -774,7 +906,7 @@ func UpLoadImages() {
 				if err != nil {
 					c.log.Error("PutFile Error:", err)
 				}
-				err = bucketManager.Prefetch(bucket, path)
+				err = bucketManager.Prefetch(bucket, key)
 				if err != nil {
 					c.log.Error("fetch error:", err)
 				}
@@ -816,4 +948,34 @@ func GetAllTokenList() ([]models.TokenList, error) {
 	err := c.db.Find(&tokenList).Error
 
 	return tokenList, err
+}
+
+func UpdateTronDecimals() {
+	var tokenLists []models.TokenList
+	err := c.db.Where("chain = ?", "tron").Find(&tokenLists).Error
+	if err != nil {
+		c.log.Error("find token list error:", err)
+	}
+	var wg sync.WaitGroup
+	for _, tokenList := range tokenLists {
+		wg.Add(1)
+		go func(t models.TokenList) {
+			defer wg.Done()
+			if t.Decimals == 0 && (len(t.Address) > 30 && len(t.Address) < 40) {
+				decimal, err := utils.GetTronDecimals(t.Address)
+				if err != nil {
+					for i := 0; err != nil && i < 5; i++ {
+						decimal, err = utils.GetTronDecimals(t.Address)
+						time.Sleep(1 * time.Second)
+					}
+				}
+				err = c.db.Model(&models.TokenList{}).Where("id = ?", t.ID).Update("decimals", decimal).Error
+				if err != nil {
+					c.log.Error("update token list decimal error:", t.ID, decimal, err)
+				}
+			}
+		}(tokenList)
+
+	}
+	wg.Wait()
 }

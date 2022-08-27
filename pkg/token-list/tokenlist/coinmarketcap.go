@@ -259,5 +259,5 @@ func getCmcPrice(id string, currency string) (float32, error) {
 			err = utils.HttpsGetForm(url, params, out)
 		}
 	}
-	return out.Data.Quote[currency].Price, err
+	return out.Data.Quote[strings.ToUpper(currency)].Price, err
 }

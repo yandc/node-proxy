@@ -46,6 +46,10 @@ func main() {
 		testAutoUpdateTokenList()
 	case "tokenInfo":
 		testGetTokenInfo()
+	case "tronDecimals":
+		testUpdateTronDecimals()
+	case "tokenListCDN":
+		testUpLoadTokenList()
 	}
 	fmt.Println("test main end")
 	//testGetPrice()
@@ -132,38 +136,45 @@ func testGetPrice() {
 	}
 	defer conn.Close()
 	c := v1.NewTokenlistClient(conn)
-	reqs := make([]*v1.PriceReq, 5)
+	reqs := make([]*v1.PriceReq, 0, 10)
+
 	//coin name
-	reqs[0] = &v1.PriceReq{
+	reqs = append(reqs, &v1.PriceReq{
 		CoinNames: "ethereum",
 		Currency:  "USD",
-	}
+	})
 	//coin name and coin address
-	reqs[1] = &v1.PriceReq{
+	reqs = append(reqs, &v1.PriceReq{
 		CoinNames:     "ethereum",
 		Currency:      "USD",
 		CoinAddresses: "ethereum_0x31903E333809897eE57Af57567f4377a1a78756c,ethereum_0xdac17f958d2ee523a2206206994597c13d831ec7,ethereum_0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-	}
+	})
 
 	//coin name and coin address
-	reqs[2] = &v1.PriceReq{
+	reqs = append(reqs, &v1.PriceReq{
 		CoinNames:     "ethereum",
 		Currency:      "USD",
 		CoinAddresses: "ethereum_0x31903E333809897eE57Af57567f4377a1a78756c",
-	}
+	})
 
 	//coin name and coin address
-	reqs[3] = &v1.PriceReq{
+	reqs = append(reqs, &v1.PriceReq{
 		CoinNames:     "ethereum,huobi-token",
 		Currency:      "USD",
 		CoinAddresses: "ethereum_0x31903E333809897eE57Af57567f4377a1a78756c,ethereum_0x31903e333809897ee57af57567f4377a1a78756c",
-	}
+	})
 
-	reqs[4] = &v1.PriceReq{
+	reqs = append(reqs, &v1.PriceReq{
 		CoinNames:     "ethereum,huobi-token",
 		Currency:      "USD",
 		CoinAddresses: "ethereum_0x1a986F1659e11E2AE7CC6543F307bAE5cDe1C761,ethereum_0x1a986f1659e11e2ae7cc6543f307bae5cde1c761",
-	}
+	})
+
+	reqs = append(reqs, &v1.PriceReq{
+		CoinNames:     "tron",
+		Currency:      "usd",
+		CoinAddresses: "tron_TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+	})
 	for _, req := range reqs {
 		resp, err := c.GetPrice(context.Background(), req)
 		if err != nil {
@@ -171,5 +182,66 @@ func testGetPrice() {
 		}
 		fmt.Println("resp==", resp)
 	}
+}
 
+func testUpdateTronDecimals() {
+	logger := log.With(log.NewStdLogger(os.Stdout),
+		"ts", log.DefaultTimestamp,
+		"caller", log.DefaultCaller,
+		"service.id", id,
+		"service.name", Name,
+		"service.version", Version,
+		"trace.id", tracing.TraceID(),
+		"span.id", tracing.SpanID(),
+	)
+	c := config.New(
+		config.WithSource(
+			file.NewSource(flagconf),
+		),
+	)
+	defer c.Close()
+
+	if err := c.Load(); err != nil {
+		panic(err)
+	}
+
+	var bc conf.Bootstrap
+	if err := c.Scan(&bc); err != nil {
+		panic(err)
+	}
+	db := data.NewDB(bc.Data, logger)
+	client := data.NewRedis(bc.Data)
+	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
+	tokenlist.UpdateTronDecimals()
+}
+
+func testUpLoadTokenList() {
+	logger := log.With(log.NewStdLogger(os.Stdout),
+		"ts", log.DefaultTimestamp,
+		"caller", log.DefaultCaller,
+		"service.id", id,
+		"service.name", Name,
+		"service.version", Version,
+		"trace.id", tracing.TraceID(),
+		"span.id", tracing.SpanID(),
+	)
+	c := config.New(
+		config.WithSource(
+			file.NewSource(flagconf),
+		),
+	)
+	defer c.Close()
+
+	if err := c.Load(); err != nil {
+		panic(err)
+	}
+
+	var bc conf.Bootstrap
+	if err := c.Scan(&bc); err != nil {
+		panic(err)
+	}
+	db := data.NewDB(bc.Data, logger)
+	client := data.NewRedis(bc.Data)
+	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
+	tokenlist.UpLoadJsonToCDN([]string{})
 }
