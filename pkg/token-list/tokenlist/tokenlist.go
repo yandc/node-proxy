@@ -734,19 +734,16 @@ func UpLoadJsonToCDN(chains []string) {
 	}
 	chainTokenList := make(map[string][]types.TokenInfo, len(tokenLists))
 	for _, t := range tokenLists {
-		chain := utils.GetChainByDBChain(t.Chain)
-		tokenInfo := types.TokenInfo{
-			ChainId:  0,
-			Address:  t.Address,
-			Symbol:   t.Symbol,
-			Decimals: t.Decimals,
-			Name:     t.Name,
-			LogoURI:  c.logoPrefix + t.LogoURI,
-		}
-		chainTokenList[chain] = append(chainTokenList[chain], tokenInfo)
-		if chain != t.Chain {
-			testChain := chain + "TEST"
-			chainTokenList[testChain] = append(chainTokenList[testChain], tokenInfo)
+		if chain := utils.GetChainByDBChain(t.Chain); chain != "" {
+			tokenInfo := types.TokenInfo{
+				ChainId:  0,
+				Address:  t.Address,
+				Symbol:   t.Symbol,
+				Decimals: t.Decimals,
+				Name:     t.Name,
+				LogoURI:  c.logoPrefix + t.LogoURI,
+			}
+			chainTokenList[chain] = append(chainTokenList[chain], tokenInfo)
 		}
 	}
 
@@ -763,10 +760,9 @@ func UpLoadJsonToCDN(chains []string) {
 		fileName := fmt.Sprintf("%s/%s.json", path, chain)
 		file, err := os.OpenFile(fileName, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0777)
 		if err != nil {
-
+			c.log.Error("open file error:", err)
 		}
 		encoder := json.NewEncoder(file)
-
 		err = encoder.Encode(tokenInfo)
 
 		if err != nil {
@@ -779,17 +775,25 @@ func UpLoadJsonToCDN(chains []string) {
 			Version: time.Now().Unix(),
 		})
 	}
-	if len(chains) == 0 {
-		listFile, _ := os.OpenFile(path+"/tokenlist.json", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0777)
-		defer listFile.Close()
-		encoder := json.NewEncoder(listFile)
-		err = encoder.Encode(tokenVersions)
+	jsonFileName := "./tokenlist.json"
+	chainVersionMap := utils.ReadTokenListVersion(jsonFileName)
+	for _, info := range tokenVersions {
+		chainVersionMap[info.Chain] = info
 	}
-
+	writeVersionInfo := make([]types.TokenInfoVersion, 0, len(chainVersionMap))
+	for _, value := range chainVersionMap {
+		writeVersionInfo = append(writeVersionInfo, value)
+	}
+	err = utils.WriteJsonToFile(path+"/tokenlist.json", writeVersionInfo)
+	if err != nil {
+		c.log.Error("write json to file error:", err)
+	}
+	err = utils.WriteJsonToFile(jsonFileName, writeVersionInfo)
+	if err != nil {
+		c.log.Error("write json to file error:", err)
+	}
 	UpLoadToken()
-
 	//删除目录
-	//delete token path
 	err = os.RemoveAll(path)
 	if err != nil {
 		fmt.Println("error:", err)
