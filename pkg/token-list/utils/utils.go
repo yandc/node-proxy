@@ -513,5 +513,38 @@ func GetChainByDBChain(dbChain string) string {
 	if value, ok := db2Chain[dbChain]; ok {
 		return value
 	}
-	return dbChain
+	return ""
+}
+
+func ReadTokenListVersion(fileName string) map[string]types.TokenInfoVersion {
+	//fileName := "tokenlist.json"
+	exist, _ := PathExists(fileName)
+	if !exist {
+		return map[string]types.TokenInfoVersion{}
+	}
+	var tokenListVersion []types.TokenInfoVersion
+	file, _ := os.Open(fileName)
+	// 关闭文件
+	defer file.Close()
+	// NewDecoder创建一个从file读取并解码json对象的*Decoder，解码器有自己的缓冲，并可能超前读取部分json数据。
+	decoder := json.NewDecoder(file)
+	//Decode从输入流读取下一个json编码值并保存在v指向的值里
+	err := decoder.Decode(&tokenListVersion)
+	if err != nil {
+		return nil
+	}
+	fmt.Println(tokenListVersion)
+	result := make(map[string]types.TokenInfoVersion)
+	for _, info := range tokenListVersion {
+		result[info.Chain] = info
+	}
+	return result
+}
+
+func WriteJsonToFile(fileName string, tokenVersions []types.TokenInfoVersion) error {
+	listFile, _ := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0777)
+	defer listFile.Close()
+	encoder := json.NewEncoder(listFile)
+	err := encoder.Encode(tokenVersions)
+	return err
 }
