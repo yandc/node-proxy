@@ -113,6 +113,8 @@ var handlerNameMap = map[string]string{
 	"optimism":  "optimistic-ethereum",
 	"oasis":     "oasis",
 	"tron":      "tron",
+	"xDai":      "xdai",
+	"ETC":       "ethereum-classic",
 }
 
 var chainNameMap = map[string]string{
@@ -131,6 +133,8 @@ var chainNameMap = map[string]string{
 	"Oasis":     "oasis",
 	"TRX":       "tron",
 	"STC":       "starcoin",
+	"xDai":      "xdai",
+	"ETC":       "ethereum-classic",
 
 	"ETHTEST":       "ethereum",
 	"HECOTEST":      "huobi-token",
@@ -147,6 +151,8 @@ var chainNameMap = map[string]string{
 	"OasisTEST":     "oasis",
 	"TRXTEST":       "tron",
 	"STCTEST":       "starcoin",
+	"xDaiTEST":      "xdai",
+	"ETCTEST":       "ethereum-classic",
 }
 
 var db2Chain = map[string]string{
@@ -165,6 +171,8 @@ var db2Chain = map[string]string{
 	"oasis":               "Oasis",
 	"tron":                "TRX",
 	"starcoin":            "STC",
+	"xdai":                "xDai",
+	"ethereum-classic":    "ETC",
 }
 
 var TokenFileMap = map[string][]string{

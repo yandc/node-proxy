@@ -243,5 +243,5 @@ func testUpLoadTokenList() {
 	db := data.NewDB(bc.Data, logger)
 	client := data.NewRedis(bc.Data)
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.UpLoadJsonToCDN([]string{})
+	tokenlist.UpLoadJsonToCDN([]string{"xdai", "ethereum-classic"})
 }
