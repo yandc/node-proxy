@@ -203,6 +203,8 @@ var chainURLMap = map[string]string{
 	"klay-token":          "https://klaytn05.fandom.finance/",
 	"huobi-token":         "https://http-mainnet-node.defibox.com",
 	"cronos":              "https://rpc.artemisone.org/cronos",
+	"xdai":                "https://rpc.ankr.com/gnosis",
+	"ethereum-classic":    "https://etc.mytokenpocket.vip",
 }
 
 var OtherTokenFileMap = map[string][]string{

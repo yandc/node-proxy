@@ -200,4 +200,3 @@ platform:
     type: TVM
     rpcURL:
       - https://api.shasta.trongrid.io
-

@@ -23,6 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PlatformClient interface {
 	GetBalance(ctx context.Context, in *GetBalanceRequest, opts ...grpc.CallOption) (*GetBalanceReply, error)
+	BuildWasmRequest(ctx context.Context, in *BuildWasmRequestRequest, opts ...grpc.CallOption) (*BuildWasmRequestReply, error)
+	AnalysisWasmResponse(ctx context.Context, in *AnalysisWasmResponseRequest, opts ...grpc.CallOption) (*AnalysisWasmResponseReply, error)
 }
 
 type platformClient struct {
@@ -42,11 +44,31 @@ func (c *platformClient) GetBalance(ctx context.Context, in *GetBalanceRequest, 
 	return out, nil
 }
 
+func (c *platformClient) BuildWasmRequest(ctx context.Context, in *BuildWasmRequestRequest, opts ...grpc.CallOption) (*BuildWasmRequestReply, error) {
+	out := new(BuildWasmRequestReply)
+	err := c.cc.Invoke(ctx, "/api.platform.v1.Platform/BuildWasmRequest", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *platformClient) AnalysisWasmResponse(ctx context.Context, in *AnalysisWasmResponseRequest, opts ...grpc.CallOption) (*AnalysisWasmResponseReply, error) {
+	out := new(AnalysisWasmResponseReply)
+	err := c.cc.Invoke(ctx, "/api.platform.v1.Platform/AnalysisWasmResponse", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PlatformServer is the server API for Platform service.
 // All implementations must embed UnimplementedPlatformServer
 // for forward compatibility
 type PlatformServer interface {
 	GetBalance(context.Context, *GetBalanceRequest) (*GetBalanceReply, error)
+	BuildWasmRequest(context.Context, *BuildWasmRequestRequest) (*BuildWasmRequestReply, error)
+	AnalysisWasmResponse(context.Context, *AnalysisWasmResponseRequest) (*AnalysisWasmResponseReply, error)
 	mustEmbedUnimplementedPlatformServer()
 }
 
@@ -56,6 +78,12 @@ type UnimplementedPlatformServer struct {
 
 func (UnimplementedPlatformServer) GetBalance(context.Context, *GetBalanceRequest) (*GetBalanceReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBalance not implemented")
+}
+func (UnimplementedPlatformServer) BuildWasmRequest(context.Context, *BuildWasmRequestRequest) (*BuildWasmRequestReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BuildWasmRequest not implemented")
+}
+func (UnimplementedPlatformServer) AnalysisWasmResponse(context.Context, *AnalysisWasmResponseRequest) (*AnalysisWasmResponseReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AnalysisWasmResponse not implemented")
 }
 func (UnimplementedPlatformServer) mustEmbedUnimplementedPlatformServer() {}
 
@@ -88,6 +116,42 @@ func _Platform_GetBalance_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Platform_BuildWasmRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BuildWasmRequestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PlatformServer).BuildWasmRequest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.platform.v1.Platform/BuildWasmRequest",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PlatformServer).BuildWasmRequest(ctx, req.(*BuildWasmRequestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Platform_AnalysisWasmResponse_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AnalysisWasmResponseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PlatformServer).AnalysisWasmResponse(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.platform.v1.Platform/AnalysisWasmResponse",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PlatformServer).AnalysisWasmResponse(ctx, req.(*AnalysisWasmResponseRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Platform_ServiceDesc is the grpc.ServiceDesc for Platform service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +162,14 @@ var Platform_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBalance",
 			Handler:    _Platform_GetBalance_Handler,
+		},
+		{
+			MethodName: "BuildWasmRequest",
+			Handler:    _Platform_BuildWasmRequest_Handler,
+		},
+		{
+			MethodName: "AnalysisWasmResponse",
+			Handler:    _Platform_AnalysisWasmResponse_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

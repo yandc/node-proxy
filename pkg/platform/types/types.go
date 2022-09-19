@@ -4,11 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	v1 "gitlab.bixin.com/mili/node-proxy/api/platform/v1"
 	"math/big"
 )
 
 type Platform interface {
 	GetBalance(ctx context.Context, address, tokenAddress, decimals string) (string, error)
+	BuildWasmRequest(ctx context.Context, nodeRpc, functionName, params string) (*v1.BuildWasmRequestReply, error)
+	AnalysisWasmResponse(ctx context.Context, functionName, params, response string) (string, error)
 	GetRpcURL() []string
 }
 
@@ -123,3 +126,24 @@ type TronTokenBalanceReq struct {
 	Parameter        string `json:"parameter"`
 	Visible          bool   `json:"visible"`
 }
+
+//Request is a jsonrpc request
+type Request struct {
+	ID      int           `json:"id"`
+	Jsonrpc string        `json:"jsonrpc"`
+	Method  string        `json:"method"`
+	Params  []interface{} `json:"params"`
+}
+
+// Response is a jsonrpc response
+type Response struct {
+	ID     uint64          `json:"id"`
+	Result json.RawMessage `json:"result"`
+	Error  *ErrorObject    `json:"error,omitempty"`
+}
+
+//type AnalysisResponse struct {
+//	Ok      bool     `json:"ok"`
+//	Message string   `json:"message"`
+//	Data    Response `json:"data"`
+//}

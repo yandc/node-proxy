@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/go-kratos/kratos/v2/log"
+	v1 "gitlab.bixin.com/mili/node-proxy/api/platform/v1"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/types"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/utils"
 	"math/big"
@@ -52,6 +53,13 @@ func (p *platform) GetBalance(ctx context.Context, address, tokenAddress, decima
 		}
 	}
 	return "0", nil
+}
+
+func (p *platform) BuildWasmRequest(ctx context.Context, nodeRpc, functionName, params string) (*v1.BuildWasmRequestReply, error) {
+	return nil, nil
+}
+func (p *platform) AnalysisWasmResponse(ctx context.Context, functionName, params, response string) (string, error) {
+	return "", nil
 }
 
 func getStcBalance(url, address, tokenAddress string, decimals int) (string, error) {
