@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/config"
@@ -14,7 +15,11 @@ import (
 	"gitlab.bixin.com/mili/node-proxy/internal/data"
 	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/tokenlist"
 	"google.golang.org/grpc"
+	"io/ioutil"
+	"net/http"
 	"os"
+	"strings"
+	"time"
 )
 
 // go build -ldflags "-X main.Version=x.y.z"
@@ -50,11 +55,48 @@ func main() {
 		testUpdateTronDecimals()
 	case "tokenListCDN":
 		testUpLoadTokenList()
+	case "buildRequest":
+		testBuildRequest()
+	case "refreshLogo":
+		testRefreshLogoURI()
+	case "EVMDecimals":
+		testUpdateEVMDecimals()
 	}
 	fmt.Println("test main end")
 	//testGetPrice()
 	//testGetBalance()
 	//tokenlist.AutoUpdateTokenList()
+}
+
+func testRefreshLogoURI() {
+	logger := log.With(log.NewStdLogger(os.Stdout),
+		"ts", log.DefaultTimestamp,
+		"caller", log.DefaultCaller,
+		"service.id", id,
+		"service.name", Name,
+		"service.version", Version,
+		"trace.id", tracing.TraceID(),
+		"span.id", tracing.SpanID(),
+	)
+	c := config.New(
+		config.WithSource(
+			file.NewSource(flagconf),
+		),
+	)
+	defer c.Close()
+
+	if err := c.Load(); err != nil {
+		panic(err)
+	}
+
+	var bc conf.Bootstrap
+	if err := c.Scan(&bc); err != nil {
+		panic(err)
+	}
+	db := data.NewDB(bc.Data, logger)
+	client := data.NewRedis(bc.Data)
+	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
+	tokenlist.RefreshLogoURI()
 }
 
 func testAutoUpdateTokenList() {
@@ -105,6 +147,71 @@ func testGetBalance() {
 		fmt.Println("get balacne error", err)
 	}
 	fmt.Println("result:", resp.Balance)
+}
+
+func testBuildRequest() {
+	conn, err := grpc.Dial("127.0.0.1:9001", grpc.WithInsecure())
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+	defer conn.Close()
+	p := pb.NewPlatformClient(conn)
+	reqs := make([]*pb.BuildWasmRequestRequest, 0, 4)
+	params := []interface{}{"0x3b43ac14079565246aeed15da656809eddcc79ab"}
+	b, _ := json.Marshal(params)
+	reqs = append(reqs, &pb.BuildWasmRequestRequest{
+		Chain:        "MYSTEN",
+		NodeRpc:      "https://gateway.devnet.sui.io:443",
+		FunctionName: "sui_getObjectsOwnedByAddress",
+		Params:       string(b),
+	})
+	for _, req := range reqs {
+		result, err := p.BuildWasmRequest(context.Background(), req)
+		if err != nil {
+
+		}
+		fmt.Println(result)
+		resp, err := ExecHttps(result.Url, result.Method, result.Body, result.Head)
+		if err != nil {
+
+		}
+		fmt.Println("resp===", resp)
+		coinTypeMap := map[string]string{
+			"coinType": "0x2::coin::Coin<0x2::sui::SUI>",
+		}
+		c, _ := json.Marshal(coinTypeMap)
+		list, err := p.AnalysisWasmResponse(context.Background(), &pb.AnalysisWasmResponseRequest{
+			Chain:        "MYSTEN",
+			FunctionName: "objectId",
+			Params:       string(c),
+			Response:     resp,
+		})
+		var objectList []string
+		json.Unmarshal([]byte(list.Data), &objectList)
+		fmt.Println("list====", objectList, len(objectList))
+	}
+
+}
+
+func ExecHttps(url, method, body string, heads map[string]string) (string, error) {
+	req, err := http.NewRequest(method, url, strings.NewReader(body))
+	if err != nil {
+		return "", err
+	}
+	for key, value := range heads {
+		req.Header.Set(key, value)
+	}
+	client := http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	return string(respBody), nil
 }
 
 func testGetTokenInfo() {
@@ -182,6 +289,41 @@ func testGetPrice() {
 		}
 		fmt.Println("resp==", resp)
 	}
+}
+
+func testUpdateEVMDecimals() {
+	logger := log.With(log.NewStdLogger(os.Stdout),
+		"ts", log.DefaultTimestamp,
+		"caller", log.DefaultCaller,
+		"service.id", id,
+		"service.name", Name,
+		"service.version", Version,
+		"trace.id", tracing.TraceID(),
+		"span.id", tracing.SpanID(),
+	)
+	c := config.New(
+		config.WithSource(
+			file.NewSource(flagconf),
+		),
+	)
+	defer c.Close()
+
+	if err := c.Load(); err != nil {
+		panic(err)
+	}
+
+	var bc conf.Bootstrap
+	if err := c.Scan(&bc); err != nil {
+		panic(err)
+	}
+	db := data.NewDB(bc.Data, logger)
+	client := data.NewRedis(bc.Data)
+	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
+	chains := []string{"ethereum-classic", "xdai"}
+	for _, chain := range chains {
+		tokenlist.UpdateEVMDecimasl(chain)
+	}
+
 }
 
 func testUpdateTronDecimals() {

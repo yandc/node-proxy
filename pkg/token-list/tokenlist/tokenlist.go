@@ -720,6 +720,32 @@ func AutoUpdateTokenList(cmcFlag, cgFlag, jsonFlag bool) {
 
 }
 
+func RefreshLogoURI() {
+	//get all token list
+	//tokenLists, err := GetAllTokenList()
+	var tokenLists []models.TokenList
+	err := c.db.Where("address = ?", "TN3W4H6rK2ce4vX9YnFQHwKENnHjoxb3m9").Find(&tokenLists).Error
+	if err != nil {
+		c.log.Error("get token list error:", err)
+		return
+	}
+	//download images
+	DownLoadImages(tokenLists)
+
+	//upload images
+	UpLoadImages()
+
+	//update logo uri
+	InsertLogoURI()
+
+	//delete images path
+	err = os.RemoveAll("./images")
+	if err != nil {
+		c.log.Error("delete images path:", err)
+	}
+
+}
+
 func UpLoadJsonToCDN(chains []string) {
 	var tokenLists []models.TokenList
 	var err error
@@ -961,6 +987,33 @@ func GetAllTokenList() ([]models.TokenList, error) {
 	err := c.db.Find(&tokenList).Error
 
 	return tokenList, err
+}
+
+func UpdateEVMDecimasl(chain string) {
+	var tokenLists []models.TokenList
+	err := c.db.Where("chain = ?", chain).Find(&tokenLists).Error
+	if err != nil {
+		c.log.Error("find token list error:", err)
+	}
+	fmt.Println("tokenList==", chain, len(tokenLists))
+	//var wg sync.WaitGroup
+	addresses := make([]string, 0, len(tokenLists))
+	for _, t := range tokenLists {
+		addresses = append(addresses, t.Address)
+	}
+	decimalMap := map[string][]string{
+		chain: addresses,
+	}
+	result := utils.GetDecimalsByMap(decimalMap)
+	for _, t := range tokenLists {
+		if decimal, ok := result[t.Chain+":"+t.Address]; ok && decimal > 0 {
+			//update decimal
+			err = c.db.Model(&models.TokenList{}).Where("id = ?", t.ID).Update("decimals", decimal).Error
+			if err != nil {
+				c.log.Error("update token list decimal error:", t.ID, decimal, err)
+			}
+		}
+	}
 }
 
 func UpdateTronDecimals() {

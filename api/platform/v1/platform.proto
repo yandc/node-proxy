@@ -8,6 +8,8 @@ option java_package = "api.platform.v1";
 
 service Platform {
   rpc GetBalance (GetBalanceRequest) returns (GetBalanceReply);
+  rpc BuildWasmRequest(BuildWasmRequestRequest) returns (BuildWasmRequestReply);
+  rpc AnalysisWasmResponse(AnalysisWasmResponseRequest) returns (AnalysisWasmResponseReply);
 }
 
 message GetBalanceRequest{
@@ -19,4 +21,31 @@ message GetBalanceRequest{
 
 message GetBalanceReply{
   string balance = 1;
+}
+
+message BuildWasmRequestRequest{
+  string chain = 1;
+  string nodeRpc = 2;
+  string functionName = 3;
+  string params = 4;
+}
+
+message BuildWasmRequestReply{
+  string method = 1;
+  string url = 2;
+  map<string, string> head = 3;
+  string body = 4;
+}
+//function, params, response
+message AnalysisWasmResponseRequest {
+  string chain = 1;
+  string functionName = 2;
+  string params = 3;
+  string response = 4;
+}
+
+message AnalysisWasmResponseReply {
+  bool ok = 1;
+  string data = 2;
+  string errMsg = 3;
 }

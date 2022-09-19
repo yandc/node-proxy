@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
+	v1 "gitlab.bixin.com/mili/node-proxy/api/platform/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/biz"
 	"gitlab.bixin.com/mili/node-proxy/internal/conf"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform"
@@ -23,4 +24,22 @@ func NewPlatformRepo(conf []*conf.Platform, logger log.Logger) biz.PlatformRepo 
 func (r *platformRepo) GetBalance(ctx context.Context, chain, address, tokenAddress, decimals string) (string, error) {
 	r.log.WithContext(ctx).Infof("GetBalance", chain, address, tokenAddress, decimals)
 	return platform.GetBalance(ctx, chain, address, tokenAddress, decimals)
+}
+
+func (r *platformRepo) BuildWasmRequest(ctx context.Context, chain, nodeRpc, functionName, params string) (
+	*v1.BuildWasmRequestReply, error) {
+	r.log.WithContext(ctx).Infof("BuildWasmRequest", chain, nodeRpc, functionName, params)
+	return platform.BuildWasmRequest(ctx, chain, nodeRpc, functionName, params)
+}
+
+func (r *platformRepo) AnalysisWasmResponse(ctx context.Context, chain, functionName, params,
+	response string) (string, error) {
+	log := r.log.WithContext(ctx)
+	log.Infof("AnalysisWasmResponse", chain, functionName, params, response)
+	result, err := platform.AnalysisWasmResponse(ctx, chain, functionName, params, response)
+	log.Infof("AnalysisWasmResponse result ", result)
+	if err != nil {
+		log.Error("AnalysisWasmResponse Error:", err)
+	}
+	return result, err
 }
