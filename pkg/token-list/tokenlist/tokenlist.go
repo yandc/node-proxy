@@ -914,6 +914,46 @@ func DownLoadImages(tokenLists []models.TokenList) {
 	c.log.Info("DownLoadImages End count:", count, noCount)
 }
 
+func UpLoadLocalImages(localFile string) {
+	mac := qbox.NewMac(c.qiniu.AccessKey, c.qiniu.SecretKey)
+	cdnManager := cdn.NewCdnManager(mac)
+	for _, bucket := range c.qiniu.Bucket {
+		cfg := storage.Config{
+			UseHTTPS: true,
+		}
+		formUploader := storage.NewFormUploader(&cfg)
+		ret := types.MyPutRet{}
+		putExtra := storage.PutExtra{
+			Params: map[string]string{
+				"x:name": "github logo",
+			},
+		}
+
+		key := c.qiniu.KeyPrefix + localFile
+		putPolicy := storage.PutPolicy{
+			Scope: fmt.Sprintf("%s:%s", bucket, key),
+		}
+		upToken := putPolicy.UploadToken(mac)
+		err := formUploader.PutFile(context.Background(), &ret, upToken, key, localFile, &putExtra)
+		if err != nil {
+			c.log.Error("PutFile Error:", err)
+		}
+		url := c.logoPrefix + localFile
+		_, err = cdnManager.RefreshUrls([]string{url})
+		if err != nil {
+			c.log.Error("refresh urls error", err)
+		}
+		c.log.Info("upload info:", ret.Bucket, ret.Key, ret.Fsize, ret.Hash, ret.Name)
+
+	}
+
+	_, err := cdnManager.RefreshDirs([]string{c.logoPrefix + "images/"})
+	if err != nil {
+		c.log.Error("fetch dirs error:", err)
+	}
+
+}
+
 func UpLoadImages() {
 	mac := qbox.NewMac(c.qiniu.AccessKey, c.qiniu.SecretKey)
 	cdnManager := cdn.NewCdnManager(mac)

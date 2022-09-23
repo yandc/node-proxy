@@ -82,6 +82,9 @@ func (p *platform) AnalysisWasmResponse(ctx context.Context, functionName, param
 		if err != nil {
 			return "", err
 		}
+		if value, strOk := result.(string); strOk {
+			return value, nil
+		}
 		b, _ := json.Marshal(result)
 		return string(b), nil
 	}

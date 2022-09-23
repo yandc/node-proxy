@@ -61,6 +61,8 @@ func main() {
 		testRefreshLogoURI()
 	case "EVMDecimals":
 		testUpdateEVMDecimals()
+	case "uploadImage":
+		testUpLoadLocalImage()
 	}
 	fmt.Println("test main end")
 	//testGetPrice()
@@ -386,4 +388,39 @@ func testUpLoadTokenList() {
 	client := data.NewRedis(bc.Data)
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
 	tokenlist.UpLoadJsonToCDN([]string{"xdai", "ethereum-classic"})
+}
+
+func testUpLoadLocalImage() {
+	logger := log.With(log.NewStdLogger(os.Stdout),
+		"ts", log.DefaultTimestamp,
+		"caller", log.DefaultCaller,
+		"service.id", id,
+		"service.name", Name,
+		"service.version", Version,
+		"trace.id", tracing.TraceID(),
+		"span.id", tracing.SpanID(),
+	)
+	c := config.New(
+		config.WithSource(
+			file.NewSource(flagconf),
+		),
+	)
+	defer c.Close()
+
+	if err := c.Load(); err != nil {
+		panic(err)
+	}
+
+	var bc conf.Bootstrap
+	if err := c.Scan(&bc); err != nil {
+		panic(err)
+	}
+	db := data.NewDB(bc.Data, logger)
+	client := data.NewRedis(bc.Data)
+	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
+	images := []string{"images/xdai/xdai_0xf929b6ce804b06a4ce92f5ea3b13fb1141c82368.png"}
+	for _, image := range images {
+		tokenlist.UpLoadLocalImages(image)
+	}
+
 }
