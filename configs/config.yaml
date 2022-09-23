@@ -200,3 +200,9 @@ platform:
     type: TVM
     rpcURL:
       - https://api.shasta.trongrid.io
+  - chain: SuiTEST
+    type: SUI
+    rpcURL:
+      - https://gateway.devnet.sui.io
+
+
