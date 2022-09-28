@@ -13,6 +13,22 @@ import (
 	"time"
 )
 
+func UpdateDecimals(amount string, decimals int) string {
+	var result string
+	//amount := balance.String()
+	if len(amount) > decimals {
+		result = fmt.Sprintf("%s.%s", amount[0:len(amount)-decimals], amount[len(amount)-decimals:])
+	} else {
+		sub := decimals - len(amount)
+		var zero string
+		for i := 0; i < sub; i++ {
+			zero += "0"
+		}
+		result = "0." + zero + amount
+	}
+	return Clean(strings.TrimRight(result, "0"))
+}
+
 func BigIntString(balance *big.Int, decimals int) string {
 	var result string
 	amount := balance.String()
@@ -149,4 +165,3 @@ func HttpsGetForm(url string, params map[string]string, out interface{}) error {
 	}
 	return nil
 }
-

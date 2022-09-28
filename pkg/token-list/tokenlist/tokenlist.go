@@ -13,6 +13,7 @@ import (
 	v1 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/conf"
 	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
+	"gitlab.bixin.com/mili/node-proxy/pkg/platform"
 	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/types"
 	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/utils"
 	"go.uber.org/zap"
@@ -37,6 +38,7 @@ type config struct {
 
 const REDIS_PRICE_KEY = "tokenlist:price:"
 const REDIS_LIST_KEY = "tokenlist:list:"
+const REDIS_TOKEN_KEY = "tokenlist:tokeninfo:"
 
 var c config
 
@@ -459,13 +461,20 @@ func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoRe
 	params := make([][]interface{}, 0, len(addressInfos))
 	addressMap := make(map[string]string, len(addressInfos))
 	for _, addressInfo := range addressInfos {
+		key := addressInfo.Chain + ":" + addressInfo.Address
+		tokenInfo := utils.GetRedisTokenInfo(c.redisClient, REDIS_TOKEN_KEY+key)
+		if tokenInfo != nil {
+			tokenInfos = append(tokenInfos, tokenInfo)
+			continue
+		}
 		chain := utils.GetChainNameByChain(addressInfo.Chain)
 		address := addressInfo.Address
+
 		if strings.HasPrefix(addressInfo.Address, "0x") && chain != utils.STARCOIN_CHAIN {
 			address = strings.ToLower(addressInfo.Address)
 		}
 		params = append(params, []interface{}{chain, address})
-		addressMap[chain+":"+address] = addressInfo.Chain + ":" + addressInfo.Address
+		addressMap[chain+":"+address] = key
 	}
 
 	// get token list
@@ -477,9 +486,11 @@ func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoRe
 	for _, tokenList := range tokenLists {
 		chain := tokenList.Chain
 		address := tokenList.Address
-		if value, ok := addressMap[chain+":"+address]; ok {
+		key := chain + ":" + address
+		if value, ok := addressMap[key]; ok {
 			addressInfo := strings.Split(value, ":")
 			chain, address = addressInfo[0], addressInfo[1]
+			delete(addressMap, key)
 		}
 		tokenInfos = append(tokenInfos, &v1.GetTokenInfoResp_Data{
 			Chain:    chain,
@@ -488,6 +499,24 @@ func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoRe
 			Symbol:   tokenList.Symbol,
 			Name:     tokenList.Name,
 		})
+	}
+	if len(addressMap) > 0 {
+		for _, value := range addressMap {
+			addressInfo := strings.Split(value, ":")
+			chain, address := addressInfo[0], addressInfo[1]
+			tokenInfo, err := platform.GetPlatformTokenInfo(chain, address)
+			if err != nil {
+				c.log.Error("get platform token info error:", err)
+				continue
+			}
+			if tokenInfo != nil {
+				if err := utils.SetRedisTokenInfo(c.redisClient, REDIS_TOKEN_KEY+value, tokenInfo); err != nil {
+					c.log.Error("set redis token info error.", err)
+					continue
+				}
+				tokenInfos = append(tokenInfos, tokenInfo)
+			}
+		}
 	}
 	return tokenInfos, nil
 }
@@ -715,16 +744,18 @@ func AutoUpdateTokenList(cmcFlag, cgFlag, jsonFlag bool) {
 			upLoadchains = append(upLoadchains, chain)
 		}
 		//upload token list json to cdn
-		UpLoadJsonToCDN(upLoadchains)
+		if len(upLoadchains) > 0 {
+			UpLoadJsonToCDN(upLoadchains)
+		}
 	}
 
 }
 
 func RefreshLogoURI() {
 	//get all token list
-	//tokenLists, err := GetAllTokenList()
-	var tokenLists []models.TokenList
-	err := c.db.Where("address = ?", "TN3W4H6rK2ce4vX9YnFQHwKENnHjoxb3m9").Find(&tokenLists).Error
+	tokenLists, err := GetAllTokenList()
+	//var tokenLists []models.TokenList
+	//err := c.db.Where("address = ?", "TN3W4H6rK2ce4vX9YnFQHwKENnHjoxb3m9").Find(&tokenLists).Error
 	if err != nil {
 		c.log.Error("get token list error:", err)
 		return

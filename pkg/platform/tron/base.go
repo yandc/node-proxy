@@ -6,7 +6,9 @@ import (
 	"github.com/btcsuite/btcutil/base58"
 	"github.com/go-kratos/kratos/v2/log"
 	v1 "gitlab.bixin.com/mili/node-proxy/api/platform/v1"
+	v12 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/types"
+	"gitlab.bixin.com/mili/node-proxy/pkg/platform/utils"
 	"strconv"
 	"strings"
 )
@@ -20,11 +22,12 @@ const (
 type platform struct {
 	rpcURL []string
 	log    *log.Helper
+	chain  string
 }
 
-func NewTronPlatform(rpcURL []string, logger log.Logger) types.Platform {
+func NewTronPlatform(chain string, rpcURL []string, logger log.Logger) types.Platform {
 	log := log.NewHelper(log.With(logger, "module", "platform/tron"))
-	return &platform{rpcURL: rpcURL, log: log}
+	return &platform{rpcURL: rpcURL, log: log, chain: chain}
 }
 
 func (p *platform) GetBalance(ctx context.Context, address, tokenAddress, decimals string) (string, error) {
@@ -61,6 +64,32 @@ func (p *platform) BuildWasmRequest(ctx context.Context, nodeRpc, functionName, 
 
 func (p *platform) AnalysisWasmResponse(ctx context.Context, functionName, params, response string) (string, error) {
 	return "", nil
+}
+
+func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error) {
+	var url string
+	if strings.Contains(p.chain, "TEST") {
+		url = "https://shastapi.tronscan.org/api/contract"
+	} else {
+		url = "https://apilist.tronscan.org/api/contract"
+	}
+	params := map[string]string{
+		"contract": token,
+	}
+	out := &types.TronTokenInfo{}
+	err := utils.HttpsGetForm(url, params, out)
+	if err != nil {
+		return nil, err
+	}
+	if len(out.Data) == 0 {
+		return nil, nil
+	}
+	return &v12.GetTokenInfoResp_Data{
+		Chain:    p.chain,
+		Address:  token,
+		Decimals: uint32(out.Data[0].TokenInfo.TokenDecimal),
+		Symbol:   strings.ToUpper(out.Data[0].TokenInfo.TokenName),
+	}, nil
 }
 
 func (p *platform) GetRpcURL() []string {

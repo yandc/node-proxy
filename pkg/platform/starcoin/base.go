@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/go-kratos/kratos/v2/log"
 	v1 "gitlab.bixin.com/mili/node-proxy/api/platform/v1"
+	v12 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/types"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/utils"
 	"math/big"
@@ -21,11 +22,12 @@ const (
 type platform struct {
 	rpcURL []string
 	log    *log.Helper
+	chain  string
 }
 
-func NewSTCPlatform(rpcURL []string, logger log.Logger) types.Platform {
+func NewSTCPlatform(chain string, rpcURL []string, logger log.Logger) types.Platform {
 	log := log.NewHelper(log.With(logger, "module", "platform/bitcoin"))
-	return &platform{rpcURL: rpcURL, log: log}
+	return &platform{rpcURL: rpcURL, log: log, chain: chain}
 }
 
 func (p *platform) GetBalance(ctx context.Context, address, tokenAddress, decimals string) (string, error) {
@@ -90,4 +92,8 @@ func call(url string, id int, method string, out interface{}, params []interface
 		return resp.Error
 	}
 	return json.Unmarshal(resp.Result, &out)
+}
+
+func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error) {
+	return nil, nil
 }

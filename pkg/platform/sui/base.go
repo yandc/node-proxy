@@ -1,4 +1,4 @@
-package mysten
+package sui
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	v1 "gitlab.bixin.com/mili/node-proxy/api/platform/v1"
+	v12 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/types"
 	"sort"
 	"strconv"
@@ -23,11 +24,12 @@ const (
 type platform struct {
 	rpcURL []string
 	log    *log.Helper
+	chain  string
 }
 
-func NewSuiPlatform(rpcURL []string, logger log.Logger) types.Platform {
-	log := log.NewHelper(log.With(logger, "module", "platform/mysten"))
-	return &platform{rpcURL: rpcURL, log: log}
+func NewSuiPlatform(chain string, rpcURL []string, logger log.Logger) types.Platform {
+	log := log.NewHelper(log.With(logger, "module", "platform/sui"))
+	return &platform{rpcURL: rpcURL, log: log, chain: chain}
 }
 
 func (p *platform) GetBalance(ctx context.Context, address, tokenAddress, decimals string) (string, error) {
@@ -209,4 +211,8 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 
 func (p *platform) GetRpcURL() []string {
 	return p.rpcURL
+}
+
+func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error) {
+	return nil, nil
 }

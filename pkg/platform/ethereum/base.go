@@ -8,21 +8,50 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/metachris/eth-go-bindings/erc20"
 	v1 "gitlab.bixin.com/mili/node-proxy/api/platform/v1"
+	v12 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/types"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/utils"
 	"math/big"
 	"strconv"
+	"strings"
 )
 
 type platform struct {
 	rpcURL []string
 	log    *log.Helper
+	chain  string
 }
 
-func NewEVMPlatform(rpcURL []string, logger log.Logger) types.Platform {
+func NewEVMPlatform(chain string, rpcURL []string, logger log.Logger) types.Platform {
 	log := log.NewHelper(log.With(logger, "module", "platform/ethereum"))
-	return &platform{rpcURL: rpcURL, log: log}
+	return &platform{rpcURL: rpcURL, log: log, chain: chain}
+}
+
+func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error) {
+	tokenAddress := common.HexToAddress(token)
+	for i := 0; i < len(p.rpcURL); i++ {
+		client, err := ethclient.Dial(p.rpcURL[i])
+		erc20Token, err := erc20.NewErc20(tokenAddress, client)
+		if err != nil {
+			continue
+		}
+		decimals, err := erc20Token.Decimals(nil)
+		if decimals > 0 && err == nil {
+			symbol, err := erc20Token.Symbol(nil)
+			if err != nil {
+				continue
+			}
+			return &v12.GetTokenInfoResp_Data{
+				Chain:    p.chain,
+				Address:  token,
+				Symbol:   strings.ToUpper(symbol),
+				Decimals: uint32(decimals),
+			}, nil
+		}
+	}
+	return nil, nil
 }
 
 func (p *platform) GetBalance(ctx context.Context, address, tokenAddress, decimals string) (string, error) {
