@@ -12,7 +12,7 @@ data:
     read_timeout: 0.2s
     write_timeout: 0.2s
 tokenList:
-  logoPrefix: https://obstatic.243096.com/download/token/
+  logoPrefix: https://obstatic.243096.com/download/tokentest/
   coingecko:
     baseURL: https://api.coingecko.com/api/v3
   coinmarketcap:
@@ -31,7 +31,7 @@ tokenList:
     bucket:
       - obstatic
       - obstatic-sgaws
-    keyPrefix: download/token/
+    keyPrefix: download/tokentest/
 
 platform:
   - chain: Cronos
@@ -204,5 +204,21 @@ platform:
     type: SUI
     rpcURL:
       - https://gateway.devnet.sui.io
-
-
+  - chain: AptosTEST
+    type: APTOS
+    rpcURL:
+      - https://testnet.aptoslabs.com/v1
+  - chain: xDai
+    type: EVM
+    rpcURL:
+      - https://rpc.ankr.com/gnosis
+      - https://gnosischain-rpc.gateway.pokt.network
+      - https://xdai-rpc.gateway.pokt.network
+      - https://gnosis-mainnet.public.blastapi.io
+      - https://rpc.gnosischain.com
+  - chain: ETC
+    type: EVM
+    rpcURL:
+      - https://etc.mytokenpocket.vip
+      - https://etc.etcdesktop.com
+      - https://www.ethercluster.com/etc

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	v1 "gitlab.bixin.com/mili/node-proxy/api/platform/v1"
+	v12 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 	"math/big"
 )
 
@@ -13,6 +14,7 @@ type Platform interface {
 	BuildWasmRequest(ctx context.Context, nodeRpc, functionName, params string) (*v1.BuildWasmRequestReply, error)
 	AnalysisWasmResponse(ctx context.Context, functionName, params, response string) (string, error)
 	GetRpcURL() []string
+	GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error)
 }
 
 type BtcClient interface {

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-redis/redis"
+	v12 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 	"io/ioutil"
 	"math/big"
 	"net/http"
@@ -557,4 +558,23 @@ func WriteJsonToFile(fileName string, tokenVersions []types.TokenInfoVersion) er
 	encoder := json.NewEncoder(listFile)
 	err := encoder.Encode(tokenVersions)
 	return err
+}
+
+func GetRedisTokenInfo(redisClient *redis.Client, key string) *v12.GetTokenInfoResp_Data {
+	result, err := redisClient.Get(key).Result()
+	if err != nil {
+		return nil
+	}
+
+	if result != "" {
+		var tokenInfo *v12.GetTokenInfoResp_Data
+		json.Unmarshal([]byte(result), &tokenInfo)
+		return tokenInfo
+	}
+	return nil
+}
+
+func SetRedisTokenInfo(redisClient *redis.Client, key string, value *v12.GetTokenInfoResp_Data) error {
+	b, _ := json.Marshal(value)
+	return redisClient.Set(key, string(b), -1).Err()
 }

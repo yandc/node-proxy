@@ -5,21 +5,24 @@ import (
 	"errors"
 	"github.com/go-kratos/kratos/v2/log"
 	v1 "gitlab.bixin.com/mili/node-proxy/api/platform/v1"
+	v12 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/conf"
+	"gitlab.bixin.com/mili/node-proxy/pkg/platform/aptos"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/bitcoin"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/ethereum"
-	"gitlab.bixin.com/mili/node-proxy/pkg/platform/mysten"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/starcoin"
+	"gitlab.bixin.com/mili/node-proxy/pkg/platform/sui"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/tron"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/types"
 )
 
 const (
-	STC = "STC"
-	BTC = "BTC"
-	EVM = "EVM"
-	TVM = "TVM"
-	SUI = "SUI"
+	STC   = "STC"
+	BTC   = "BTC"
+	EVM   = "EVM"
+	TVM   = "TVM"
+	SUI   = "SUI"
+	APTOS = "APTOS"
 )
 
 type TypeAndRpc struct {
@@ -79,19 +82,30 @@ func AnalysisWasmResponse(ctx context.Context, chain, functionName, params, resp
 	return platform.AnalysisWasmResponse(ctx, functionName, params, response)
 }
 
+func GetPlatformTokenInfo(chain, token string) (*v12.GetTokenInfoResp_Data, error) {
+	platform := newPlatform(chain)
+	if platform == nil {
+		c.log.Error("get platform is nil")
+		return nil, errors.New("platform is nil")
+	}
+	return platform.GetTokenType(token)
+}
+
 func newPlatform(chain string) types.Platform {
 	if value, ok := c.chainInfo[chain]; ok {
 		switch value.Type {
 		case EVM:
-			return ethereum.NewEVMPlatform(value.RpcURL, c.logger)
+			return ethereum.NewEVMPlatform(chain, value.RpcURL, c.logger)
 		case STC:
-			return starcoin.NewSTCPlatform(value.RpcURL, c.logger)
+			return starcoin.NewSTCPlatform(chain, value.RpcURL, c.logger)
 		case BTC:
-			return bitcoin.NewBTCPlatform(value.RpcURL, c.logger)
+			return bitcoin.NewBTCPlatform(chain, value.RpcURL, c.logger)
 		case TVM:
-			return tron.NewTronPlatform(value.RpcURL, c.logger)
+			return tron.NewTronPlatform(chain, value.RpcURL, c.logger)
 		case SUI:
-			return mysten.NewSuiPlatform(value.RpcURL, c.logger)
+			return sui.NewSuiPlatform(chain, value.RpcURL, c.logger)
+		case APTOS:
+			return aptos.NewAptosPlatform(chain, value.RpcURL, c.logger)
 		}
 	}
 	return nil

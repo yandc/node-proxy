@@ -8,6 +8,7 @@ require (
 	github.com/go-kratos/kratos/v2 v2.4.0
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/google/wire v0.5.0
+	github.com/metachris/eth-go-bindings v0.5.0
 	github.com/shopspring/decimal v1.2.0
 	go.uber.org/zap v1.13.0
 	google.golang.org/grpc v1.48.0
@@ -15,6 +16,8 @@ require (
 	gorm.io/driver/postgres v1.3.8
 	gorm.io/gorm v1.23.8
 )
+
+require github.com/rjeczalik/notify v0.9.1 // indirect
 
 require (
 	github.com/BurntSushi/toml v1.1.0 // indirect
