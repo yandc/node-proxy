@@ -222,3 +222,14 @@ platform:
       - https://etc.mytokenpocket.vip
       - https://etc.etcdesktop.com
       - https://www.ethercluster.com/etc
+  - chain: SolanaTEST
+    type: SOL
+    rpcURL:
+      - https://api.testnet.solana.com
+  - chain: Solana
+    type: SOL
+    rpcURL:
+      - https://api.mainnet-beta.solana.com
+      - https://ssc-dao.genesysgo.net
+      - https://solana-api.projectserum.com
+      - https://rpc.ankr.com/solana

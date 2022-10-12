@@ -52,3 +52,22 @@ func (s *PlatformService) AnalysisWasmResponse(ctx context.Context, req *pb.Anal
 		ErrMsg: errMsg,
 	}, nil
 }
+
+func (s *PlatformService) GetGasEstimate(ctx context.Context, req *pb.GetGasEstimateRequest) (*pb.GetGasEstimateReply,
+	error) {
+	// 设置接口 3s 超时
+	subctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+	data, err := s.pc.GetGasEstimate(subctx, req.Chain, req.GasInfo)
+	ok := true
+	errMsg := ""
+	if err != nil {
+		ok = false
+		errMsg = err.Error()
+	}
+	return &pb.GetGasEstimateReply{
+		Ok:     ok,
+		Data:   data,
+		ErrMsg: errMsg,
+	}, nil
+}

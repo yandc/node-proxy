@@ -43,3 +43,14 @@ func (r *platformRepo) AnalysisWasmResponse(ctx context.Context, chain, function
 	}
 	return result, err
 }
+
+func (r *platformRepo) GetGasEstimate(ctx context.Context, chain, gasInfo string) (string, error) {
+	log := r.log.WithContext(ctx)
+	log.Infof("GetGasEstimate", chain, gasInfo)
+	result, err := platform.GetGasEstimateTime(chain, gasInfo)
+	log.Infof("GetGasEstimate result ", result)
+	if err != nil {
+		log.Error("GetGasEstimate Error:", err)
+	}
+	return result, err
+}

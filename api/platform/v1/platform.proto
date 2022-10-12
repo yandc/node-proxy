@@ -10,6 +10,7 @@ service Platform {
   rpc GetBalance (GetBalanceRequest) returns (GetBalanceReply);
   rpc BuildWasmRequest(BuildWasmRequestRequest) returns (BuildWasmRequestReply);
   rpc AnalysisWasmResponse(AnalysisWasmResponseRequest) returns (AnalysisWasmResponseReply);
+  rpc GetGasEstimate(GetGasEstimateRequest) returns (GetGasEstimateReply);
 }
 
 message GetBalanceRequest{
@@ -45,6 +46,17 @@ message AnalysisWasmResponseRequest {
 }
 
 message AnalysisWasmResponseReply {
+  bool ok = 1;
+  string data = 2;
+  string errMsg = 3;
+}
+
+message GetGasEstimateRequest {
+  string chain = 1;
+  string gasInfo = 2;
+}
+
+message GetGasEstimateReply {
   bool ok = 1;
   string data = 2;
   string errMsg = 3;

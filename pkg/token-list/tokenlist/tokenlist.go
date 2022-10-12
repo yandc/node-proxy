@@ -518,6 +518,42 @@ func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoRe
 			}
 		}
 	}
+	if len(addressMap) > 0 {
+		for _, value := range addressMap {
+			addressInfo := strings.Split(value, ":")
+			chain, address := addressInfo[0], addressInfo[1]
+			tokenInfo, err := platform.GetPlatformTokenInfo(chain, address)
+			if err != nil {
+				c.log.Error("get platform token info error:", err)
+				continue
+			}
+			if tokenInfo != nil {
+				if err := utils.SetRedisTokenInfo(c.redisClient, REDIS_TOKEN_KEY+value, tokenInfo); err != nil {
+					c.log.Error("set redis token info error.", err)
+					continue
+				}
+				tokenInfos = append(tokenInfos, tokenInfo)
+			}
+		}
+	}
+	if len(addressMap) > 0 {
+		for _, value := range addressMap {
+			addressInfo := strings.Split(value, ":")
+			chain, address := addressInfo[0], addressInfo[1]
+			tokenInfo, err := platform.GetPlatformTokenInfo(chain, address)
+			if err != nil {
+				c.log.Error("get platform token info error:", err)
+				continue
+			}
+			if tokenInfo != nil {
+				if err := utils.SetRedisTokenInfo(c.redisClient, REDIS_TOKEN_KEY+value, tokenInfo); err != nil {
+					c.log.Error("set redis token info error.", err)
+					continue
+				}
+				tokenInfos = append(tokenInfos, tokenInfo)
+			}
+		}
+	}
 	return tokenInfos, nil
 }
 
@@ -1087,32 +1123,27 @@ func UpdateEVMDecimasl(chain string) {
 	}
 }
 
-func UpdateTronDecimals() {
+func UpdateDecimalsByChain(chain string) {
 	var tokenLists []models.TokenList
-	err := c.db.Where("chain = ?", "tron").Find(&tokenLists).Error
+	err := c.db.Where("chain = ? and decimals = ?", chain, "0").Find(&tokenLists).Error
 	if err != nil {
 		c.log.Error("find token list error:", err)
 	}
-	var wg sync.WaitGroup
-	for _, tokenList := range tokenLists {
-		wg.Add(1)
-		go func(t models.TokenList) {
-			defer wg.Done()
-			if t.Decimals == 0 && (len(t.Address) > 30 && len(t.Address) < 40) {
-				decimal, err := utils.GetTronDecimals(t.Address)
-				if err != nil {
-					for i := 0; err != nil && i < 5; i++ {
-						decimal, err = utils.GetTronDecimals(t.Address)
-						time.Sleep(1 * time.Second)
-					}
-				}
-				err = c.db.Model(&models.TokenList{}).Where("id = ?", t.ID).Update("decimals", decimal).Error
-				if err != nil {
-					c.log.Error("update token list decimal error:", t.ID, decimal, err)
+	fmt.Println("token list lengt==", len(tokenLists))
+	for _, t := range tokenLists {
+		if t.Decimals == 0 {
+			decimal, err := utils.GetDecimalsByChain(chain, t.Address)
+			if err != nil {
+				time.Sleep(1 * time.Minute)
+				for i := 0; err != nil && strings.Contains(err.Error(), "Too many requests") && i < 3; i++ {
+					decimal, err = utils.GetDecimalsByChain(chain, t.Address)
+					time.Sleep(1 * time.Minute)
 				}
 			}
-		}(tokenList)
-
+			err = c.db.Model(&models.TokenList{}).Where("id = ?", t.ID).Update("decimals", decimal).Error
+			if err != nil {
+				c.log.Error("update token list decimal error:", t.ID, decimal, err)
+			}
+		}
 	}
-	wg.Wait()
 }

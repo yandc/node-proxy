@@ -10,6 +10,7 @@ type PlatformRepo interface {
 	GetBalance(ctx context.Context, chain, address, tokenAddress, decimals string) (string, error)
 	BuildWasmRequest(ctx context.Context, chain, nodeRpc, functionName, params string) (*v1.BuildWasmRequestReply, error)
 	AnalysisWasmResponse(ctx context.Context, chain, functionName, params, response string) (string, error)
+	GetGasEstimate(ctx context.Context, chain, gasInfo string) (string, error)
 }
 
 type PlatformUseCase struct {
@@ -33,4 +34,8 @@ func (uc *PlatformUseCase) BuildWasmRequest(ctx context.Context, chain, nodeRpc,
 func (uc *PlatformUseCase) AnalysisWasmResponse(ctx context.Context, chain, functionName, params,
 	response string) (string, error) {
 	return uc.repo.AnalysisWasmResponse(ctx, chain, functionName, params, response)
+}
+
+func (uc *PlatformUseCase) GetGasEstimate(ctx context.Context, chain, gasInfo string) (string, error) {
+	return uc.repo.GetGasEstimate(ctx, chain, gasInfo)
 }
