@@ -1,15 +1,5 @@
 package types
 
-const (
-	RESPONSE_BALANCE    = "balance"
-	RESPONSE_TXHASH     = "txHash"
-	RESPONSE_OBJECTID   = "objectId"
-	RESPONSE_TXPARAMS   = "txParams"
-	RESPONSE_OBJECTREAD = "objectRead"
-	RESPONSE_TXSTATUS   = "txStatus"
-	RESPONSE_HEIGHT     = "height"
-)
-
 type SuiObjectInfo struct {
 	ObjectID string `json:"objectId"`
 	Version  int    `json:"version"`

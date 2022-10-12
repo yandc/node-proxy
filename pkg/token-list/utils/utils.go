@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis"
 	v12 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
+	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
 	"io/ioutil"
 	"math/big"
 	"net/http"
@@ -116,6 +117,7 @@ var handlerNameMap = map[string]string{
 	"tron":      "tron",
 	"xDai":      "xdai",
 	"ETC":       "ethereum-classic",
+	"solana":    "solana",
 }
 
 var chainNameMap = map[string]string{
@@ -136,6 +138,7 @@ var chainNameMap = map[string]string{
 	"STC":       "starcoin",
 	"xDai":      "xdai",
 	"ETC":       "ethereum-classic",
+	"Solana":    "solana",
 
 	"ETHTEST":       "ethereum",
 	"HECOTEST":      "huobi-token",
@@ -154,6 +157,7 @@ var chainNameMap = map[string]string{
 	"STCTEST":       "starcoin",
 	"xDaiTEST":      "xdai",
 	"ETCTEST":       "ethereum-classic",
+	"SolanaTEST":    "solana",
 }
 
 var db2Chain = map[string]string{
@@ -174,6 +178,7 @@ var db2Chain = map[string]string{
 	"starcoin":            "STC",
 	"xdai":                "xDai",
 	"ethereum-classic":    "ETC",
+	"solana":              "Solana",
 }
 
 var TokenFileMap = map[string][]string{
@@ -279,6 +284,8 @@ func GetDecimalsByMap(noDecimals map[string][]string) map[string]int {
 		var decimals map[string]int
 		if chain == "tron" {
 			decimals = GetTronBatchDecimals(chain, tokenAddress)
+		} else if chain == "solana" {
+			decimals = GetSolanaBatchDecimals(chain, tokenAddress)
 		} else {
 			endIndex := 0
 			for i := 0; i < len(tokenAddress); i += pageSize {
@@ -341,9 +348,27 @@ func GetBatchDecimals(chain string, tokens []string) map[string]int {
 	return result
 }
 
+func GetSolanaBatchDecimals(chain string, tokens []string) map[string]int {
+	result := make(map[string]int, len(tokens))
+	for _, token := range tokens {
+		decimal, err := GetSolanaDecimal(token)
+		if err != nil && strings.Contains(err.Error(), "Too many requests") {
+			time.Sleep(1 * time.Minute)
+			for i := 0; err != nil && strings.Contains(err.Error(), "Too many requests") && i < 3; i++ {
+				decimal, err = GetSolanaDecimal(token)
+				time.Sleep(1 * time.Minute)
+			}
+		}
+		if err != nil {
+			continue
+		}
+		result[chain+":"+token] = decimal
+	}
+	return result
+}
+
 func GetTronBatchDecimals(chain string, tokens []string) map[string]int {
 	result := make(map[string]int, len(tokens))
-
 	for _, token := range tokens {
 		decimal, err := GetTronDecimals(token)
 		if err != nil {
@@ -354,11 +379,39 @@ func GetTronBatchDecimals(chain string, tokens []string) map[string]int {
 	return result
 }
 
-func GetTronDecimals(token string) (int, error) {
+func GetSolanaDecimal(token string) (int, error) {
+	var err error
+	//url := "https://api.mainnet-beta.solana.com"
+	urls := []string{"https://solana-api.projectserum.com", "https://api.mainnet-beta.solana.com",
+		"https://ssc-dao.genesysgo.net"}
+	for _, url := range urls {
+		method := "getTokenSupply"
+		params := []interface{}{token}
+		out := &types.SolanaTokenInfo{}
+		err = utils.JsonHttpsPost(url, 1, method, "2.0", out, params)
+		if err != nil {
+			continue
+		}
+		return out.Value.Decimals, nil
+	}
+	return -1, err
+}
 
+func GetDecimalsByChain(chain, token string) (int, error) {
+	switch chain {
+	case "tron":
+		if len(token) > 30 && len(token) < 40 {
+			return GetTronDecimals(token)
+		}
+	case "solana":
+		return GetSolanaDecimal(token)
+	}
+	return 0, nil
+}
+
+func GetTronDecimals(token string) (int, error) {
 	url := "https://apilist.tronscan.org/api/contract"
 	out := &types.TronTokenInfo{}
-
 	params := map[string]string{
 		"contract": token,
 	}

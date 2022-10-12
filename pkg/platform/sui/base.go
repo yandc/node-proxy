@@ -60,9 +60,7 @@ func (p *platform) BuildWasmRequest(ctx context.Context, nodeRpc, functionName, 
 	}, nil
 }
 
-type analysisResponseType func(params string, result json.RawMessage) (interface{}, error)
-
-var responseFunc = map[string]analysisResponseType{
+var responseFunc = map[string]types.AnalysisResponseType{
 	types.RESPONSE_BALANCE:    analysisBalance,
 	types.RESPONSE_OBJECTID:   analysisObjectIds,
 	types.RESPONSE_TXHASH:     analysisTxHash,

@@ -25,6 +25,7 @@ type PlatformClient interface {
 	GetBalance(ctx context.Context, in *GetBalanceRequest, opts ...grpc.CallOption) (*GetBalanceReply, error)
 	BuildWasmRequest(ctx context.Context, in *BuildWasmRequestRequest, opts ...grpc.CallOption) (*BuildWasmRequestReply, error)
 	AnalysisWasmResponse(ctx context.Context, in *AnalysisWasmResponseRequest, opts ...grpc.CallOption) (*AnalysisWasmResponseReply, error)
+	GetGasEstimate(ctx context.Context, in *GetGasEstimateRequest, opts ...grpc.CallOption) (*GetGasEstimateReply, error)
 }
 
 type platformClient struct {
@@ -62,6 +63,15 @@ func (c *platformClient) AnalysisWasmResponse(ctx context.Context, in *AnalysisW
 	return out, nil
 }
 
+func (c *platformClient) GetGasEstimate(ctx context.Context, in *GetGasEstimateRequest, opts ...grpc.CallOption) (*GetGasEstimateReply, error) {
+	out := new(GetGasEstimateReply)
+	err := c.cc.Invoke(ctx, "/api.platform.v1.Platform/GetGasEstimate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PlatformServer is the server API for Platform service.
 // All implementations must embed UnimplementedPlatformServer
 // for forward compatibility
@@ -69,6 +79,7 @@ type PlatformServer interface {
 	GetBalance(context.Context, *GetBalanceRequest) (*GetBalanceReply, error)
 	BuildWasmRequest(context.Context, *BuildWasmRequestRequest) (*BuildWasmRequestReply, error)
 	AnalysisWasmResponse(context.Context, *AnalysisWasmResponseRequest) (*AnalysisWasmResponseReply, error)
+	GetGasEstimate(context.Context, *GetGasEstimateRequest) (*GetGasEstimateReply, error)
 	mustEmbedUnimplementedPlatformServer()
 }
 
@@ -84,6 +95,9 @@ func (UnimplementedPlatformServer) BuildWasmRequest(context.Context, *BuildWasmR
 }
 func (UnimplementedPlatformServer) AnalysisWasmResponse(context.Context, *AnalysisWasmResponseRequest) (*AnalysisWasmResponseReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AnalysisWasmResponse not implemented")
+}
+func (UnimplementedPlatformServer) GetGasEstimate(context.Context, *GetGasEstimateRequest) (*GetGasEstimateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGasEstimate not implemented")
 }
 func (UnimplementedPlatformServer) mustEmbedUnimplementedPlatformServer() {}
 
@@ -152,6 +166,24 @@ func _Platform_AnalysisWasmResponse_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Platform_GetGasEstimate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetGasEstimateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PlatformServer).GetGasEstimate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.platform.v1.Platform/GetGasEstimate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PlatformServer).GetGasEstimate(ctx, req.(*GetGasEstimateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Platform_ServiceDesc is the grpc.ServiceDesc for Platform service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -170,6 +202,10 @@ var Platform_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AnalysisWasmResponse",
 			Handler:    _Platform_AnalysisWasmResponse_Handler,
+		},
+		{
+			MethodName: "GetGasEstimate",
+			Handler:    _Platform_GetGasEstimate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

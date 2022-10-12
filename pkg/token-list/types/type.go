@@ -143,3 +143,12 @@ type TronTokenInfo struct {
 
 type DescriptionItem map[string]string
 type LinksItem map[string]interface{}
+
+type SolanaTokenInfo struct {
+	Value struct {
+		Amount         string  `json:"amount"`
+		Decimals       int     `json:"decimals"`
+		UIAmount       float64 `json:"uiAmount"`
+		UIAmountString string  `json:"uiAmountString"`
+	} `json:"value"`
+}

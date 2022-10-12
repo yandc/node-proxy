@@ -51,8 +51,8 @@ func main() {
 		testAutoUpdateTokenList()
 	case "tokenInfo":
 		testGetTokenInfo()
-	case "tronDecimals":
-		testUpdateTronDecimals()
+	case "chainDecimals":
+		testUpdateDecimalsByChain()
 	case "tokenListCDN":
 		testUpLoadTokenList()
 	case "buildRequest":
@@ -63,6 +63,8 @@ func main() {
 		testUpdateEVMDecimals()
 	case "uploadImage":
 		testUpLoadLocalImage()
+	case "gasEstimate":
+		testGetGasEstimate()
 	}
 	fmt.Println("test main end")
 	//testGetPrice()
@@ -321,14 +323,14 @@ func testUpdateEVMDecimals() {
 	db := data.NewDB(bc.Data, logger)
 	client := data.NewRedis(bc.Data)
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	chains := []string{"ethereum-classic", "xdai"}
+	chains := []string{"solana"}
 	for _, chain := range chains {
 		tokenlist.UpdateEVMDecimasl(chain)
 	}
 
 }
 
-func testUpdateTronDecimals() {
+func testUpdateDecimalsByChain() {
 	logger := log.With(log.NewStdLogger(os.Stdout),
 		"ts", log.DefaultTimestamp,
 		"caller", log.DefaultCaller,
@@ -356,7 +358,11 @@ func testUpdateTronDecimals() {
 	db := data.NewDB(bc.Data, logger)
 	client := data.NewRedis(bc.Data)
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.UpdateTronDecimals()
+	chains := []string{"solana"}
+	for _, chain := range chains {
+		tokenlist.UpdateDecimalsByChain(chain)
+	}
+
 }
 
 func testUpLoadTokenList() {
@@ -387,7 +393,7 @@ func testUpLoadTokenList() {
 	db := data.NewDB(bc.Data, logger)
 	client := data.NewRedis(bc.Data)
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.UpLoadJsonToCDN([]string{"xdai", "ethereum-classic"})
+	tokenlist.UpLoadJsonToCDN([]string{"solana"})
 }
 
 func testUpLoadLocalImage() {
@@ -422,5 +428,26 @@ func testUpLoadLocalImage() {
 	for _, image := range images {
 		tokenlist.UpLoadLocalImages(image)
 	}
+}
 
+func testGetGasEstimate() {
+	conn, err := grpc.Dial("127.0.0.1:9001", grpc.WithInsecure())
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+	defer conn.Close()
+	p := pb.NewPlatformClient(conn)
+	req := new(pb.GetGasEstimateRequest)
+	req.Chain = "ETH"
+	a := map[string]string{
+		"gas_price": "8000000000",
+	}
+	b, _ := json.Marshal(a)
+	req.GasInfo = string(b)
+	fmt.Println("req===", req)
+	resp, err := p.GetGasEstimate(context.Background(), req)
+	if err != nil {
+		fmt.Println("get balacne error", err)
+	}
+	fmt.Println("result:", resp)
 }

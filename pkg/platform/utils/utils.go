@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/tls"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/types"
 	"io/ioutil"
@@ -159,6 +160,9 @@ func HttpsGetForm(url string, params map[string]string, out interface{}) error {
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
+	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return errors.New(string(body))
 	}
 	if err := json.Unmarshal(body, &out); err != nil {
 		return err

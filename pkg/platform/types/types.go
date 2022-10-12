@@ -9,6 +9,24 @@ import (
 	"math/big"
 )
 
+const (
+	RESPONSE_BALANCE           = "balance"
+	RESPONSE_TOKEN_BALANCE     = "tokenBalance"
+	RESPONSE_TXHASH            = "txHash"
+	RESPONSE_OBJECTID          = "objectId"
+	RESPONSE_TXPARAMS          = "txParams"
+	RESPONSE_OBJECTREAD        = "objectRead"
+	RESPONSE_TXSTATUS          = "txStatus"
+	RESPONSE_HEIGHT            = "height"
+	RESPONSE_RECENT_BLOCK_HASH = "recentBlockHash"
+	RESPONSE_TOKEN_ACTIVE      = "tokenActive"
+	RESPONSE_ADDRESS_ACTIVE    = "addressActive"
+	RESPONSE_RENT              = "rent"
+	RESPONSE_TOKEN_INFO        = "tokenInfo"
+)
+
+type AnalysisResponseType func(params string, result json.RawMessage) (interface{}, error)
+
 type Platform interface {
 	GetBalance(ctx context.Context, address, tokenAddress, decimals string) (string, error)
 	BuildWasmRequest(ctx context.Context, nodeRpc, functionName, params string) (*v1.BuildWasmRequestReply, error)
