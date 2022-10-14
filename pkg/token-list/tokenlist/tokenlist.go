@@ -1,9 +1,15 @@
 package tokenlist
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/cloudfront"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-redis/redis"
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
@@ -29,11 +35,13 @@ import (
 )
 
 type config struct {
-	db          *gorm.DB
-	log         *log.Helper
-	redisClient *redis.Client
-	logoPrefix  string
-	qiniu       types.QiNiuConf
+	db            *gorm.DB
+	log           *log.Helper
+	redisClient   *redis.Client
+	logoPrefix    string
+	awsLogoPrefie string
+	qiniu         types.QiNiuConf
+	aws           []*conf.TokenList_AWS
 }
 
 const REDIS_PRICE_KEY = "tokenlist:price:"
@@ -45,16 +53,18 @@ var c config
 func InitTokenList(conf *conf.TokenList, db *gorm.DB, client *redis.Client, logger log.Logger) {
 	log := log.NewHelper(log.With(logger, "module", "tokenlist/InittokenList"))
 	c = config{
-		db:          db,
-		log:         log,
-		redisClient: client,
-		logoPrefix:  conf.LogoPrefix,
+		db:            db,
+		log:           log,
+		redisClient:   client,
+		logoPrefix:    conf.LogoPrefix,
+		awsLogoPrefie: conf.AwsLogoPrefix,
 		qiniu: types.QiNiuConf{
 			AccessKey: conf.Qiniu.AccessKey,
 			SecretKey: conf.Qiniu.SecretKey,
 			Bucket:    conf.Qiniu.Bucket,
 			KeyPrefix: conf.Qiniu.KeyPrefix,
 		},
+		aws: conf.Aws,
 	}
 
 	InitCG(conf.Coingecko.BaseURL, db, logger)
@@ -743,18 +753,11 @@ func AutoUpdateTokenList(cmcFlag, cgFlag, jsonFlag bool) {
 				tokenLists[i].Address = strings.Trim(tokenLists[i].Address, " ")
 			}
 		}
-		patchSize := 1000
-		end := 0
-		for i := 0; i < len(tokenLists); i += patchSize {
-			if i+patchSize > len(tokenLists) {
-				end = len(tokenLists)
-			} else {
-				end = i + patchSize
-			}
-			temp := tokenLists[i:end]
+
+		for i := 0; i < len(tokenLists); i++ {
 			result := c.db.Clauses(clause.OnConflict{
 				UpdateAll: true,
-			}).Create(&temp)
+			}).Create(&tokenLists[i])
 			if result.Error != nil {
 				c.log.Error("create token list error:", result.Error)
 			}
@@ -896,6 +899,13 @@ func UpLoadJsonToCDN(chains []string) {
 func UpLoadToken() {
 	mac := qbox.NewMac(c.qiniu.AccessKey, c.qiniu.SecretKey)
 	cdnManager := cdn.NewCdnManager(mac)
+	var paths []string
+	filepath.Walk("tokenlist", func(path string, info fs.FileInfo, err error) error {
+		if !info.IsDir() {
+			paths = append(paths, path)
+		}
+		return nil
+	})
 	for _, bucket := range c.qiniu.Bucket {
 		//upToken := putPolicy.UploadToken(mac)
 		cfg := storage.Config{
@@ -910,32 +920,42 @@ func UpLoadToken() {
 				"x:name": "github logo",
 			},
 		}
-		filepath.Walk("tokenlist", func(path string, info fs.FileInfo, err error) error {
-			if !info.IsDir() {
-				key := c.qiniu.KeyPrefix + path
-				putPolicy := storage.PutPolicy{
-					Scope: fmt.Sprintf("%s:%s", bucket, key),
-				}
-				upToken := putPolicy.UploadToken(mac)
-				err = formUploader.PutFile(context.Background(), &ret, upToken, key, path, &putExtra)
-				if err != nil {
-					c.log.Error("PutFile Error:", err)
-				}
-				url := c.logoPrefix + path
-				_, err := cdnManager.RefreshUrls([]string{url})
-				if err != nil {
-					c.log.Error("refresh urls error", err)
-				}
-				c.log.Info("upload info:", ret.Bucket, ret.Key, ret.Fsize, ret.Hash, ret.Name)
+		for _, path := range paths {
+			key := c.qiniu.KeyPrefix + path
+			putPolicy := storage.PutPolicy{
+				Scope: fmt.Sprintf("%s:%s", bucket, key),
 			}
-			return nil
-		})
+			upToken := putPolicy.UploadToken(mac)
+			err := formUploader.PutFile(context.Background(), &ret, upToken, key, path, &putExtra)
+			if err != nil {
+				c.log.Error("PutFile Error:", err)
+			}
+			c.log.Info("upload info:", ret.Bucket, ret.Key, ret.Fsize, ret.Hash, ret.Name)
+		}
+		//filepath.Walk("tokenlist", func(path string, info fs.FileInfo, err error) error {
+		//	if !info.IsDir() {
+		//		key := c.qiniu.KeyPrefix + path
+		//		putPolicy := storage.PutPolicy{
+		//			Scope: fmt.Sprintf("%s:%s", bucket, key),
+		//		}
+		//		upToken := putPolicy.UploadToken(mac)
+		//		err = formUploader.PutFile(context.Background(), &ret, upToken, key, path, &putExtra)
+		//		if err != nil {
+		//			c.log.Error("PutFile Error:", err)
+		//		}
+		//		c.log.Info("upload info:", ret.Bucket, ret.Key, ret.Fsize, ret.Hash, ret.Name)
+		//	}
+		//	return nil
+		//})
 	}
 
-	_, err := cdnManager.RefreshDirs([]string{c.logoPrefix + "tokenlist/"})
+	_, err := cdnManager.RefreshDirs([]string{c.logoPrefix, c.awsLogoPrefie})
 	if err != nil {
 		c.log.Error("fetch dirs error:", err)
 	}
+
+	//upload file to s3
+	UploadFileToS3(paths)
 }
 
 func DownLoadImages(tokenLists []models.TokenList) {
@@ -1005,25 +1025,30 @@ func UpLoadLocalImages(localFile string) {
 		if err != nil {
 			c.log.Error("PutFile Error:", err)
 		}
-		url := c.logoPrefix + localFile
-		_, err = cdnManager.RefreshUrls([]string{url})
-		if err != nil {
-			c.log.Error("refresh urls error", err)
-		}
 		c.log.Info("upload info:", ret.Bucket, ret.Key, ret.Fsize, ret.Hash, ret.Name)
 
 	}
 
-	_, err := cdnManager.RefreshDirs([]string{c.logoPrefix + "images/"})
+	_, err := cdnManager.RefreshDirs([]string{c.logoPrefix, c.awsLogoPrefie})
 	if err != nil {
 		c.log.Error("fetch dirs error:", err)
 	}
+
+	//upload file to s3
+	UploadFileToS3([]string{localFile})
 
 }
 
 func UpLoadImages() {
 	mac := qbox.NewMac(c.qiniu.AccessKey, c.qiniu.SecretKey)
 	cdnManager := cdn.NewCdnManager(mac)
+	var paths []string
+	filepath.Walk("images", func(path string, info fs.FileInfo, err error) error {
+		if !info.IsDir() && strings.HasSuffix(info.Name(), ".png") {
+			paths = append(paths, path)
+		}
+		return nil
+	})
 	for _, bucket := range c.qiniu.Bucket {
 		cfg := storage.Config{
 			UseHTTPS: true,
@@ -1035,32 +1060,27 @@ func UpLoadImages() {
 				"x:name": "github logo",
 			},
 		}
-		filepath.Walk("images", func(path string, info fs.FileInfo, err error) error {
-			if !info.IsDir() && strings.HasSuffix(info.Name(), ".png") {
-				key := c.qiniu.KeyPrefix + path
-				putPolicy := storage.PutPolicy{
-					Scope: fmt.Sprintf("%s:%s", bucket, key),
-				}
-				upToken := putPolicy.UploadToken(mac)
-				err = formUploader.PutFile(context.Background(), &ret, upToken, key, path, &putExtra)
-				if err != nil {
-					c.log.Error("PutFile Error:", err)
-				}
-				url := c.logoPrefix + path
-				_, err := cdnManager.RefreshUrls([]string{url})
-				if err != nil {
-					c.log.Error("refresh urls error", err)
-				}
-				c.log.Info("upload info:", ret.Bucket, ret.Key, ret.Fsize, ret.Hash, ret.Name)
+		for _, path := range paths {
+			key := c.qiniu.KeyPrefix + path
+			putPolicy := storage.PutPolicy{
+				Scope: fmt.Sprintf("%s:%s", bucket, key),
 			}
-			return nil
-		})
+			upToken := putPolicy.UploadToken(mac)
+			err := formUploader.PutFile(context.Background(), &ret, upToken, key, path, &putExtra)
+			if err != nil {
+				c.log.Error("PutFile Error:", err)
+			}
+			c.log.Info("upload info:", ret.Bucket, ret.Key, ret.Fsize, ret.Hash, ret.Name)
+		}
 	}
 
-	_, err := cdnManager.RefreshDirs([]string{c.logoPrefix + "images/"})
+	_, err := cdnManager.RefreshDirs([]string{c.logoPrefix, c.awsLogoPrefie})
 	if err != nil {
 		c.log.Error("fetch dirs error:", err)
 	}
+
+	//upload file to s3
+	UploadFileToS3(paths)
 
 }
 
@@ -1146,4 +1166,59 @@ func UpdateDecimalsByChain(chain string) {
 			}
 		}
 	}
+}
+
+func UploadFileToS3(localFiles []string) {
+	if c.aws != nil {
+		for _, awsInfo := range c.aws {
+			sess, err := session.NewSession(&aws.Config{
+				Region: aws.String(awsInfo.Region), //桶所在的区域
+				Credentials: credentials.NewStaticCredentials(
+					awsInfo.AccessKey, // accessKey
+					awsInfo.SecretKey, // secretKey
+					""),               //sts的临时凭证
+			})
+			if err != nil {
+				c.log.Error("new session error:", err)
+			}
+			//upload file
+			for _, localFile := range localFiles {
+				exist, _ := utils.PathExists(localFile)
+				if !exist {
+					continue
+				}
+
+				buffer, _ := os.ReadFile(localFile)
+				key := awsInfo.KeyPrefix + localFile
+				//fmt.Println("tokenList==", string(buffer))
+				_, err = s3.New(sess).PutObject(&s3.PutObjectInput{
+					Bucket: aws.String(awsInfo.Bucket), //桶名
+					Key:    aws.String(key),
+					Body:   bytes.NewReader(buffer),
+				})
+				if err != nil {
+					c.log.Error("put file to s3 error:", err)
+				}
+			}
+			//refresh dir
+			callerReference := time.Now().String()
+			svc := cloudfront.New(sess)
+			paths := &cloudfront.Paths{
+				Items:    []*string{aws.String(awsInfo.KeyPrefix)},
+				Quantity: aws.Int64(1),
+			}
+
+			input := &cloudfront.CreateInvalidationInput{DistributionId: aws.String(awsInfo.DistributionId),
+				InvalidationBatch: &cloudfront.InvalidationBatch{
+					CallerReference: aws.String(callerReference),
+					Paths:           paths,
+				}}
+			_, err = svc.CreateInvalidation(input)
+			if err != nil {
+				c.log.Error("create invalidation error:", err)
+			}
+
+		}
+	}
+
 }
