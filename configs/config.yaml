@@ -13,6 +13,7 @@ data:
     write_timeout: 0.2s
 tokenList:
   logoPrefix: https://obstatic.243096.com/download/tokentest/
+  awsLogoPrefix: https://obstaticaws.243096.com/download/tokentest/
   coingecko:
     baseURL: https://api.coingecko.com/api/v3
   coinmarketcap:
@@ -32,6 +33,13 @@ tokenList:
       - obstatic
       - obstatic-sgaws
     keyPrefix: download/tokentest/
+  aws:
+    - accessKey: accessKey
+      secretKey: secretKey
+      bucket: bixin-obstatic
+      region: region
+      keyPrefix: /download/tokentest/
+      distributionId: distributionId
 
 platform:
   - chain: Cronos

@@ -65,18 +65,20 @@ func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error
 	}
 	for i := 0; i < len(p.rpcURL); i++ {
 		resources := getResourceByAddress(p.rpcURL[i], token)
-		for _, r := range *resources {
-			if strings.HasPrefix(r.Type, TOKEN_INFO_PREFIX) {
-				var tokenInfo types.AptosTokenInfo
-				b, _ := json.Marshal(r.Data)
-				json.Unmarshal(b, &tokenInfo)
-				return &v12.GetTokenInfoResp_Data{
-					Chain:    p.chain,
-					Address:  token,
-					Decimals: uint32(tokenInfo.Decimals),
-					Symbol:   strings.ToUpper(tokenInfo.Symbol),
-					Name:     tokenInfo.Name,
-				}, nil
+		if resources != nil {
+			for _, r := range *resources {
+				if strings.HasPrefix(r.Type, TOKEN_INFO_PREFIX) {
+					var tokenInfo types.AptosTokenInfo
+					b, _ := json.Marshal(r.Data)
+					json.Unmarshal(b, &tokenInfo)
+					return &v12.GetTokenInfoResp_Data{
+						Chain:    p.chain,
+						Address:  token,
+						Decimals: uint32(tokenInfo.Decimals),
+						Symbol:   strings.ToUpper(tokenInfo.Symbol),
+						Name:     tokenInfo.Name,
+					}, nil
+				}
 			}
 		}
 	}

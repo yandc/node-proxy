@@ -51,10 +51,20 @@ message TokenList {
     repeated string bucket = 3;
     string keyPrefix = 4;
   }
+  message AWS {
+    string accessKey = 1;
+    string secretKey = 2;
+    string bucket = 3;
+    string region = 4;
+    string keyPrefix = 5;
+    string distributionId = 6;
+  }
   CoinGecko coingecko = 1;
   CoinMarketCap coinmarketcap = 2;
   string logoPrefix = 3;
   QiNiu qiniu = 4;
+  string awsLogoPrefix = 5;
+  repeated AWS aws = 6;
 }
 
 message Platform  {

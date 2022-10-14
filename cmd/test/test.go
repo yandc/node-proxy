@@ -424,7 +424,7 @@ func testUpLoadLocalImage() {
 	db := data.NewDB(bc.Data, logger)
 	client := data.NewRedis(bc.Data)
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	images := []string{"images/xdai/xdai_0xf929b6ce804b06a4ce92f5ea3b13fb1141c82368.png"}
+	images := []string{"tokenlist/tokenlist.json"}
 	for _, image := range images {
 		tokenlist.UpLoadLocalImages(image)
 	}

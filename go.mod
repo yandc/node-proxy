@@ -17,7 +17,11 @@ require (
 	gorm.io/gorm v1.23.8
 )
 
-require github.com/rjeczalik/notify v0.9.1 // indirect
+require (
+	github.com/aws/aws-sdk-go v1.44.114 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
+	github.com/rjeczalik/notify v0.9.1 // indirect
+)
 
 require (
 	github.com/BurntSushi/toml v1.1.0 // indirect
