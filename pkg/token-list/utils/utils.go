@@ -28,6 +28,7 @@ const REDIS_TOKENLIST_TIMESTAMP = "timestamp"
 const REDIS_PRICE_INTERVAL = 60
 const REDIS_TOKENLIST_INTERVAL = 86400 //24H
 const STARCOIN_CHAIN = "starcoin"
+const APTOS_CHAIN = "aptos"
 
 var platformMap = map[string]string{
 	"aurora":      "aurora",
@@ -118,6 +119,7 @@ var handlerNameMap = map[string]string{
 	"xDai":      "xdai",
 	"ETC":       "ethereum-classic",
 	"solana":    "solana",
+	"aptos":     "aptos",
 }
 
 var chainNameMap = map[string]string{
@@ -139,6 +141,7 @@ var chainNameMap = map[string]string{
 	"xDai":      "xdai",
 	"ETC":       "ethereum-classic",
 	"Solana":    "solana",
+	"Aptos":     "aptos",
 
 	"ETHTEST":       "ethereum",
 	"HECOTEST":      "huobi-token",
@@ -158,6 +161,7 @@ var chainNameMap = map[string]string{
 	"xDaiTEST":      "xdai",
 	"ETCTEST":       "ethereum-classic",
 	"SolanaTEST":    "solana",
+	"AptosTEST":     "aptos",
 }
 
 var db2Chain = map[string]string{
@@ -179,6 +183,7 @@ var db2Chain = map[string]string{
 	"xdai":                "xDai",
 	"ethereum-classic":    "ETC",
 	"solana":              "Solana",
+	"aptos":               "Aptos",
 }
 
 var TokenFileMap = map[string][]string{

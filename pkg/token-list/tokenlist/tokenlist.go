@@ -187,7 +187,7 @@ func CreateTokenList() {
 	for key, token := range decimalsInfo {
 		if _, ok := tokenListMap[key]; !ok {
 			decimalsDBCount++
-			chain := strings.Split(key, ":")[0]
+			chain := strings.SplitN(key, ":", 2)[0]
 			tokenListMap[key] = &models.TokenList{
 				Name:     token.Name,
 				Address:  token.Address,
@@ -480,7 +480,8 @@ func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoRe
 		chain := utils.GetChainNameByChain(addressInfo.Chain)
 		address := addressInfo.Address
 
-		if strings.HasPrefix(addressInfo.Address, "0x") && chain != utils.STARCOIN_CHAIN {
+		if strings.HasPrefix(addressInfo.Address, "0x") && chain != utils.STARCOIN_CHAIN &&
+			chain != utils.APTOS_CHAIN {
 			address = strings.ToLower(addressInfo.Address)
 		}
 		params = append(params, []interface{}{chain, address})
@@ -498,7 +499,7 @@ func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoRe
 		address := tokenList.Address
 		key := chain + ":" + address
 		if value, ok := addressMap[key]; ok {
-			addressInfo := strings.Split(value, ":")
+			addressInfo := strings.SplitN(value, ":", 2)
 			chain, address = addressInfo[0], addressInfo[1]
 			delete(addressMap, key)
 		}
@@ -512,7 +513,7 @@ func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoRe
 	}
 	if len(addressMap) > 0 {
 		for _, value := range addressMap {
-			addressInfo := strings.Split(value, ":")
+			addressInfo := strings.SplitN(value, ":", 2)
 			chain, address := addressInfo[0], addressInfo[1]
 			tokenInfo, err := platform.GetPlatformTokenInfo(chain, address)
 			if err != nil {
@@ -528,42 +529,7 @@ func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoRe
 			}
 		}
 	}
-	if len(addressMap) > 0 {
-		for _, value := range addressMap {
-			addressInfo := strings.Split(value, ":")
-			chain, address := addressInfo[0], addressInfo[1]
-			tokenInfo, err := platform.GetPlatformTokenInfo(chain, address)
-			if err != nil {
-				c.log.Error("get platform token info error:", err)
-				continue
-			}
-			if tokenInfo != nil {
-				if err := utils.SetRedisTokenInfo(c.redisClient, REDIS_TOKEN_KEY+value, tokenInfo); err != nil {
-					c.log.Error("set redis token info error.", err)
-					continue
-				}
-				tokenInfos = append(tokenInfos, tokenInfo)
-			}
-		}
-	}
-	if len(addressMap) > 0 {
-		for _, value := range addressMap {
-			addressInfo := strings.Split(value, ":")
-			chain, address := addressInfo[0], addressInfo[1]
-			tokenInfo, err := platform.GetPlatformTokenInfo(chain, address)
-			if err != nil {
-				c.log.Error("get platform token info error:", err)
-				continue
-			}
-			if tokenInfo != nil {
-				if err := utils.SetRedisTokenInfo(c.redisClient, REDIS_TOKEN_KEY+value, tokenInfo); err != nil {
-					c.log.Error("set redis token info error.", err)
-					continue
-				}
-				tokenInfos = append(tokenInfos, tokenInfo)
-			}
-		}
-	}
+
 	return tokenInfos, nil
 }
 
@@ -723,7 +689,7 @@ func AutoUpdateTokenList(cmcFlag, cgFlag, jsonFlag bool) {
 	for key, token := range decimalsInfo {
 		if _, dbOk := tempDBTokenListMap[key]; !dbOk {
 			if _, ok := tokenListMap[key]; !ok {
-				chain := strings.Split(key, ":")[0]
+				chain := strings.SplitN(key, ":", 2)[0]
 				tokenListMap[key] = &models.TokenList{
 					Name:     token.Name,
 					Address:  token.Address,
@@ -1219,6 +1185,47 @@ func UploadFileToS3(localFiles []string) {
 			}
 
 		}
+	}
+}
+
+func UpdateAptosToken() {
+	var tokenLists = []models.TokenList{{
+		Address:  "0x5e156f1207d0ebfa19a9eeff00d62a282278fb8719f4fab3a586a0a2c0fffbea::coin::T",
+		Decimals: 6,
+		Name:     "USD Coin (eth)",
+		Symbol:   "USDC (eth)",
+		Chain:    "aptos",
+	}, {
+		Address:  "0xdd89c0e695df0692205912fb69fc290418bed0dbe6e4573d744a6d5e6bab6c13::coin::T",
+		Decimals: 8,
+		Name:     "Wrapped SOL",
+		Symbol:   "SOL",
+		Chain:    "aptos",
+	}, {
+		Address:  "0xae478ff7d83ed072dbc5e264250e67ef58f57c99d89b447efd8a0a2e8b2be76e::coin::T",
+		Decimals: 8,
+		Name:     "Wrapped BTC",
+		Symbol:   "WBTC",
+		Chain:    "aptos",
+	}, {
+		Address:  "0x1000000fa32d122c18a6a31c009ce5e71674f22d06a581bb0a15575e6addadcc::usda::USDA",
+		Decimals: 6,
+		Name:     "Argo USD",
+		Symbol:   "USDA",
+		Chain:    "aptos",
+	}, {
+		Address:  "0xc91d826e29a3183eb3b6f6aa3a722089fdffb8e9642b94c5fcd4c48d035c0080::coin::T",
+		Decimals: 6,
+		Name:     "USD Coin (sol)",
+		Symbol:   "USDC (sol)",
+		Chain:    "aptos",
+	},
+	}
+	result := c.db.Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Create(&tokenLists)
+	if result.Error != nil {
+		c.log.Error("create db aptos error:", result.Error)
 	}
 
 }

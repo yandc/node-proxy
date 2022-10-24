@@ -60,11 +60,12 @@ func (p *platform) AnalysisWasmResponse(ctx context.Context, functionName, param
 }
 
 func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error) {
+	sourceToken := token
 	if strings.Contains(token, "::") {
-		token = strings.Split(token, "::")[0]
+		sourceToken = strings.Split(token, "::")[0]
 	}
 	for i := 0; i < len(p.rpcURL); i++ {
-		resources := getResourceByAddress(p.rpcURL[i], token)
+		resources := getResourceByAddress(p.rpcURL[i], sourceToken)
 		if resources != nil {
 			for _, r := range *resources {
 				if strings.HasPrefix(r.Type, TOKEN_INFO_PREFIX) {
