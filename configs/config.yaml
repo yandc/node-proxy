@@ -216,6 +216,12 @@ platform:
     type: APTOS
     rpcURL:
       - https://testnet.aptoslabs.com/v1
+  - chain: Aptos
+    type: APTOS
+    rpcURL:
+      - https://fullnode.mainnet.aptoslabs.com/v1
+      - https://aptos-mainnet.pontem.network/v1
+      - https://fullnode.mainnet.martianwallet.xyz/v1
   - chain: xDai
     type: EVM
     rpcURL:

@@ -65,6 +65,8 @@ func main() {
 		testUpLoadLocalImage()
 	case "gasEstimate":
 		testGetGasEstimate()
+	case "aptosList":
+		testUpdateApots()
 	}
 	fmt.Println("test main end")
 	//testGetPrice()
@@ -393,7 +395,7 @@ func testUpLoadTokenList() {
 	db := data.NewDB(bc.Data, logger)
 	client := data.NewRedis(bc.Data)
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.UpLoadJsonToCDN([]string{"solana"})
+	tokenlist.UpLoadJsonToCDN([]string{"aptos"})
 }
 
 func testUpLoadLocalImage() {
@@ -450,4 +452,35 @@ func testGetGasEstimate() {
 		fmt.Println("get balacne error", err)
 	}
 	fmt.Println("result:", resp)
+}
+
+func testUpdateApots() {
+	logger := log.With(log.NewStdLogger(os.Stdout),
+		"ts", log.DefaultTimestamp,
+		"caller", log.DefaultCaller,
+		"service.id", id,
+		"service.name", Name,
+		"service.version", Version,
+		"trace.id", tracing.TraceID(),
+		"span.id", tracing.SpanID(),
+	)
+	c := config.New(
+		config.WithSource(
+			file.NewSource(flagconf),
+		),
+	)
+	defer c.Close()
+
+	if err := c.Load(); err != nil {
+		panic(err)
+	}
+
+	var bc conf.Bootstrap
+	if err := c.Scan(&bc); err != nil {
+		panic(err)
+	}
+	db := data.NewDB(bc.Data, logger)
+	client := data.NewRedis(bc.Data)
+	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
+	tokenlist.UpdateAptosToken()
 }
