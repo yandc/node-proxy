@@ -3,6 +3,7 @@ module gitlab.bixin.com/mili/node-proxy
 go 1.17
 
 require (
+	github.com/aws/aws-sdk-go v1.44.114
 	github.com/btcsuite/btcutil v1.0.3-0.20201208143702-a53e38424cce
 	github.com/ethereum/go-ethereum v1.10.13
 	github.com/go-kratos/kratos/v2 v2.4.0
@@ -18,7 +19,6 @@ require (
 )
 
 require (
-	github.com/aws/aws-sdk-go v1.44.114 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/rjeczalik/notify v0.9.1 // indirect
 )

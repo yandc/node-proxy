@@ -446,7 +446,7 @@ func testGetGasEstimate() {
 	}
 	b, _ := json.Marshal(a)
 	req.GasInfo = string(b)
-	fmt.Println("req===", req)
+	fmt.Println("req", req)
 	resp, err := p.GetGasEstimate(context.Background(), req)
 	if err != nil {
 		fmt.Println("get balacne error", err)
