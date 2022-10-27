@@ -509,6 +509,7 @@ func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoRe
 			Decimals: uint32(tokenList.Decimals),
 			Symbol:   tokenList.Symbol,
 			Name:     tokenList.Name,
+			LogoURI:  tokenList.LogoURI,
 		})
 	}
 	if len(addressMap) > 0 {

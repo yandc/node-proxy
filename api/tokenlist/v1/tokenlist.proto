@@ -53,6 +53,7 @@ message GetTokenInfoResp {
     string address = 3;
     uint32 decimals = 4;
     string symbol = 5;
+    string logoURI = 6;
   }
   repeated Data data = 1;
 }
