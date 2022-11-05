@@ -50,3 +50,24 @@ func (s *TokenlistService) GetTokenInfo(ctx context.Context, req *pb.GetTokenInf
 		Data: data,
 	}, err
 }
+
+func (s *TokenlistService) GetDBTokenInfo(ctx context.Context, req *pb.GetTokenInfoReq) (*pb.GetTokenInfoResp, error) {
+	// 设置接口 3s 超时
+	subctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+	fmt.Println(subctx, len(req.Data))
+	data, err := s.uc.GetDBTokenInfo(ctx, req.Data)
+	return &pb.GetTokenInfoResp{
+		Data: data,
+	}, err
+}
+
+func (s *TokenlistService) GetTokenTop20(ctx context.Context, req *pb.GetTokenTop20Req) (*pb.GetTokenTop20Resp, error) {
+	// 设置接口 3s 超时
+	subctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+	data, err := s.uc.GetTokenTop20(subctx, req.Chain)
+	return &pb.GetTokenTop20Resp{
+		Data: data,
+	}, err
+}

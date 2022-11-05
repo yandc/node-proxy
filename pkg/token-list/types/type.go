@@ -152,3 +152,8 @@ type SolanaTokenInfo struct {
 		UIAmountString string  `json:"uiAmountString"`
 	} `json:"value"`
 }
+
+type CGMarket struct {
+	ID            string `json:"id"`
+	MarketCapRank int    `json:"market_cap_rank"`
+}

@@ -28,6 +28,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -44,9 +45,12 @@ type config struct {
 	aws           []*conf.TokenList_AWS
 }
 
-const REDIS_PRICE_KEY = "tokenlist:price:"
-const REDIS_LIST_KEY = "tokenlist:list:"
-const REDIS_TOKEN_KEY = "tokenlist:tokeninfo:"
+const (
+	REDIS_PRICE_KEY = "tokenlist:price:"
+	REDIS_LIST_KEY  = "tokenlist:list:"
+	REDIS_TOKEN_KEY = "tokenlist:tokeninfo:"
+	REDIS_TOP20_KEY = "tokenlist:top20:"
+)
 
 var c config
 
@@ -464,6 +468,48 @@ func GetDecimalsInfo() map[string]types.TokenInfo {
 		}
 	}
 	return result
+}
+
+func GetDBTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoResp_Data, error) {
+	tokenInfos := make([]*v1.GetTokenInfoResp_Data, 0, len(addressInfos))
+	params := make([][]interface{}, 0, len(addressInfos))
+	addressMap := make(map[string]string, len(addressInfos))
+	for _, addressInfo := range addressInfos {
+		key := addressInfo.Chain + ":" + addressInfo.Address
+		chain := utils.GetChainNameByChain(addressInfo.Chain)
+		address := addressInfo.Address
+		if strings.HasPrefix(addressInfo.Address, "0x") && chain != utils.STARCOIN_CHAIN &&
+			chain != utils.APTOS_CHAIN {
+			address = strings.ToLower(addressInfo.Address)
+		}
+		params = append(params, []interface{}{chain, address})
+		addressMap[chain+":"+address] = key
+	}
+
+	// get token list
+	var tokenLists []models.TokenList
+	err := c.db.Where("(chain, address) IN ?", params).Find(&tokenLists).Error
+	if err != nil {
+		c.log.Error("get token list error:", err)
+	}
+	for _, tokenList := range tokenLists {
+		chain := tokenList.Chain
+		address := tokenList.Address
+		key := chain + ":" + address
+		if value, ok := addressMap[key]; ok {
+			addressInfo := strings.SplitN(value, ":", 2)
+			chain, address = addressInfo[0], addressInfo[1]
+		}
+		tokenInfos = append(tokenInfos, &v1.GetTokenInfoResp_Data{
+			Chain:    chain,
+			Address:  address,
+			Decimals: uint32(tokenList.Decimals),
+			Symbol:   tokenList.Symbol,
+			Name:     tokenList.Name,
+			LogoURI:  tokenList.LogoURI,
+		})
+	}
+	return tokenInfos, nil
 }
 
 func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoResp_Data, error) {
@@ -1229,4 +1275,93 @@ func UpdateAptosToken() {
 		c.log.Error("create db aptos error:", result.Error)
 	}
 
+}
+
+func GetTop20TokenList(chain string) ([]*v1.TokenInfoData, error) {
+	oldChain := chain
+	key := REDIS_TOP20_KEY + chain
+	//get chain
+	chain = utils.GetChainNameByChain(chain)
+	//get redis cache
+	var result []*v1.TokenInfoData
+	str, updateFlag, err := utils.GetTokenTop20RedisValueByKey(c.redisClient, key)
+	if err != nil {
+		c.log.Error("get token top29 key error:", err, key)
+	}
+	if str != "" {
+		if err := json.Unmarshal([]byte(str), &result); err != nil {
+			c.log.Error("unmarshal error:", err)
+		}
+	}
+	if !updateFlag {
+		return result, nil
+	}
+	var tokenLists []models.TokenList
+	err = c.db.Where("chain = ? AND name != ? AND cg_id != ?", chain, oldChain, "").Find(&tokenLists).Error
+	if err != nil {
+		c.log.Error("get token list error:", err)
+	}
+	c.log.Info("token list length=", len(tokenLists))
+	if len(tokenLists) >= 20 {
+		tokenInfos := make(map[string]*v1.TokenInfoData, len(tokenLists))
+		ids := make([]string, len(tokenLists))
+		for i, t := range tokenLists {
+			ids[i] = t.CgId
+			tokenInfos[t.CgId] = &v1.TokenInfoData{
+				Chain:    oldChain,
+				Address:  t.Address,
+				Symbol:   t.Symbol,
+				Decimals: uint32(t.Decimals),
+				Name:     t.Name,
+				LogoURI:  c.logoPrefix + t.LogoURI,
+			}
+		}
+		markets := make([]types.CGMarket, 0, len(tokenLists)+2)
+		pageSize := 500
+		endIndex := 0
+		for i := 0; i < len(ids); i += pageSize {
+			if i+pageSize > len(ids) {
+				endIndex = len(ids)
+			} else {
+				endIndex = i + pageSize
+			}
+			cgMarkets, err := GetCGMarkets(ids[i:endIndex], "CNY", 20)
+			if err != nil {
+				c.log.Error("get cg markets error:", err)
+			}
+			for j := 0; err != nil && j < 3; j++ {
+				time.Sleep(time.Duration(j) * time.Second)
+				cgMarkets, err = GetCGMarkets(ids[i:endIndex], "CNY", 20)
+			}
+			if err != nil {
+				continue
+			}
+			markets = append(markets, cgMarkets...)
+		}
+		//sort markets
+		sort.Slice(markets, func(i, j int) bool {
+			return markets[i].MarketCapRank <= markets[j].MarketCapRank
+		})
+		index := 0
+		for ; index < len(markets) && markets[index].MarketCapRank == 0; index++ {
+		}
+
+		markets = append(markets[index:], markets[:index]...)
+		if len(markets) > 20 {
+			markets = markets[:20]
+		}
+		c.log.Info("cgMarkets=", markets)
+		result = make([]*v1.TokenInfoData, 0, len(markets))
+		for _, market := range markets {
+			if value, ok := tokenInfos[market.ID]; ok {
+				result = append(result, value)
+			}
+		}
+		b, _ := json.Marshal(result)
+		if err := utils.SetTokenTop20RedisKey(c.redisClient, key, string(b)); err != nil {
+			c.log.Error("set redis client cache error:", err)
+		}
+		return result, nil
+	}
+	return result, nil
 }

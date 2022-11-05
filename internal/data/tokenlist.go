@@ -58,3 +58,14 @@ func (r *tokenListRepo) GetTokenInfo(ctx context.Context, addressInfo []*v1.GetT
 	r.log.WithContext(ctx).Infof("GetTokenInfo", addressInfo)
 	return tokenlist.GetTokenInfo(addressInfo)
 }
+
+func (r *tokenListRepo) GetDBTokenInfo(ctx context.Context, addressInfo []*v1.GetTokenInfoReq_Data) (
+	[]*v1.GetTokenInfoResp_Data, error) {
+	r.log.WithContext(ctx).Infof("GetTokenInfo", addressInfo)
+	return tokenlist.GetDBTokenInfo(addressInfo)
+}
+
+func (r *tokenListRepo) GetTokenTop20(ctx context.Context, chain string) ([]*v1.TokenInfoData, error) {
+	r.log.WithContext(ctx).Infof("GetTokenTop20", chain)
+	return tokenlist.GetTop20TokenList(chain)
+}

@@ -21,14 +21,17 @@ import (
 	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/types"
 )
 
-const REDIS_PRICE_PRICE = "price"
-const REDIS_PRICE_TIMESTAMP = "timestamp"
-const REDIS_TOKENLIST_TOKENLIST = "tokenlist"
-const REDIS_TOKENLIST_TIMESTAMP = "timestamp"
-const REDIS_PRICE_INTERVAL = 60
-const REDIS_TOKENLIST_INTERVAL = 86400 //24H
-const STARCOIN_CHAIN = "starcoin"
-const APTOS_CHAIN = "aptos"
+const (
+	REDIS_PRICE_PRICE         = "price"
+	REDIS_PRICE_TIMESTAMP     = "timestamp"
+	REDIS_TOKENLIST_TOKENLIST = "tokenlist"
+	REDIS_TOKENLIST_TIMESTAMP = "timestamp"
+	REDIS_PRICE_INTERVAL      = 60
+	REDIS_TOKENLIST_INTERVAL  = 86400 //24H
+	STARCOIN_CHAIN            = "starcoin"
+	APTOS_CHAIN               = "aptos"
+	REDIS_TOKENLIST_TOP20     = "tokenTop20"
+)
 
 var platformMap = map[string]string{
 	"aurora":      "aurora",
@@ -442,8 +445,8 @@ func HttpsGetForm(url string, params map[string]string, out interface{}) error {
 		q.Add(k, v)
 	}
 	req.URL.RawQuery = q.Encode()
-	//client := &http.Client{Transport: globalTransport}
-	resp, err := http.DefaultClient.Do(req)
+	client := &http.Client{}
+	resp, err := client.Do(req)
 	if err != nil {
 		return err
 	}
@@ -460,6 +463,16 @@ func HttpsGetForm(url string, params map[string]string, out interface{}) error {
 	}
 	return nil
 }
+
+//var globalTransport *http.Transport
+
+//func init() {
+//	uu, _ := url.Parse("http://127.0.0.1:1087")
+//	globalTransport = &http.Transport{
+//		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+//		Proxy:           http.ProxyURL(uu),
+//	}
+//}
 
 func GetChainNameByPlatform(handler string) string {
 	if value, ok := handlerNameMap[handler]; ok {
@@ -635,4 +648,31 @@ func GetRedisTokenInfo(redisClient *redis.Client, key string) *v12.GetTokenInfoR
 func SetRedisTokenInfo(redisClient *redis.Client, key string, value *v12.GetTokenInfoResp_Data) error {
 	b, _ := json.Marshal(value)
 	return redisClient.Set(key, string(b), -1).Err()
+}
+
+// GetTokenTop20RedisValueByKey get token list top20,whether update
+func GetTokenTop20RedisValueByKey(redisClient *redis.Client, key string) (string, bool, error) {
+	result, err := redisClient.HGetAll(key).Result()
+	if err != nil || len(result) == 0 {
+		return "", true, err
+	}
+	flag := true
+	tokenTop20 := result[REDIS_TOKENLIST_TOP20]
+	val := result[REDIS_TOKENLIST_TIMESTAMP]
+	timestamp, err := strconv.ParseInt(val, 10, 64)
+	if err != nil {
+		return tokenTop20, flag, err
+	}
+	if time.Now().Unix()-timestamp < REDIS_TOKENLIST_INTERVAL {
+		flag = false
+	}
+	return tokenTop20, flag, nil
+}
+
+func SetTokenTop20RedisKey(redisClient *redis.Client, key, tokenTop20 string) error {
+	fields := map[string]interface{}{
+		REDIS_TOKENLIST_TOP20:     tokenTop20,
+		REDIS_TOKENLIST_TIMESTAMP: time.Now().Unix(),
+	}
+	return redisClient.HMSet(key, fields).Err()
 }

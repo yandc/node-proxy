@@ -53,6 +53,19 @@ func CGSimplePrice(ids []string, currency string) (map[string]map[string]float32
 	return result, err
 }
 
+func GetCGMarkets(ids []string, currency string, perPage int) ([]types.CGMarket, error) {
+	url := fmt.Sprintf("%s/coins/markets", cg.baseURL)
+	id := strings.Join(ids, ",")
+	params := map[string]string{
+		"ids":         id,
+		"vs_currency": currency,
+		"per_page":    fmt.Sprintf("%d", perPage),
+	}
+	var result []types.CGMarket
+	err := utils.HttpsGetForm(url, params, &result)
+	return result, err
+}
+
 func CGCoinsId(id string) (*types.CGCoinsID, error) {
 	if len(id) == 0 {
 		return nil, fmt.Errorf("id is required")
