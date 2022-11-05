@@ -15,6 +15,8 @@ type TokenListRepo interface {
 	GetTokenList(ctx context.Context, chain string) ([]*v1.GetTokenListResp_Data, error)
 	AutoUpdateTokenList(ctx context.Context)
 	GetTokenInfo(ctx context.Context, addressInfo []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoResp_Data, error)
+	GetDBTokenInfo(ctx context.Context, addressInfo []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoResp_Data, error)
+	GetTokenTop20(ctx context.Context, chain string) ([]*v1.TokenInfoData, error)
 }
 
 type TokenListUsecase struct {
@@ -52,4 +54,13 @@ func (uc *TokenListUsecase) AutoUpdateTokenList(ctx context.Context) {
 func (uc *TokenListUsecase) GetTokenInfo(ctx context.Context, addressInfo []*v1.GetTokenInfoReq_Data) (
 	[]*v1.GetTokenInfoResp_Data, error) {
 	return uc.repo.GetTokenInfo(ctx, addressInfo)
+}
+
+func (uc *TokenListUsecase) GetDBTokenInfo(ctx context.Context, addressInfo []*v1.GetTokenInfoReq_Data) (
+	[]*v1.GetTokenInfoResp_Data, error) {
+	return uc.repo.GetDBTokenInfo(ctx, addressInfo)
+}
+
+func (uc *TokenListUsecase) GetTokenTop20(ctx context.Context, chain string) ([]*v1.TokenInfoData, error) {
+	return uc.repo.GetTokenTop20(ctx, chain)
 }

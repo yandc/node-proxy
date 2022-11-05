@@ -67,6 +67,8 @@ func main() {
 		testGetGasEstimate()
 	case "aptosList":
 		testUpdateApots()
+	case "top20List":
+		testGetTop20TokenList()
 	}
 	fmt.Println("test main end")
 	//testGetPrice()
@@ -483,4 +485,39 @@ func testUpdateApots() {
 	client := data.NewRedis(bc.Data)
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
 	tokenlist.UpdateAptosToken()
+}
+
+func testGetTop20TokenList() {
+	logger := log.With(log.NewStdLogger(os.Stdout),
+		"ts", log.DefaultTimestamp,
+		"caller", log.DefaultCaller,
+		"service.id", id,
+		"service.name", Name,
+		"service.version", Version,
+		"trace.id", tracing.TraceID(),
+		"span.id", tracing.SpanID(),
+	)
+	c := config.New(
+		config.WithSource(
+			file.NewSource(flagconf),
+		),
+	)
+	defer c.Close()
+
+	if err := c.Load(); err != nil {
+		panic(err)
+	}
+
+	var bc conf.Bootstrap
+	if err := c.Scan(&bc); err != nil {
+		panic(err)
+	}
+	db := data.NewDB(bc.Data, logger)
+	client := data.NewRedis(bc.Data)
+	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
+	result, err := tokenlist.GetTop20TokenList("ETH")
+	if err != nil {
+		fmt.Println("error=", err)
+	}
+	fmt.Println("result===", result)
 }

@@ -10,6 +10,8 @@ service Tokenlist {
   rpc GetPrice (PriceReq) returns (PriceResp);
   rpc GetTokenList (GetTokenListReq) returns (GetTokenListResp);
   rpc GetTokenInfo (GetTokenInfoReq) returns (GetTokenInfoResp);
+  rpc GetTokenTop20 (GetTokenTop20Req) returns (GetTokenTop20Resp);
+  rpc GetDBTokenInfo (GetTokenInfoReq) returns (GetTokenInfoResp);
 }
 
 message GetTokenListReq {
@@ -46,6 +48,15 @@ message GetTokenInfoReq {
   repeated Data data = 1;
 }
 
+message TokenInfoData {
+  string chain = 1;
+  string name = 2;
+  string address = 3;
+  uint32 decimals = 4;
+  string symbol = 5;
+  string logoURI = 6;
+}
+
 message GetTokenInfoResp {
   message Data {
     string chain = 1;
@@ -56,4 +67,12 @@ message GetTokenInfoResp {
     string logoURI = 6;
   }
   repeated Data data = 1;
+}
+
+message GetTokenTop20Req {
+  string chain = 1;
+}
+
+message GetTokenTop20Resp {
+  repeated TokenInfoData data = 1;
 }
