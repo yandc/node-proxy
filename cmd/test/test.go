@@ -9,12 +9,14 @@ import (
 	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
+	"github.com/go-redis/redis"
 	pb "gitlab.bixin.com/mili/node-proxy/api/platform/v1"
 	v1 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/conf"
 	"gitlab.bixin.com/mili/node-proxy/internal/data"
 	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/tokenlist"
 	"google.golang.org/grpc"
+	"gorm.io/gorm"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -32,16 +34,51 @@ var (
 	flagconf string
 	testFunc string
 	id, _    = os.Hostname()
+	db       *gorm.DB
+	client   *redis.Client
+	logger   log.Logger
+	bc       conf.Bootstrap
 )
 
 func init() {
+
 	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
 	flag.StringVar(&testFunc, "name", "price", "test func name")
+
+}
+
+func Init() {
+	logger = log.With(log.NewStdLogger(os.Stdout),
+		"ts", log.DefaultTimestamp,
+		"caller", log.DefaultCaller,
+		"service.id", id,
+		"service.name", Name,
+		"service.version", Version,
+		"trace.id", tracing.TraceID(),
+		"span.id", tracing.SpanID(),
+	)
+	c := config.New(
+		config.WithSource(
+			file.NewSource(flagconf),
+		),
+	)
+	defer c.Close()
+
+	if err := c.Load(); err != nil {
+		panic(err)
+	}
+
+	if err := c.Scan(&bc); err != nil {
+		panic(err)
+	}
+	db = data.NewDB(bc.Data, logger)
+	client = data.NewRedis(bc.Data)
 }
 
 func main() {
 	flag.Parse()
 	fmt.Println("func name", testFunc)
+	Init()
 	switch testFunc {
 	case "price":
 		testGetPrice()
@@ -65,76 +102,20 @@ func main() {
 		testUpLoadLocalImage()
 	case "gasEstimate":
 		testGetGasEstimate()
-	case "aptosList":
-		testUpdateApots()
 	case "top20List":
 		testGetTop20TokenList()
+	case "chainTokenList":
+		testUpdateChainList()
 	}
 	fmt.Println("test main end")
-	//testGetPrice()
-	//testGetBalance()
-	//tokenlist.AutoUpdateTokenList()
 }
 
 func testRefreshLogoURI() {
-	logger := log.With(log.NewStdLogger(os.Stdout),
-		"ts", log.DefaultTimestamp,
-		"caller", log.DefaultCaller,
-		"service.id", id,
-		"service.name", Name,
-		"service.version", Version,
-		"trace.id", tracing.TraceID(),
-		"span.id", tracing.SpanID(),
-	)
-	c := config.New(
-		config.WithSource(
-			file.NewSource(flagconf),
-		),
-	)
-	defer c.Close()
-
-	if err := c.Load(); err != nil {
-		panic(err)
-	}
-
-	var bc conf.Bootstrap
-	if err := c.Scan(&bc); err != nil {
-		panic(err)
-	}
-	db := data.NewDB(bc.Data, logger)
-	client := data.NewRedis(bc.Data)
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.RefreshLogoURI()
+	tokenlist.RefreshLogoURI("nervos")
 }
 
 func testAutoUpdateTokenList() {
-	logger := log.With(log.NewStdLogger(os.Stdout),
-		"ts", log.DefaultTimestamp,
-		"caller", log.DefaultCaller,
-		"service.id", id,
-		"service.name", Name,
-		"service.version", Version,
-		"trace.id", tracing.TraceID(),
-		"span.id", tracing.SpanID(),
-	)
-	c := config.New(
-		config.WithSource(
-			file.NewSource(flagconf),
-		),
-	)
-	defer c.Close()
-
-	if err := c.Load(); err != nil {
-		panic(err)
-	}
-
-	var bc conf.Bootstrap
-	if err := c.Scan(&bc); err != nil {
-		panic(err)
-	}
-	db := data.NewDB(bc.Data, logger)
-	client := data.NewRedis(bc.Data)
-	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
 	tokenlist.AutoUpdateTokenList(false, false, true)
 }
 
@@ -300,33 +281,6 @@ func testGetPrice() {
 }
 
 func testUpdateEVMDecimals() {
-	logger := log.With(log.NewStdLogger(os.Stdout),
-		"ts", log.DefaultTimestamp,
-		"caller", log.DefaultCaller,
-		"service.id", id,
-		"service.name", Name,
-		"service.version", Version,
-		"trace.id", tracing.TraceID(),
-		"span.id", tracing.SpanID(),
-	)
-	c := config.New(
-		config.WithSource(
-			file.NewSource(flagconf),
-		),
-	)
-	defer c.Close()
-
-	if err := c.Load(); err != nil {
-		panic(err)
-	}
-
-	var bc conf.Bootstrap
-	if err := c.Scan(&bc); err != nil {
-		panic(err)
-	}
-	db := data.NewDB(bc.Data, logger)
-	client := data.NewRedis(bc.Data)
-	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
 	chains := []string{"solana"}
 	for _, chain := range chains {
 		tokenlist.UpdateEVMDecimasl(chain)
@@ -335,33 +289,6 @@ func testUpdateEVMDecimals() {
 }
 
 func testUpdateDecimalsByChain() {
-	logger := log.With(log.NewStdLogger(os.Stdout),
-		"ts", log.DefaultTimestamp,
-		"caller", log.DefaultCaller,
-		"service.id", id,
-		"service.name", Name,
-		"service.version", Version,
-		"trace.id", tracing.TraceID(),
-		"span.id", tracing.SpanID(),
-	)
-	c := config.New(
-		config.WithSource(
-			file.NewSource(flagconf),
-		),
-	)
-	defer c.Close()
-
-	if err := c.Load(); err != nil {
-		panic(err)
-	}
-
-	var bc conf.Bootstrap
-	if err := c.Scan(&bc); err != nil {
-		panic(err)
-	}
-	db := data.NewDB(bc.Data, logger)
-	client := data.NewRedis(bc.Data)
-	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
 	chains := []string{"solana"}
 	for _, chain := range chains {
 		tokenlist.UpdateDecimalsByChain(chain)
@@ -370,65 +297,13 @@ func testUpdateDecimalsByChain() {
 }
 
 func testUpLoadTokenList() {
-	logger := log.With(log.NewStdLogger(os.Stdout),
-		"ts", log.DefaultTimestamp,
-		"caller", log.DefaultCaller,
-		"service.id", id,
-		"service.name", Name,
-		"service.version", Version,
-		"trace.id", tracing.TraceID(),
-		"span.id", tracing.SpanID(),
-	)
-	c := config.New(
-		config.WithSource(
-			file.NewSource(flagconf),
-		),
-	)
-	defer c.Close()
-
-	if err := c.Load(); err != nil {
-		panic(err)
-	}
-
-	var bc conf.Bootstrap
-	if err := c.Scan(&bc); err != nil {
-		panic(err)
-	}
-	db := data.NewDB(bc.Data, logger)
-	client := data.NewRedis(bc.Data)
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.UpLoadJsonToCDN([]string{"aptos"})
+	tokenlist.UpLoadJsonToCDN([]string{"nervos", "tron"})
 }
 
 func testUpLoadLocalImage() {
-	logger := log.With(log.NewStdLogger(os.Stdout),
-		"ts", log.DefaultTimestamp,
-		"caller", log.DefaultCaller,
-		"service.id", id,
-		"service.name", Name,
-		"service.version", Version,
-		"trace.id", tracing.TraceID(),
-		"span.id", tracing.SpanID(),
-	)
-	c := config.New(
-		config.WithSource(
-			file.NewSource(flagconf),
-		),
-	)
-	defer c.Close()
-
-	if err := c.Load(); err != nil {
-		panic(err)
-	}
-
-	var bc conf.Bootstrap
-	if err := c.Scan(&bc); err != nil {
-		panic(err)
-	}
-	db := data.NewDB(bc.Data, logger)
-	client := data.NewRedis(bc.Data)
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	images := []string{"tokenlist/tokenlist.json"}
+	images := []string{"images/nervos/nervos_0xcce6d0ac83d2491f8b8bd3875f3577b9e77f08a0396cd2e9274f339eb76e08a4.svg"}
 	for _, image := range images {
 		tokenlist.UpLoadLocalImages(image)
 	}
@@ -456,35 +331,9 @@ func testGetGasEstimate() {
 	fmt.Println("result:", resp)
 }
 
-func testUpdateApots() {
-	logger := log.With(log.NewStdLogger(os.Stdout),
-		"ts", log.DefaultTimestamp,
-		"caller", log.DefaultCaller,
-		"service.id", id,
-		"service.name", Name,
-		"service.version", Version,
-		"trace.id", tracing.TraceID(),
-		"span.id", tracing.SpanID(),
-	)
-	c := config.New(
-		config.WithSource(
-			file.NewSource(flagconf),
-		),
-	)
-	defer c.Close()
-
-	if err := c.Load(); err != nil {
-		panic(err)
-	}
-
-	var bc conf.Bootstrap
-	if err := c.Scan(&bc); err != nil {
-		panic(err)
-	}
-	db := data.NewDB(bc.Data, logger)
-	client := data.NewRedis(bc.Data)
+func testUpdateChainList() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.UpdateAptosToken()
+	tokenlist.UpdateChainToken("nervos")
 }
 
 func testGetTop20TokenList() {

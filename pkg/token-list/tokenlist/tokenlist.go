@@ -22,6 +22,7 @@ import (
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform"
 	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/types"
 	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/utils"
+	utils3 "gitlab.bixin.com/mili/node-proxy/pkg/utils"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -29,6 +30,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -565,6 +567,12 @@ func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoRe
 			tokenInfo, err := platform.GetPlatformTokenInfo(chain, address)
 			if err != nil {
 				c.log.Error("get platform token info error:", err)
+				tokenInfos = append(tokenInfos, &v1.GetTokenInfoResp_Data{
+					Chain:    chain,
+					Address:  address,
+					Symbol:   "Unknown Token",
+					Decimals: 0,
+				})
 				continue
 			}
 			if tokenInfo != nil {
@@ -803,10 +811,15 @@ func AutoUpdateTokenList(cmcFlag, cgFlag, jsonFlag bool) {
 
 }
 
-func RefreshLogoURI() {
+func RefreshLogoURI(chain string) {
 	//get all token list
-	tokenLists, err := GetAllTokenList()
-	//var tokenLists []models.TokenList
+	var tokenLists []models.TokenList
+	var err error
+	if chain != "" {
+		err = c.db.Where("chain = ?", chain).Find(&tokenLists).Error
+	} else {
+		tokenLists, err = GetAllTokenList()
+	}
 	//err := c.db.Where("address = ?", "TN3W4H6rK2ce4vX9YnFQHwKENnHjoxb3m9").Find(&tokenLists).Error
 	if err != nil {
 		c.log.Error("get token list error:", err)
@@ -884,8 +897,7 @@ func UpLoadJsonToCDN(chains []string) {
 			Version: time.Now().Unix(),
 		})
 	}
-	jsonFileName := "./tokenlist.json"
-	chainVersionMap := utils.ReadTokenListVersion(jsonFileName)
+	chainVersionMap := utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")
 	for _, info := range tokenVersions {
 		chainVersionMap[info.Chain] = info
 	}
@@ -893,11 +905,8 @@ func UpLoadJsonToCDN(chains []string) {
 	for _, value := range chainVersionMap {
 		writeVersionInfo = append(writeVersionInfo, value)
 	}
+	c.log.Info("json info:", writeVersionInfo)
 	err = utils.WriteJsonToFile(path+"/tokenlist.json", writeVersionInfo)
-	if err != nil {
-		c.log.Error("write json to file error:", err)
-	}
-	err = utils.WriteJsonToFile(jsonFileName, writeVersionInfo)
 	if err != nil {
 		c.log.Error("write json to file error:", err)
 	}
@@ -925,7 +934,6 @@ func UpLoadToken() {
 			UseHTTPS: true,
 		}
 		//bucketManager := storage.NewBucketManager(mac, &cfg)
-
 		formUploader := storage.NewFormUploader(&cfg)
 		ret := types.MyPutRet{}
 		putExtra := storage.PutExtra{
@@ -945,21 +953,6 @@ func UpLoadToken() {
 			}
 			c.log.Info("upload info:", ret.Bucket, ret.Key, ret.Fsize, ret.Hash, ret.Name)
 		}
-		//filepath.Walk("tokenlist", func(path string, info fs.FileInfo, err error) error {
-		//	if !info.IsDir() {
-		//		key := c.qiniu.KeyPrefix + path
-		//		putPolicy := storage.PutPolicy{
-		//			Scope: fmt.Sprintf("%s:%s", bucket, key),
-		//		}
-		//		upToken := putPolicy.UploadToken(mac)
-		//		err = formUploader.PutFile(context.Background(), &ret, upToken, key, path, &putExtra)
-		//		if err != nil {
-		//			c.log.Error("PutFile Error:", err)
-		//		}
-		//		c.log.Info("upload info:", ret.Bucket, ret.Key, ret.Fsize, ret.Hash, ret.Name)
-		//	}
-		//	return nil
-		//})
 	}
 
 	_, err := cdnManager.RefreshDirs([]string{c.logoPrefix, c.awsLogoPrefie})
@@ -987,13 +980,17 @@ func DownLoadImages(tokenLists []models.TokenList) {
 		} else {
 			image = t.Logo
 		}
-		if image != "" {
+		if image != "" && strings.HasPrefix(image, "https") {
 			path := "./images/" + t.Chain
 			exist, _ := utils.PathExists(path)
 			if !exist {
 				os.MkdirAll(path, 0777)
 			}
-			fileName := path + "/" + t.Chain + "_" + t.Address + ".png"
+			fileSuffix := ".png"
+			if strings.Contains(image, ".svg") {
+				fileSuffix = ".svg"
+			}
+			fileName := path + "/" + t.Chain + "_" + t.Address + fileSuffix
 			wg.Add(1)
 			go func(f, i string) {
 				defer wg.Done()
@@ -1057,7 +1054,7 @@ func UpLoadImages() {
 	cdnManager := cdn.NewCdnManager(mac)
 	var paths []string
 	filepath.Walk("images", func(path string, info fs.FileInfo, err error) error {
-		if !info.IsDir() && strings.HasSuffix(info.Name(), ".png") {
+		if !info.IsDir() {
 			paths = append(paths, path)
 		}
 		return nil
@@ -1100,7 +1097,7 @@ func UpLoadImages() {
 func InsertLogoURI() {
 	count := 0
 	filepath.Walk("images", func(path string, info fs.FileInfo, err error) error {
-		if !info.IsDir() && strings.HasSuffix(info.Name(), ".png") {
+		if !info.IsDir() {
 			logoURI := path
 			fileName := info.Name()[:len(info.Name())-4]
 			chainAddress := strings.Split(fileName, "_")
@@ -1217,7 +1214,7 @@ func UploadFileToS3(localFiles []string) {
 			callerReference := time.Now().String()
 			svc := cloudfront.New(sess)
 			paths := &cloudfront.Paths{
-				Items:    []*string{aws.String(awsInfo.KeyPrefix)},
+				Items:    []*string{aws.String(awsInfo.KeyPrefix + "*")},
 				Quantity: aws.Int64(1),
 			}
 
@@ -1232,6 +1229,17 @@ func UploadFileToS3(localFiles []string) {
 			}
 
 		}
+	}
+}
+
+func UpdateChainToken(chain string) {
+	switch chain {
+	case "nervos":
+		UpdateNervosToken()
+	case "aptos":
+		UpdateAptosToken()
+		//default:
+		//	utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")
 	}
 }
 
@@ -1364,4 +1372,57 @@ func GetTop20TokenList(chain string) ([]*v1.TokenInfoData, error) {
 		return result, nil
 	}
 	return result, nil
+}
+func UpdateNervosToken() {
+	count := 0
+	page := 1
+	pageSize := 20
+	url := "https://mainnet-api.explorer.nervos.org/api/v1/udts"
+	params := map[string]string{
+		"page":      fmt.Sprintf("%d", page),
+		"page_size": fmt.Sprintf("%d", pageSize),
+	}
+	heads := map[string]string{
+		"Content-Type": "application/vnd.api+json",
+		"Accept":       "application/vnd.api+json",
+	}
+	out := &types.NervosTokenList{}
+	for {
+		err := utils3.CommHttpsForm(url, "GET", params, heads, "", out)
+		if err != nil {
+			c.log.Error("get nervos token list error:", err)
+		}
+		count += len(out.Data)
+		handlerNervosList(out)
+		if len(out.Data) < pageSize {
+			break
+		}
+		page += 1
+		params["page"] = fmt.Sprintf("%d", page)
+	}
+}
+
+func handlerNervosList(data *types.NervosTokenList) {
+	for _, d := range data.Data {
+		var decimal int
+		if d.Attributes.Decimal != "" {
+			decimal, _ = strconv.Atoi(d.Attributes.Decimal)
+		}
+		if d.Attributes.TypeScript.Args != "" {
+			t := models.TokenList{
+				Symbol:   d.Attributes.Symbol,
+				Name:     d.Attributes.FullName,
+				Address:  strings.ToLower(d.Attributes.TypeScript.Args),
+				Logo:     d.Attributes.IconFile,
+				Decimals: decimal,
+				Chain:    "nervos",
+			}
+			result := c.db.Clauses(clause.OnConflict{
+				UpdateAll: true,
+			}).Create(&t)
+			if result.Error != nil {
+				c.log.Error("create db nervos error:", result.Error)
+			}
+		}
+	}
 }
