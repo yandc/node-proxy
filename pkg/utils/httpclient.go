@@ -1,9 +1,11 @@
 package utils
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -74,3 +76,66 @@ func JsonHttpsPost(url string, id int, method, jsonrpc string, out interface{}, 
 	}
 	return json.Unmarshal(jsonResp.Result, &out)
 }
+
+func CommHttpsForm(url, method string, params, headers map[string]string, reqBody, out interface{}) error {
+	var bodyReader io.Reader
+	if reqBody != nil {
+		if value, ok := reqBody.(string); ok {
+			bodyReader = strings.NewReader(value)
+		} else {
+			byts, err := json.Marshal(reqBody)
+			if err != nil {
+				return err
+			}
+			bodyReader = bytes.NewReader(byts)
+		}
+	}
+	req, err := http.NewRequest(method, url, bodyReader)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	for key, value := range headers {
+		req.Header.Set(key, value)
+	}
+	if params != nil {
+		q := req.URL.Query()
+		for k, v := range params {
+			q.Add(k, v)
+		}
+		req.URL.RawQuery = q.Encode()
+	}
+	//tr := &http.Transport{
+	//	TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	//}
+	client := &http.Client{
+		//Transport: GlobalTransport,
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return errors.New(string(body))
+	}
+	if err = json.Unmarshal(body, &out); err != nil {
+		return err
+	}
+	return nil
+}
+
+//var GlobalTransport *http.Transport
+//
+//func init() {
+//	uu, _ := url.Parse("http://127.0.0.1:1087")
+//	GlobalTransport = &http.Transport{
+//		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+//		Proxy:           http.ProxyURL(uu),
+//	}
+//}

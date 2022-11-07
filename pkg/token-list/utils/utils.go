@@ -123,6 +123,7 @@ var handlerNameMap = map[string]string{
 	"ETC":       "ethereum-classic",
 	"solana":    "solana",
 	"aptos":     "aptos",
+	"nervos":    "nervos",
 }
 
 var chainNameMap = map[string]string{
@@ -145,6 +146,7 @@ var chainNameMap = map[string]string{
 	"ETC":       "ethereum-classic",
 	"Solana":    "solana",
 	"Aptos":     "aptos",
+	"Nervos":    "nervos",
 
 	"ETHTEST":       "ethereum",
 	"HECOTEST":      "huobi-token",
@@ -165,6 +167,7 @@ var chainNameMap = map[string]string{
 	"ETCTEST":       "ethereum-classic",
 	"SolanaTEST":    "solana",
 	"AptosTEST":     "aptos",
+	"NervosTEST":    "nervos",
 }
 
 var db2Chain = map[string]string{
@@ -187,6 +190,7 @@ var db2Chain = map[string]string{
 	"ethereum-classic":    "ETC",
 	"solana":              "Solana",
 	"aptos":               "Aptos",
+	"nervos":              "Nervos",
 }
 
 var TokenFileMap = map[string][]string{
@@ -489,7 +493,10 @@ func GetChainNameByChain(chain string) string {
 }
 
 func DownLoad(base string, url string) error {
-	v, err := http.Get(url)
+	client := &http.Client{
+		//Transport: utils.GlobalTransport,
+	}
+	v, err := client.Get(url)
 	if err != nil {
 		return err
 	}
@@ -596,6 +603,20 @@ func GetChainByDBChain(dbChain string) string {
 		return value
 	}
 	return ""
+}
+
+func GetCDNTokenList(url string) map[string]types.TokenInfoVersion {
+	var tokenListVersion []types.TokenInfoVersion
+	err := HttpsGetForm(url, nil, &tokenListVersion)
+	if err != nil {
+		fmt.Println("error", err)
+		return ReadTokenListVersion("./tokenlist.json")
+	}
+	result := make(map[string]types.TokenInfoVersion)
+	for _, info := range tokenListVersion {
+		result[info.Chain] = info
+	}
+	return result
 }
 
 func ReadTokenListVersion(fileName string) map[string]types.TokenInfoVersion {

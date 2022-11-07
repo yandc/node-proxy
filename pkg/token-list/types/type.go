@@ -157,3 +157,19 @@ type CGMarket struct {
 	ID            string `json:"id"`
 	MarketCapRank int    `json:"market_cap_rank"`
 }
+
+type NervosTokenList struct {
+	Data []struct {
+		ID         string `json:"id"`
+		Type       string `json:"type"`
+		Attributes struct {
+			Symbol     string `json:"symbol"`
+			FullName   string `json:"full_name"`
+			IconFile   string `json:"icon_file"`
+			TypeScript struct {
+				Args string `json:"args"`
+			} `json:"type_script"`
+			Decimal string `json:"decimal"`
+		} `json:"attributes"`
+	} `json:"data"`
+}
