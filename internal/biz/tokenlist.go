@@ -46,7 +46,7 @@ func (uc *TokenListUsecase) AutoUpdateTokenList(ctx context.Context) {
 	for true {
 		select {
 		case <-transactionPlan.C:
-			uc.repo.AutoUpdateTokenList(ctx)
+			//uc.repo.AutoUpdateTokenList(ctx)
 		}
 	}
 }
