@@ -1,0 +1,497 @@
+package list
+
+import (
+	"encoding/hex"
+	"encoding/json"
+	"errors"
+	"fmt"
+	v1 "gitlab.bixin.com/mili/node-proxy/api/nft/v1"
+	v12 "gitlab.bixin.com/mili/node-proxy/api/platform/v1"
+	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
+	"gitlab.bixin.com/mili/node-proxy/pkg/nft"
+	"gitlab.bixin.com/mili/node-proxy/pkg/nft/types"
+	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
+	"gorm.io/gorm/clause"
+	"strings"
+	"sync"
+	"time"
+)
+
+func CreateNFTList(chain string) {
+	assetList, err := GetNFTList(chain, "")
+	if err != nil {
+		nft.GetNFTLog().Error("get asset list error:", err)
+	}
+	i := 1
+	AssetType2Models(chain, assetList.Assets)
+	for len(assetList.Assets) >= nft.MAXLISTLIMIT {
+		cursor := assetList.Next
+		assetList, err = GetNFTList(chain, cursor)
+		if err != nil {
+			nft.GetNFTLog().Error("get asset list error:", err)
+		}
+		AssetType2Models(chain, assetList.Assets)
+		i++
+	}
+}
+
+// GetNFTList get nft list
+func GetNFTList(chain, cursor string) (*types.AssetList, error) {
+	//https://api.opensea.io/api/v1/assets
+	var url string
+	var headers map[string]string
+	if strings.HasSuffix(chain, "TEST") {
+		url = nft.TESTBASEURL + "assets"
+	} else {
+		url = nft.BASEURL + "assets"
+		headers = map[string]string{
+			"X-API-KEY": nft.OPENSEA_KEY,
+			"accept":    "application/json",
+		}
+	}
+	//url := nft.BASEURL + "assets"
+	params := map[string]string{
+		"format": "json",
+		"limit":  fmt.Sprintf("%d", nft.MAXLISTLIMIT),
+	}
+	if cursor != "" {
+		params["cursor"] = cursor
+	}
+	out := &types.AssetList{}
+	err := utils.HttpsGet(url, params, headers, out)
+	if err != nil {
+		for i := 0; err != nil && i < 3; i++ {
+			time.Sleep(1 * time.Second)
+			err = utils.HttpsGet(url, params, headers, out)
+		}
+	}
+	return out, err
+}
+
+func GetOpenSeaAsset(chain, contractAddress, tokenId string) (types.Asset, error) {
+	var url string
+	var result types.Asset
+	if strings.HasSuffix(chain, "TEST") {
+		url = nft.TESTBASEURL + "asset/" + fmt.Sprintf("%s/%s?format=json", contractAddress, tokenId)
+	} else {
+		url = nft.BASEURL + "asset/" + fmt.Sprintf("%s/%s?format=json", contractAddress, tokenId)
+	}
+	resp, err := nft.DoOpenSeaRequest(url)
+	if err != nil {
+		for i := 0; err != nil && i < 3; i++ {
+			time.Sleep(time.Duration(i) * time.Second)
+			resp, err = nft.DoOpenSeaRequest(url)
+		}
+	}
+	if err != nil {
+		return result, err
+	}
+	err = json.Unmarshal([]byte(resp), &result)
+	return result, err
+}
+
+/*func GetAsset(chain, contractAddress, tokenId string) (*types.Asset, error) {
+	var url string
+	var headers map[string]string
+	if strings.HasSuffix(chain, "TEST") {
+		url = nft.TESTBASEURL + "asset/" + fmt.Sprintf("%s/%s", contractAddress, tokenId)
+	} else {
+		url = nft.BASEURL + "asset/" + fmt.Sprintf("%s/%s", contractAddress, tokenId)
+		headers = map[string]string{
+			"X-API-KEY": nft.OPENSEA_KEY,
+			"accept":    "application/json",
+		}
+	}
+	out := &types.Asset{}
+	err := utils.HttpsGet(url, nil, headers, out)
+	if err != nil {
+		for i := 0; err != nil && i < 3; i++ {
+			time.Sleep(1 * time.Second)
+			err = utils.HttpsGet(url, nil, headers, out)
+		}
+	}
+	return out, err
+}
+*/
+func AssetType2Models(chain string, assets []types.Asset) {
+	assetModel := make([]models.NftList, len(assets))
+	for i := 0; i < len(assets); i++ {
+		var properties string
+		if len(assets[i].Traits) > 0 {
+			b, _ := json.Marshal(assets[i].Traits)
+			properties = string(b)
+		}
+		assetModel[i] = models.NftList{
+			TokenId:               assets[i].TokenID,
+			TokenAddress:          strings.ToLower(assets[i].AssetContract.Address),
+			Name:                  assets[i].AssetContract.Name,
+			Symbol:                assets[i].AssetContract.Symbol,
+			TokenType:             assets[i].AssetContract.SchemaName,
+			Description:           assets[i].Description,
+			ImageURL:              assets[i].ImageURL,
+			ImageOriginalURL:      assets[i].ImageOriginalURL,
+			Chain:                 chain,
+			Rarity:                "",
+			Network:               "Ethereum",
+			Properties:            properties,
+			CollectionName:        assets[i].Collection.Name,
+			CollectionSlug:        assets[i].Collection.Slug,
+			CollectionDescription: assets[i].Collection.Description,
+			CollectionImageURL:    assets[i].Collection.ImageURL,
+			NftName:               assets[i].Name,
+			AnimationURL:          assets[i].AnimationURL,
+		}
+	}
+	if len(assetModel) > 0 {
+		result := nft.GetNFTDb().Clauses(clause.OnConflict{
+			UpdateAll: true,
+		}).Create(&assetModel)
+		if result.Error != nil {
+			nft.GetNFTLog().Error("create db error:", result.Error)
+		}
+	}
+
+}
+
+func OpenSea2Models(chain string, asset types.Asset) models.NftList {
+	var properties, rarity string
+	if len(asset.Traits) > 0 {
+		b, _ := json.Marshal(asset.Traits)
+		properties = string(b)
+	}
+	if asset.RarityData != nil {
+		b, _ := json.Marshal(asset.Traits)
+		rarity = string(b)
+	}
+	network := nft.GetFullName(chain)
+	return models.NftList{
+		TokenId:               asset.TokenID,
+		TokenAddress:          strings.ToLower(asset.AssetContract.Address),
+		Name:                  asset.AssetContract.Name,
+		Symbol:                asset.AssetContract.Symbol,
+		TokenType:             asset.AssetContract.SchemaName,
+		Description:           asset.Description,
+		ImageURL:              asset.ImageURL,
+		ImageOriginalURL:      asset.ImageOriginalURL,
+		Chain:                 chain,
+		Rarity:                rarity,
+		Network:               network,
+		Properties:            properties,
+		CollectionName:        asset.Collection.Name,
+		CollectionSlug:        asset.Collection.Slug,
+		CollectionDescription: asset.Collection.Description,
+		CollectionImageURL:    asset.Collection.ImageURL,
+		NftName:               asset.Name,
+		AnimationURL:          asset.AnimationURL,
+	}
+}
+
+// GetNFTInfo get nft info
+func GetNFTInfo(chain string, tokenInfos []*v1.GetNftInfoRequest_NftInfo) ([]*v1.GetNftReply_NftInfoResp, error) {
+	params := make([][]interface{}, 0, len(tokenInfos))
+	addressMap := make(map[string]string, len(tokenInfos))
+	for _, tokenInfo := range tokenInfos {
+		address := tokenInfo.TokenAddress
+		if strings.HasPrefix(tokenInfo.TokenAddress, "0x") && chain != "STC" {
+			address = strings.ToLower(tokenInfo.TokenAddress)
+		}
+		params = append(params, []interface{}{address, tokenInfo.TokenId})
+		addressMap[address+":"+tokenInfo.TokenId] = tokenInfo.TokenAddress
+	}
+	var nftListModes []models.NftList
+	err := nft.GetNFTDb().Where("chain = ? and (token_address,token_id) IN ?", chain, params).Find(&nftListModes).Error
+	if err != nil {
+		nft.GetNFTLog().Error("get db nft list error:", err)
+		return nil, err
+	}
+	result := make([]*v1.GetNftReply_NftInfoResp, 0, len(tokenInfos)+2)
+	for _, nftList := range nftListModes {
+		address := nftList.TokenAddress
+		if value, ok := addressMap[nftList.TokenAddress+":"+nftList.TokenId]; ok {
+			address = value
+			delete(addressMap, nftList.TokenAddress+":"+nftList.TokenId)
+		}
+		if nftList.ImageURL != "" && !strings.HasPrefix(nftList.ImageURL, "https") {
+			nftList.ImageURL = strings.Replace(nftList.ImageURL, "ipfs://", nft.GetIPFS(), 1)
+		}
+		if nftList.ImageOriginalURL != "" &&
+			!strings.HasPrefix(nftList.ImageOriginalURL, "https") {
+			nftList.ImageOriginalURL = strings.Replace(nftList.ImageOriginalURL, "ipfs://", nft.GetIPFS(), 1)
+		}
+
+		if nftList.CollectionImageURL != "" && !strings.HasPrefix(nftList.CollectionImageURL, "https") {
+			nftList.CollectionImageURL = strings.Replace(nftList.CollectionImageURL, "ipfs://", nft.GetIPFS(), 1)
+		}
+		if nftList.AnimationURL != "" && !strings.HasPrefix(nftList.AnimationURL, "https") {
+			nftList.AnimationURL = strings.Replace(nftList.AnimationURL, "ipfs://", nft.GetIPFS(), 1)
+		}
+		result = append(result, &v1.GetNftReply_NftInfoResp{
+			TokenId:               nftList.TokenId,
+			TokenType:             strings.ToUpper(nftList.TokenType),
+			TokenAddress:          address,
+			Name:                  nftList.Name,
+			Symbol:                nftList.Symbol,
+			ImageURL:              nftList.ImageURL,
+			ImageOriginalURL:      nftList.ImageOriginalURL,
+			Description:           nftList.Description,
+			Chain:                 chain,
+			CollectionName:        nftList.CollectionName,
+			CollectionSlug:        nftList.CollectionSlug,
+			Rarity:                nftList.Rarity,
+			Network:               nftList.Network,
+			Properties:            nftList.Properties,
+			CollectionDescription: nftList.CollectionDescription,
+			NftName:               nftList.NftName,
+			CollectionImageURL:    nftList.CollectionImageURL,
+			AnimationURL:          nftList.AnimationURL,
+		})
+	}
+	if len(addressMap) > 0 {
+		var wg sync.WaitGroup
+		for key, value := range addressMap {
+			wg.Add(1)
+			go func(addressInfo, oldAddress string) {
+				defer wg.Done()
+				addressAndId := strings.Split(addressInfo, ":")
+				if len(addressAndId) > 1 {
+					address, tokenId := addressAndId[0], addressAndId[1]
+					asset, err := GetOpenSeaAsset(chain, address, tokenId)
+
+					var nftListModel models.NftList
+					if asset.ID > 0 && err == nil {
+						nftListModel = OpenSea2Models(chain, asset)
+					} else {
+						nftInfo, err := GetSingeNFTByNFTPort(address, tokenId)
+						if err != nil {
+							nft.GetNFTLog().Error("get asset scan error:", err)
+							return
+						}
+						nftListModel = NFTPort2Models(chain, *nftInfo)
+					}
+					if nftListModel.TokenId != "" {
+						dbresult := nft.GetNFTDb().Clauses(clause.OnConflict{
+							UpdateAll: true,
+						}).Create(&nftListModel)
+						if dbresult.Error != nil {
+							nft.GetNFTLog().Error("create db error:", dbresult.Error)
+						}
+
+						nftListModel.TokenType = strings.ToUpper(nftListModel.TokenType)
+						if nftListModel.ImageURL != "" && !strings.HasPrefix(nftListModel.ImageURL, "https") {
+							nftListModel.ImageURL = strings.Replace(nftListModel.ImageURL, "ipfs://", nft.GetIPFS(), 1)
+						}
+						if nftListModel.ImageOriginalURL != "" &&
+							!strings.HasPrefix(nftListModel.ImageOriginalURL, "https") {
+							nftListModel.ImageOriginalURL = strings.Replace(nftListModel.ImageOriginalURL, "ipfs://", nft.GetIPFS(), 1)
+						}
+
+						if nftListModel.CollectionImageURL != "" && !strings.HasPrefix(nftListModel.CollectionImageURL, "https") {
+							nftListModel.CollectionImageURL = strings.Replace(nftListModel.CollectionImageURL, "ipfs://", nft.GetIPFS(), 1)
+						}
+						if nftListModel.AnimationURL != "" && !strings.HasPrefix(nftListModel.AnimationURL, "https") {
+							nftListModel.AnimationURL = strings.Replace(nftListModel.AnimationURL, "ipfs://", nft.GetIPFS(), 1)
+						}
+
+						result = append(result, &v1.GetNftReply_NftInfoResp{
+							TokenId:               nftListModel.TokenId,
+							TokenType:             nftListModel.TokenType,
+							TokenAddress:          oldAddress,
+							Name:                  nftListModel.Name,
+							Symbol:                nftListModel.Symbol,
+							ImageURL:              nftListModel.ImageURL,
+							ImageOriginalURL:      nftListModel.ImageOriginalURL,
+							Description:           nftListModel.Description,
+							Chain:                 chain,
+							CollectionName:        nftListModel.CollectionName,
+							CollectionSlug:        nftListModel.CollectionSlug,
+							Rarity:                nftListModel.Rarity,
+							Network:               "Ethereum",
+							Properties:            nftListModel.Properties,
+							CollectionDescription: nftListModel.CollectionDescription,
+							NftName:               nftListModel.NftName,
+							CollectionImageURL:    nftListModel.CollectionImageURL,
+							AnimationURL:          nftListModel.AnimationURL,
+						})
+					}
+
+				}
+			}(key, value)
+			wg.Wait()
+		}
+	}
+
+	return result, nil
+}
+
+func GetSingeNFTByNFTPort(tokenAddress, tokenId string) (*types.NFTPortAssetInfo, error) {
+	url := fmt.Sprintf("https://api.nftport.xyz/v0/nfts/%s/%s", tokenAddress, tokenId)
+	headers := map[string]string{
+		"Authorization": "275c2680-9df1-42b8-aaca-8d50ee42c3bf",
+	}
+	params := map[string]string{
+		"chain": "ethereum",
+	}
+	out := &types.NFTPortAssetInfo{}
+	err := utils.HttpsGet(url, params, headers, out)
+	if err != nil {
+		for i := 0; err != nil && i < 3; i++ {
+			time.Sleep(1 * time.Second)
+			err = utils.HttpsGet(url, nil, headers, out)
+		}
+	}
+	if err != nil {
+		return nil, err
+	}
+	if out.Response != "OK" {
+		return nil, errors.New(out.Error.Message)
+	}
+	return out, nil
+}
+
+func NFTPort2Models(chain string, asset types.NFTPortAssetInfo) models.NftList {
+	tempTokenIdName := fmt.Sprintf("#%s", asset.Nft.TokenID)
+	if asset.Contract.Name == "" && strings.Contains(asset.Nft.Metadata.Name, tempTokenIdName) {
+		asset.Contract.Name = strings.Trim(strings.Split(asset.Nft.Metadata.Name, tempTokenIdName)[0], " ")
+	}
+	if asset.Nft.Metadata.Name == "" {
+		asset.Nft.Metadata.Name = tempTokenIdName
+	}
+	properties, _ := json.Marshal(asset.Nft.Metadata.Attributes)
+	network := nft.GetFullName(chain)
+	return models.NftList{
+		TokenId:               asset.Nft.TokenID,
+		TokenAddress:          strings.ToLower(asset.Nft.ContractAddress),
+		TokenType:             strings.ToUpper(asset.Contract.Type),
+		Description:           asset.Nft.Metadata.Description,
+		ImageURL:              asset.Nft.Metadata.Image,
+		Chain:                 chain,
+		Rarity:                "",
+		Network:               network,
+		Properties:            string(properties),
+		CollectionName:        asset.Contract.Name,
+		CollectionDescription: asset.Contract.Metadata.Description,
+		CollectionImageURL:    asset.Contract.Metadata.ThumbnailURL,
+		NftName:               asset.Nft.Metadata.Name,
+		AnimationURL:          asset.Nft.AnimationURL,
+	}
+
+}
+
+func BuildNFTInfoFunc(chain, params string) (*v12.BuildWasmRequestReply, error) {
+	var tokenInfos [][]interface{}
+	tempParams, _ := hex.DecodeString(params)
+	if err := json.Unmarshal(tempParams, &tokenInfos); err != nil {
+
+	}
+	var nftListModes []models.NftList
+	err := nft.GetNFTDb().Where("chain = ? and (token_address,token_id) IN ?", chain, tokenInfos).Find(&nftListModes).Error
+	if err != nil {
+		nft.GetNFTLog().Error("get db nft list error:", err)
+		return nil, err
+	}
+	for index, nftList := range nftListModes {
+		if nftList.ImageURL != "" && !strings.HasPrefix(nftList.ImageURL, "https") {
+			nftList.ImageURL = strings.Replace(nftList.ImageURL, "ipfs://", nft.GetIPFS(), 1)
+		}
+		if nftList.ImageOriginalURL != "" &&
+			!strings.HasPrefix(nftList.ImageOriginalURL, "https") {
+			nftList.ImageOriginalURL = strings.Replace(nftList.ImageOriginalURL, "ipfs://", nft.GetIPFS(), 1)
+		}
+
+		if nftList.CollectionImageURL != "" && !strings.HasPrefix(nftList.CollectionImageURL, "https") {
+			nftList.CollectionImageURL = strings.Replace(nftList.CollectionImageURL, "ipfs://", nft.GetIPFS(), 1)
+		}
+		if nftList.AnimationURL != "" && !strings.HasPrefix(nftList.AnimationURL, "https") {
+			nftList.AnimationURL = strings.Replace(nftList.AnimationURL, "ipfs://", nft.GetIPFS(), 1)
+		}
+		nftListModes[index] = nftList
+	}
+	body, err := json.Marshal(nftListModes)
+	if err != nil {
+		nft.GetNFTLog().Error("json marshal error:", err)
+	}
+	return &v12.BuildWasmRequestReply{
+		Body: string(body),
+	}, nil
+}
+
+func AnalysisNFTResponse(chain, params, response string) (string, error) {
+	var result models.NftList
+	var paramsMap map[string]string
+	json.Unmarshal([]byte(params), &paramsMap)
+	var oldAddress string
+	if value, ok := paramsMap["oldAddress"]; ok {
+		oldAddress = value
+	}
+	switch chain {
+	case "ETH":
+		var assets types.Asset
+		if err := json.Unmarshal([]byte(response), &assets); err != nil {
+			return "", err
+		}
+		result = Assets2ModesList(chain, assets)
+	}
+	if oldAddress != "" {
+		result.TokenAddress = oldAddress
+	}
+	b, _ := json.Marshal(result)
+	return string(b), nil
+}
+
+func Assets2ModesList(chain string, asset types.Asset) models.NftList {
+	fullName := nft.GetFullName(chain)
+
+	var properties, ratiry string
+	if len(asset.Traits) > 0 {
+		b, _ := json.Marshal(asset.Traits)
+		properties = string(b)
+	}
+	if asset.RarityData != nil {
+		b, _ := json.Marshal(asset.RarityData)
+		ratiry = string(b)
+	}
+	tempModel := models.NftList{
+		TokenId:               asset.TokenID,
+		TokenAddress:          strings.ToLower(asset.AssetContract.Address),
+		Name:                  asset.AssetContract.Name,
+		Symbol:                asset.AssetContract.Symbol,
+		TokenType:             strings.ToUpper(asset.AssetContract.SchemaName),
+		Description:           asset.Description,
+		ImageURL:              asset.ImageURL,
+		ImageOriginalURL:      asset.ImageOriginalURL,
+		Chain:                 chain,
+		Rarity:                ratiry,
+		Network:               fullName,
+		Properties:            properties,
+		CollectionName:        asset.Collection.Name,
+		CollectionSlug:        asset.Collection.Slug,
+		CollectionDescription: asset.Collection.Description,
+		CollectionImageURL:    asset.Collection.ImageURL,
+		NftName:               asset.Name,
+		AnimationURL:          asset.AnimationURL,
+	}
+
+	dbresult := nft.GetNFTDb().Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Create(&tempModel)
+	if dbresult.Error != nil {
+		nft.GetNFTLog().Error("create db error:", dbresult.Error)
+	}
+
+	if tempModel.ImageURL != "" && !strings.HasPrefix(tempModel.ImageURL, "https") {
+		tempModel.ImageURL = strings.Replace(tempModel.ImageURL, "ipfs://", nft.GetIPFS(), 1)
+	}
+	if tempModel.ImageOriginalURL != "" &&
+		!strings.HasPrefix(tempModel.ImageOriginalURL, "https") {
+		tempModel.ImageOriginalURL = strings.Replace(tempModel.ImageOriginalURL, "ipfs://", nft.GetIPFS(), 1)
+	}
+
+	if tempModel.CollectionImageURL != "" && !strings.HasPrefix(tempModel.CollectionImageURL, "https") {
+		tempModel.CollectionImageURL = strings.Replace(tempModel.CollectionImageURL, "ipfs://", nft.GetIPFS(), 1)
+	}
+	if tempModel.AnimationURL != "" && !strings.HasPrefix(tempModel.AnimationURL, "https") {
+		tempModel.AnimationURL = strings.Replace(tempModel.AnimationURL, "ipfs://", nft.GetIPFS(), 1)
+	}
+
+	return tempModel
+}

@@ -94,6 +94,7 @@ func (p *platform) GetBalance(ctx context.Context, address, tokenAddress, decima
 }
 
 func (p *platform) BuildWasmRequest(ctx context.Context, nodeRpc, functionName, params string) (*v1.BuildWasmRequestReply, error) {
+
 	return nil, nil
 }
 func (p *platform) AnalysisWasmResponse(ctx context.Context, functionName, params, response string) (string, error) {

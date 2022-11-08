@@ -10,10 +10,14 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-redis/redis"
+	v12 "gitlab.bixin.com/mili/node-proxy/api/nft/v1"
 	pb "gitlab.bixin.com/mili/node-proxy/api/platform/v1"
 	v1 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/conf"
 	"gitlab.bixin.com/mili/node-proxy/internal/data"
+	"gitlab.bixin.com/mili/node-proxy/pkg/nft"
+	"gitlab.bixin.com/mili/node-proxy/pkg/nft/collection"
+	"gitlab.bixin.com/mili/node-proxy/pkg/nft/list"
 	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/tokenlist"
 	"google.golang.org/grpc"
 	"gorm.io/gorm"
@@ -106,6 +110,12 @@ func main() {
 		testGetTop20TokenList()
 	case "chainTokenList":
 		testUpdateChainList()
+	case "nftList":
+		testCreateNFTList()
+	case "nftInfo":
+		testGetNFTInfo()
+	case "nftCollection":
+		testCreateNFTCollection()
 	}
 	fmt.Println("test main end")
 }
@@ -369,4 +379,87 @@ func testGetTop20TokenList() {
 		fmt.Println("error=", err)
 	}
 	fmt.Println("result===", result)
+}
+
+func testCreateNFTList() {
+	logger := log.With(log.NewStdLogger(os.Stdout),
+		"ts", log.DefaultTimestamp,
+		"caller", log.DefaultCaller,
+		"service.id", id,
+		"service.name", Name,
+		"service.version", Version,
+		"trace.id", tracing.TraceID(),
+		"span.id", tracing.SpanID(),
+	)
+	c := config.New(
+		config.WithSource(
+			file.NewSource(flagconf),
+		),
+	)
+	defer c.Close()
+
+	if err := c.Load(); err != nil {
+		panic(err)
+	}
+
+	var bc conf.Bootstrap
+	if err := c.Scan(&bc); err != nil {
+		panic(err)
+	}
+	db := data.NewDB(bc.Data, logger)
+	nft.InitNFT(db, logger, bc.NftList)
+	list.CreateNFTList("ETHGoerliTEST")
+}
+
+func testCreateNFTCollection() {
+	logger := log.With(log.NewStdLogger(os.Stdout),
+		"ts", log.DefaultTimestamp,
+		"caller", log.DefaultCaller,
+		"service.id", id,
+		"service.name", Name,
+		"service.version", Version,
+		"trace.id", tracing.TraceID(),
+		"span.id", tracing.SpanID(),
+	)
+	c := config.New(
+		config.WithSource(
+			file.NewSource(flagconf),
+		),
+	)
+	defer c.Close()
+
+	if err := c.Load(); err != nil {
+		panic(err)
+	}
+
+	var bc conf.Bootstrap
+	if err := c.Scan(&bc); err != nil {
+		panic(err)
+	}
+	db := data.NewDB(bc.Data, logger)
+	nft.InitNFT(db, logger, bc.NftList)
+	collection.CreateCollectionList()
+}
+
+func testGetNFTInfo() {
+	conn, err := grpc.Dial("127.0.0.1:9001", grpc.WithInsecure())
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+	defer conn.Close()
+	p := v12.NewNftClient(conn)
+
+	req := new(v12.GetNftInfoRequest)
+	req.Chain = "ETH"
+	tokenInfo := []*v12.GetNftInfoRequest_NftInfo{
+		{TokenAddress: "0x495f947276749ce646f68ac8c248420045cb7b5e", TokenId: "7913402202769379533690164279743878593095549349620263384589938601384149516289"},
+		{TokenAddress: "0xc8ff927b56d617ea04976f5d5f77383cf72712d3", TokenId: "907"},
+		{TokenAddress: "0xc8ff927b56d617ea04976f5d5f77383cf72712d3", TokenId: "908"},
+	}
+	req.NftInfo = tokenInfo
+	resp, err := p.GetNftInfo(context.Background(), req)
+	if err != nil {
+		fmt.Println("get balacne error", err)
+	}
+	fmt.Println("result:", resp)
 }

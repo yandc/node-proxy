@@ -77,6 +77,39 @@ func JsonHttpsPost(url string, id int, method, jsonrpc string, out interface{}, 
 	return json.Unmarshal(jsonResp.Result, &out)
 }
 
+func HttpsGet(url string, params, headers map[string]string, out interface{}) error {
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	for key, value := range headers {
+		req.Header.Add(key, value)
+	}
+	q := req.URL.Query()
+	for k, v := range params {
+		q.Add(k, v)
+	}
+	req.URL.RawQuery = q.Encode()
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	if 200 != resp.StatusCode {
+		return fmt.Errorf("%s", body)
+	}
+	if err := json.Unmarshal(body, &out); err != nil {
+		return err
+	}
+	return nil
+}
+
 func CommHttpsForm(url, method string, params, headers map[string]string, reqBody, out interface{}) error {
 	var bodyReader io.Reader
 	if reqBody != nil {
@@ -91,6 +124,7 @@ func CommHttpsForm(url, method string, params, headers map[string]string, reqBod
 		}
 	}
 	req, err := http.NewRequest(method, url, bodyReader)
+
 	if err != nil {
 		return err
 	}
@@ -105,6 +139,7 @@ func CommHttpsForm(url, method string, params, headers map[string]string, reqBod
 		}
 		req.URL.RawQuery = q.Encode()
 	}
+
 	//tr := &http.Transport{
 	//	TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	//}
@@ -125,6 +160,7 @@ func CommHttpsForm(url, method string, params, headers map[string]string, reqBod
 		return errors.New(string(body))
 	}
 	if err = json.Unmarshal(body, &out); err != nil {
+
 		return err
 	}
 	return nil

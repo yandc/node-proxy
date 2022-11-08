@@ -13,7 +13,7 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewDB, NewRedis, NewTokenListRepo, NewPlatformRepo)
+var ProviderSet = wire.NewSet(NewData, NewDB, NewRedis, NewTokenListRepo, NewPlatformRepo, NewNFTRepo)
 
 // Data .
 type Data struct {
@@ -30,7 +30,8 @@ func NewDB(conf *conf.Data, logger log.Logger) *gorm.DB {
 	if err != nil {
 		log.Fatalf("failed opening connection to postgres: %v", err)
 	}
-	if err := db.AutoMigrate(&models.CoinGecko{}, &models.CoinMarketCap{}, &models.TokenList{}); err != nil {
+	if err := db.AutoMigrate(&models.CoinGecko{}, &models.CoinMarketCap{}, &models.TokenList{}, &models.NftList{},
+		&models.NftCollection{}); err != nil {
 		log.Fatal(err)
 	}
 	return db

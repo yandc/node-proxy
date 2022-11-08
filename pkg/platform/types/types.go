@@ -23,6 +23,7 @@ const (
 	RESPONSE_ADDRESS_ACTIVE    = "addressActive"
 	RESPONSE_RENT              = "rent"
 	RESPONSE_TOKEN_INFO        = "tokenInfo"
+	NFTINFO                    = "nftInfo"
 )
 
 type AnalysisResponseType func(params string, result json.RawMessage) (interface{}, error)

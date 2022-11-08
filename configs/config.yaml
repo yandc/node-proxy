@@ -40,6 +40,8 @@ tokenList:
       region: region
       keyPrefix: /download/tokentest/
       distributionId: distributionId
+nftList:
+  ipfs: https://cloudflare-ipfs.com/ipfs/
 
 platform:
   - chain: Cronos
