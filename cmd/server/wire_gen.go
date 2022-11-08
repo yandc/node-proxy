@@ -18,7 +18,7 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, confData *conf.Data, tokenList *conf.TokenList, arg []*conf.Platform, logger log.Logger) (*kratos.App, func(), error) {
+func wireApp(confServer *conf.Server, confData *conf.Data, tokenList *conf.TokenList, arg []*conf.Platform, nftList *conf.NFTList, logger log.Logger) (*kratos.App, func(), error) {
 	db := data.NewDB(confData, logger)
 	client := data.NewRedis(confData)
 	tokenListRepo := data.NewTokenListRepo(tokenList, db, client, logger)
@@ -27,7 +27,10 @@ func wireApp(confServer *conf.Server, confData *conf.Data, tokenList *conf.Token
 	platformRepo := data.NewPlatformRepo(arg, logger)
 	platformUseCase := biz.NewPlatformUseCase(platformRepo, logger)
 	platformService := service.NewPlatformService(platformUseCase)
-	grpcServer := server.NewGRPCServer(confServer, tokenlistService, platformService, logger)
+	nftRepo := data.NewNFTRepo(db, logger, nftList)
+	nftUsecase := biz.NewNFTUsecase(nftRepo, logger)
+	nftService := service.NewNFTService(nftUsecase)
+	grpcServer := server.NewGRPCServer(confServer, tokenlistService, platformService, nftService, logger)
 	app := newApp(logger, grpcServer)
 	return app, func() {
 	}, nil

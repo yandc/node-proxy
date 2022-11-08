@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package api.nft.v1;
+
+option go_package = "gitlab.bixin.com/mili/node-proxy/api/nft/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.nft.v1";
+
+service Nft {
+  rpc GetNftInfo (GetNftInfoRequest) returns (GetNftReply);
+  rpc NetNftCollectionInfo (GetNftCollectionInfoReq) returns (GetNftCollectionInfoReply);
+}
+
+message GetNftInfoRequest {
+  string chain = 1;
+  message NftInfo{
+    string tokenId = 1;
+    string tokenAddress = 2;
+  }
+  repeated NftInfo nftInfo = 2;
+}
+
+message GetNftReply {
+  message NftInfoResp {
+    string tokenId = 1;
+    string tokenAddress = 2;
+    string name = 3;
+    string symbol = 4;
+    string tokenType = 5;
+    string imageURL = 6;
+    string imageOriginalURL = 7;
+    string description = 8;
+    string chain = 9;
+    string collectionName = 10;
+    string collectionSlug = 11;
+    string rarity = 12;
+    string network = 13;
+    string properties = 14;
+    string collectionDescription = 15;
+    string nftName = 16;
+    string collectionImageURL = 17;
+    string animationURL = 18;
+  }
+  bool ok = 1;
+  string errMsg = 2;
+  repeated NftInfoResp data = 3;
+
+}
+
+message GetNftCollectionInfoReq{
+  string chain = 1;
+  string address = 2;
+}
+
+message GetNftCollectionInfoReply{
+  message Data {
+    string chain = 1;
+    string address = 2;
+    string name = 3;
+    string slug = 4;
+    string imageURL = 5;
+    string description = 6;
+  }
+  bool ok = 1;
+  string errMsg = 2;
+  Data data = 3;
+}

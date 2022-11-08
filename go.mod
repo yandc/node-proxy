@@ -3,6 +3,8 @@ module gitlab.bixin.com/mili/node-proxy
 go 1.17
 
 require (
+	github.com/Danny-Dasilva/CycleTLS/cycletls v0.0.0-20220620102923-c84d740b4757
+	github.com/RomainMichau/cloudscraper_go v0.4.0
 	github.com/aws/aws-sdk-go v1.44.114
 	github.com/btcsuite/btcutil v1.0.3-0.20201208143702-a53e38424cce
 	github.com/ethereum/go-ethereum v1.10.13
@@ -19,6 +21,11 @@ require (
 )
 
 require (
+	github.com/Danny-Dasilva/fhttp v0.0.0-20220524230104-f801520157d6 // indirect
+	github.com/Danny-Dasilva/utls v0.0.0-20220604023528-30cb107b834e // indirect
+	github.com/andybalholm/brotli v1.0.4 // indirect
+	github.com/btcsuite/btcd/chaincfg/chainhash v1.0.1 // indirect
+	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/rjeczalik/notify v0.9.1 // indirect
 )
@@ -37,7 +44,7 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
-	github.com/gorilla/websocket v1.4.2 // indirect
+	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.12.1 // indirect
@@ -59,7 +66,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.7.0 // indirect
 	go.uber.org/atomic v1.6.0 // indirect
 	go.uber.org/multierr v1.5.0 // indirect
-	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
+	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e // indirect
 	golang.org/x/lint v0.0.0-20191125180803-fdd1cda4f05f // indirect
 	golang.org/x/net v0.0.0-20220708220712-1185a9018129 // indirect
 	golang.org/x/sync v0.0.0-20220513210516-0976fa681c29 // indirect
