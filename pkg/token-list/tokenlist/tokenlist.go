@@ -45,6 +45,7 @@ type config struct {
 	awsLogoPrefie string
 	qiniu         types.QiNiuConf
 	aws           []*conf.TokenList_AWS
+	chains        []string
 }
 
 const (
@@ -70,7 +71,8 @@ func InitTokenList(conf *conf.TokenList, db *gorm.DB, client *redis.Client, logg
 			Bucket:    conf.Qiniu.Bucket,
 			KeyPrefix: conf.Qiniu.KeyPrefix,
 		},
-		aws: conf.Aws,
+		aws:    conf.Aws,
+		chains: conf.Chains,
 	}
 
 	InitCG(conf.Coingecko.BaseURL, db, logger)
@@ -843,6 +845,13 @@ func RefreshLogoURI(chain string) {
 }
 
 func UpLoadJsonToCDN(chains []string) {
+	chainVersionMap := utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")
+	// 验证已上线的链
+	for _, chain := range c.chains {
+		if _, ok := chainVersionMap[chain]; !ok {
+			chains = append(chains, utils.GetChainNameByChain(chain))
+		}
+	}
 	var tokenLists []models.TokenList
 	var err error
 	if len(chains) > 0 {
@@ -890,14 +899,13 @@ func UpLoadJsonToCDN(chains []string) {
 		if err != nil {
 			c.log.Error("编码错误", err.Error())
 		}
-
 		tokenVersions = append(tokenVersions, types.TokenInfoVersion{
 			Chain:   chain,
 			URL:     c.logoPrefix + fileName,
 			Version: time.Now().Unix(),
 		})
 	}
-	chainVersionMap := utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")
+
 	for _, info := range tokenVersions {
 		chainVersionMap[info.Chain] = info
 	}
@@ -1201,7 +1209,7 @@ func UploadFileToS3(localFiles []string) {
 				buffer, _ := os.ReadFile(localFile)
 				key := awsInfo.KeyPrefix + localFile
 				//fmt.Println("tokenList==", string(buffer))
-				_, err = s3.New(sess).PutObject(&s3.PutObjectInput{
+				ret, err := s3.New(sess).PutObject(&s3.PutObjectInput{
 					Bucket: aws.String(awsInfo.Bucket), //桶名
 					Key:    aws.String(key),
 					Body:   bytes.NewReader(buffer),
@@ -1209,6 +1217,7 @@ func UploadFileToS3(localFiles []string) {
 				if err != nil {
 					c.log.Error("put file to s3 error:", err)
 				}
+				c.log.Info("upload s3 info:", ret)
 			}
 			//refresh dir
 			callerReference := time.Now().String()
@@ -1223,10 +1232,11 @@ func UploadFileToS3(localFiles []string) {
 					CallerReference: aws.String(callerReference),
 					Paths:           paths,
 				}}
-			_, err = svc.CreateInvalidation(input)
+			ret, err := svc.CreateInvalidation(input)
 			if err != nil {
 				c.log.Error("create invalidation error:", err)
 			}
+			c.log.Info("s3 refresh dir:", ret)
 
 		}
 	}

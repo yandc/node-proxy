@@ -608,9 +608,13 @@ func GetChainByDBChain(dbChain string) string {
 func GetCDNTokenList(url string) map[string]types.TokenInfoVersion {
 	var tokenListVersion []types.TokenInfoVersion
 	err := HttpsGetForm(url, nil, &tokenListVersion)
+	for i := 0; err != nil && i < 3; i++ {
+		time.Sleep(1 * time.Second)
+		err = HttpsGetForm(url, nil, &tokenListVersion)
+	}
 	if err != nil {
-		fmt.Println("error", err)
-		return ReadTokenListVersion("./tokenlist.json")
+		fmt.Println("get cdn token list error:", err)
+		return nil
 	}
 	result := make(map[string]types.TokenInfoVersion)
 	for _, info := range tokenListVersion {
