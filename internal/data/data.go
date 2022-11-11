@@ -1,8 +1,6 @@
 package data
 
 import (
-	"fmt"
-
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-redis/redis"
 	"github.com/google/wire"
@@ -38,7 +36,6 @@ func NewDB(conf *conf.Data, logger log.Logger) *gorm.DB {
 }
 
 func NewRedis(conf *conf.Data) *redis.Client {
-	fmt.Println("redis config:", conf.Redis.Addr, int(conf.Redis.Db))
 	return redis.NewClient(&redis.Options{
 		Addr: conf.Redis.Addr,
 		DB:   int(conf.Redis.Db),

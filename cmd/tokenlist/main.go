@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/go-kratos/kratos/v2/log"
@@ -54,7 +53,6 @@ func main() {
 	if err := c.Scan(&bc); err != nil {
 		panic(err)
 	}
-	fmt.Println("db:", bc.Data.Database.String(), bc.TokenList.String())
 	tokenList, cleanup, err := initTokenListcase(bc.Data, bc.TokenList, logger)
 	if err != nil {
 		panic(err)

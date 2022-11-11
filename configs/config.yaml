@@ -40,6 +40,27 @@ tokenList:
       region: region
       keyPrefix: /download/tokentest/
       distributionId: distributionId
+  chains:
+    - ETH
+    - HECO
+    - OEC
+    - BSC
+    - Polygon
+    - Fantom
+    - Avalanche
+    - Cronos
+    - Arbitrum
+    - Klaytn
+    - Aurora
+    - Optimism
+    - Oasis
+    - TRX
+    - xDai
+    - ETC
+    - Solana
+    - Aptos
+    - Nervos
+    - STC
 nftList:
   ipfs: https://cloudflare-ipfs.com/ipfs/
 
@@ -147,6 +168,39 @@ platform:
     rpcURL:
       - https://api.trongrid.io
       - https://api.tronstack.io
+  - chain: Aptos
+    type: APTOS
+    rpcURL:
+      - https://fullnode.mainnet.aptoslabs.com/v1
+      - https://aptos-mainnet.pontem.network/v1
+      - https://fullnode.mainnet.martianwallet.xyz/v1
+  - chain: xDai
+    type: EVM
+    rpcURL:
+      - https://rpc.ankr.com/gnosis
+      - https://gnosischain-rpc.gateway.pokt.network
+      - https://xdai-rpc.gateway.pokt.network
+      - https://gnosis-mainnet.public.blastapi.io
+      - https://rpc.gnosischain.com
+  - chain: ETC
+    type: EVM
+    rpcURL:
+      - https://etc.mytokenpocket.vip
+      - https://etc.etcdesktop.com
+      - https://www.ethercluster.com/etc
+  - chain: Solana
+    type: SOL
+    rpcURL:
+      - https://api.mainnet-beta.solana.com
+      - https://ssc-dao.genesysgo.net
+      - https://solana-api.projectserum.com
+      - https://rpc.ankr.com/solana
+  - chain: Arbitrum
+    type: EVM
+    rpcURL:
+      - https://arb1.arbitrum.io/rpc
+      - https://rpc.ankr.com/arbitrum
+      - https://arbitrum-mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161
 
   - chain: AvalancheTEST
     type: EVM
@@ -218,34 +272,12 @@ platform:
     type: APTOS
     rpcURL:
       - https://testnet.aptoslabs.com/v1
-  - chain: Aptos
-    type: APTOS
-    rpcURL:
-      - https://fullnode.mainnet.aptoslabs.com/v1
-      - https://aptos-mainnet.pontem.network/v1
-      - https://fullnode.mainnet.martianwallet.xyz/v1
-  - chain: xDai
-    type: EVM
-    rpcURL:
-      - https://rpc.ankr.com/gnosis
-      - https://gnosischain-rpc.gateway.pokt.network
-      - https://xdai-rpc.gateway.pokt.network
-      - https://gnosis-mainnet.public.blastapi.io
-      - https://rpc.gnosischain.com
-  - chain: ETC
-    type: EVM
-    rpcURL:
-      - https://etc.mytokenpocket.vip
-      - https://etc.etcdesktop.com
-      - https://www.ethercluster.com/etc
   - chain: SolanaTEST
     type: SOL
     rpcURL:
       - https://api.testnet.solana.com
-  - chain: Solana
-    type: SOL
+  - chain: ArbitrumTEST
+    type: EVM
     rpcURL:
-      - https://api.mainnet-beta.solana.com
-      - https://ssc-dao.genesysgo.net
-      - https://solana-api.projectserum.com
-      - https://rpc.ankr.com/solana
+      - https://rinkeby.arbitrum.io/rpc
+      - https://arbitrum-rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161
