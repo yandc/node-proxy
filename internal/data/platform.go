@@ -34,7 +34,10 @@ func (r *platformRepo) BuildWasmRequest(ctx context.Context, chain, nodeRpc, fun
 	if functionName == types.NFTINFO {
 		return list.BuildNFTInfoFunc(chain, params)
 	}
-	return platform.BuildWasmRequest(ctx, chain, nodeRpc, functionName, params)
+
+	result, err := platform.BuildWasmRequest(ctx, chain, nodeRpc, functionName, params)
+	log.Infof("BuildWasmRequest result ", result)
+	return result, err
 }
 
 func (r *platformRepo) AnalysisWasmResponse(ctx context.Context, chain, functionName, params,
