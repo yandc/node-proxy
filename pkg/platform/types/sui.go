@@ -38,66 +38,28 @@ type SuiObjectRead struct {
 	} `json:"details"`
 }
 
-type SuiTransactionResponse struct {
-	Certificate struct {
-		AuthSignInfo struct {
-			Epoch      int           `json:"epoch"`
-			Signature  []interface{} `json:"signature"`
-			SignersMap []int         `json:"signers_map"`
-		} `json:"authSignInfo"`
-		Data struct {
-			GasBudget  int `json:"gasBudget"`
-			GasPayment struct {
-				Digest   string `json:"digest"`
-				ObjectID string `json:"objectId"`
-				Version  int    `json:"version"`
-			} `json:"gasPayment"`
-			Sender       string `json:"sender"`
-			Transactions []struct {
-				TransferObject struct {
-					ObjectRef struct {
-						Digest   string `json:"digest"`
-						ObjectID string `json:"objectId"`
-						Version  int    `json:"version"`
-					} `json:"objectRef"`
-					Recipient string `json:"recipient"`
-				} `json:"TransferObject"`
-			} `json:"transactions"`
-		} `json:"data"`
-		TransactionDigest string `json:"transactionDigest"`
-		TxSignature       string `json:"txSignature"`
-	} `json:"certificate"`
+type SuiTransactionEffects struct {
 	Effects struct {
-		GasObject struct {
-			Owner struct {
-				ObjectOwner string `json:"ObjectOwner"`
-			} `json:"owner"`
-			Reference struct {
-				Digest   string `json:"digest"`
-				ObjectID string `json:"objectId"`
-				Version  int    `json:"version"`
-			} `json:"reference"`
-		} `json:"gasObject"`
-		GasUsed struct {
-			ComputationCost int `json:"computationCost"`
-			StorageCost     int `json:"storageCost"`
-			StorageRebate   int `json:"storageRebate"`
-		} `json:"gasUsed"`
-		Mutated []struct {
-			Owner struct {
-				AddressOwner string `json:"AddressOwner"`
-			} `json:"owner"`
-			Reference struct {
-				Digest   string `json:"digest"`
-				ObjectID string `json:"objectId"`
-				Version  int    `json:"version"`
-			} `json:"reference"`
-		} `json:"mutated"`
 		Status struct {
 			Status string `json:"status"`
 		} `json:"status"`
-		TransactionDigest string `json:"transactionDigest"`
 	} `json:"effects"`
-	ParsedData  interface{} `json:"parsed_data"`
-	TimestampMs interface{} `json:"timestamp_ms"`
+}
+
+type SuiTransactionResponse struct {
+	EffectsCert struct {
+		Certificate struct {
+			TransactionDigest string `json:"transactionDigest"`
+		} `json:"certificate"`
+		Effects struct {
+			TransactionEffectsDigest string `json:"transactionEffectsDigest"`
+			Effects                  struct {
+				Status struct {
+					Status string `json:"status"`
+				} `json:"status"`
+				TransactionDigest string   `json:"transactionDigest"`
+				Dependencies      []string `json:"dependencies"`
+			} `json:"effects"`
+		} `json:"effects"`
+	} `json:"EffectsCert"`
 }

@@ -12,6 +12,7 @@ import (
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/types"
 	"sort"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -19,6 +20,8 @@ const (
 	JSONID         = 1
 	RESULT_SUCCESS = "Exists"
 	NATIVE_TYPE    = "0x2::coin::Coin<0x2::sui::SUI>"
+	TXFAILED       = "failed"
+	TXSUCCESS      = "success"
 )
 
 type platform struct {
@@ -104,7 +107,7 @@ func analysisTxHash(params string, result json.RawMessage) (interface{}, error) 
 	if err := json.Unmarshal(result, &txInfo); err != nil {
 		return "", err
 	}
-	return txInfo.Certificate.TransactionDigest, nil
+	return txInfo.EffectsCert.Certificate.TransactionDigest, nil
 }
 
 func analysisObjectIds(params string, result json.RawMessage) (interface{}, error) {
@@ -146,11 +149,14 @@ func analysisObjectRead(params string, result json.RawMessage) (interface{}, err
 }
 
 func analysisTxStatus(params string, result json.RawMessage) (interface{}, error) {
-	var objectRead types.SuiTransactionResponse
+	var objectRead types.SuiTransactionEffects
 	if err := json.Unmarshal(result, &objectRead); err != nil {
 		return nil, err
 	}
-	return objectRead.Effects.Status.Status, nil
+	if strings.Contains(objectRead.Effects.Status.Status, "fai") {
+		return TXFAILED, nil
+	}
+	return TXSUCCESS, nil
 }
 
 func analysisTxParams(params string, result json.RawMessage) (interface{}, error) {
@@ -158,7 +164,6 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 	if err := json.Unmarshal([]byte(params), &paramsMap); err != nil {
 		return nil, err
 	}
-	fmt.Println("params===", paramsMap)
 	var amount = 0
 	if value, ok := paramsMap["amount"]; ok {
 		amount, _ = strconv.Atoi(value)
@@ -190,12 +195,12 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 			"balance":  fmt.Sprintf("%v", filedBalance),
 		})
 		balance += filedBalance
-		if amount+gasLimit > balance {
-			gasLimit += 20
+		if amount > balance+gasLimit {
+			gasLimit += 60
 		}
 	}
 	if amount == 0 {
-		gasLimit += 20 * len(objectReads)
+		gasLimit += 60 * len(objectReads)
 	}
 	if len(objectReads) == 0 || amount > balance+gasLimit {
 		return nil, errors.New("insufficiency of balance")
@@ -203,7 +208,7 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 	return map[string]interface{}{
 		"gasPrice":   "1",
 		"suiObjects": suiObjects,
-		"gasLimit":   fmt.Sprintf("%v", gasLimit),
+		"gasLimit":   strconv.Itoa(int(float32(gasLimit) * 1.2)),
 	}, nil
 }
 
