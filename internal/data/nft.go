@@ -40,7 +40,7 @@ func (r *nftListRepo) GetNFTInfo(ctx context.Context, chain string, tokenInfos [
 	}, nil
 }
 
-func (r *nftListRepo) NetNftCollectionInfo(ctx context.Context, chain, address string) (*v1.GetNftCollectionInfoReply, error) {
+func (r *nftListRepo) GetNftCollectionInfo(ctx context.Context, chain, address string) (*v1.GetNftCollectionInfoReply, error) {
 	r.log.WithContext(ctx).Infof("NetNftCollectionInfo", chain, address)
 	collectionInfo, err := collection.GetNFTCollectionInfo(chain, address)
 	ok := true
@@ -52,13 +52,6 @@ func (r *nftListRepo) NetNftCollectionInfo(ctx context.Context, chain, address s
 	return &v1.GetNftCollectionInfoReply{
 		Ok:     ok,
 		ErrMsg: errMsg,
-		Data: &v1.GetNftCollectionInfoReply_Data{
-			Chain:       collectionInfo.Chain,
-			Address:     collectionInfo.Address,
-			Name:        collectionInfo.Name,
-			Slug:        collectionInfo.Slug,
-			Description: collectionInfo.Description,
-			ImageURL:    collectionInfo.ImageURL,
-		},
+		Data:   collectionInfo,
 	}, nil
 }

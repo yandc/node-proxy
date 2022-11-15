@@ -8,7 +8,7 @@ import (
 
 type NFTRepo interface {
 	GetNFTInfo(ctx context.Context, chain string, tokenInfos []*v1.GetNftInfoRequest_NftInfo) (*v1.GetNftReply, error)
-	NetNftCollectionInfo(ctx context.Context, chain, address string) (*v1.GetNftCollectionInfoReply, error)
+	GetNftCollectionInfo(ctx context.Context, chain, address string) (*v1.GetNftCollectionInfoReply, error)
 }
 
 type NFTUsecase struct {
@@ -25,6 +25,6 @@ func (uc *NFTUsecase) GetNFTInfo(ctx context.Context, chain string, tokenInfos [
 	return uc.repo.GetNFTInfo(ctx, chain, tokenInfos)
 }
 
-func (uc *NFTUsecase) NetNftCollectionInfo(ctx context.Context, chain, address string) (*v1.GetNftCollectionInfoReply, error) {
-	return uc.repo.NetNftCollectionInfo(ctx, chain, address)
+func (uc *NFTUsecase) GetNftCollectionInfo(ctx context.Context, chain, address string) (*v1.GetNftCollectionInfoReply, error) {
+	return uc.repo.GetNftCollectionInfo(ctx, chain, address)
 }
