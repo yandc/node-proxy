@@ -1,11 +1,12 @@
 package collection
 
 import (
-	"encoding/json"
 	"fmt"
 	v1 "gitlab.bixin.com/mili/node-proxy/api/nft/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft"
+	"gitlab.bixin.com/mili/node-proxy/pkg/nft/aptosNFT"
+	"gitlab.bixin.com/mili/node-proxy/pkg/nft/ethNFT"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/types"
 	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
 	"gorm.io/gorm/clause"
@@ -73,7 +74,7 @@ func CollectionsType2Models(source *types.CollectionList) {
 func GetNFTCollectionInfo(chain, address string) (*v1.GetNftCollectionInfoReply_Data, error) {
 	var collectionInfo models.NftCollection
 	tempAddress := address
-	if strings.HasPrefix(address, "0x") && chain != "STC" {
+	if strings.HasPrefix(address, "0x") && !strings.Contains(chain, "Aptos") {
 		tempAddress = strings.ToLower(address)
 	}
 	err := nft.GetNFTDb().Where("chain = ? and address = ?", chain, tempAddress).First(&collectionInfo).Error
@@ -109,50 +110,68 @@ func GetNFTCollectionInfo(chain, address string) (*v1.GetNftCollectionInfoReply_
 	}
 
 	//get info to chain
-
-	openSeaCollection, err := GetOpenSeaCollection(chain, address)
+	collectionModel, err := GetCollectionMode(chain, address)
 	if err != nil {
 		return nil, err
-	}
-	OpenSeaCollection2Models(openSeaCollection)
-	return &v1.GetNftCollectionInfoReply_Data{
-		Chain:       chain,
-		Address:     address,
-		Name:        openSeaCollection.Name,
-		Slug:        openSeaCollection.Collection.Slug,
-		Description: openSeaCollection.Description,
-		ImageURL:    openSeaCollection.ImageURL,
-	}, nil
-}
-
-func GetOpenSeaCollection(chain, address string) (types.OpenSeaCollection, error) {
-	var url string
-	var result types.OpenSeaCollection
-	//	url := "https://api.opensea.io/api/v1/asset_contract/0x06012c8cf97bead5deae237070f9587f8e7a266d"
-	if strings.HasSuffix(chain, "TEST") {
-		url = nft.TESTBASEURL + "asset_contract/" + fmt.Sprintf("%s?format=json", address)
-	} else {
-		url = nft.BASEURL + "asset_contract/" + fmt.Sprintf("%s?format=json", address)
-	}
-	resp, err := nft.DoOpenSeaRequest(url)
-	if err != nil {
-		return result, err
-	}
-	err = json.Unmarshal([]byte(resp), &result)
-	return result, err
-}
-
-func OpenSeaCollection2Models(collection types.OpenSeaCollection) {
-	collectionModel := models.NftCollection{
-		Name:        collection.Name,
-		Slug:        collection.Collection.Slug,
-		ImageURL:    collection.ImageURL,
-		Chain:       "ETH",
-		Description: collection.Description,
-		Address:     strings.ToLower(collection.Address),
-		TokenType:   strings.ToUpper(collection.SchemaName),
 	}
 	nft.GetNFTDb().Clauses(clause.OnConflict{
 		UpdateAll: true,
 	}).Create(&collectionModel)
+	//openSeaCollection, err := GetOpenSeaCollection(chain, address)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//OpenSeaCollection2Models(openSeaCollection)
+	return &v1.GetNftCollectionInfoReply_Data{
+		Chain:       chain,
+		Address:     address,
+		Name:        collectionModel.Name,
+		Slug:        collectionModel.Slug,
+		Description: collectionModel.Description,
+		ImageURL:    collectionModel.ImageURL,
+	}, nil
 }
+
+func GetCollectionMode(chain, address string) (models.NftCollection, error) {
+	fullName := nft.GetFullName(chain)
+	switch fullName {
+	case "Ethereum":
+		return ethNFT.GetETHCollection(chain, address)
+	case "Aptos":
+		return aptosNFT.GetAptosCollection(chain, address)
+
+	}
+	return models.NftCollection{}, nil
+}
+
+//func GetOpenSeaCollection(chain, address string) (types.OpenSeaCollection, error) {
+//	var url string
+//	var result types.OpenSeaCollection
+//	//	url := "https://api.opensea.io/api/v1/asset_contract/0x06012c8cf97bead5deae237070f9587f8e7a266d"
+//	if strings.HasSuffix(chain, "TEST") {
+//		url = nft.TESTBASEURL + "asset_contract/" + fmt.Sprintf("%s?format=json", address)
+//	} else {
+//		url = nft.BASEURL + "asset_contract/" + fmt.Sprintf("%s?format=json", address)
+//	}
+//	resp, err := nft.DoWebRequest(url)
+//	if err != nil {
+//		return result, err
+//	}
+//	err = json.Unmarshal([]byte(resp), &result)
+//	return result, err
+//}
+//
+//func OpenSeaCollection2Models(collection types.OpenSeaCollection) {
+//	collectionModel := models.NftCollection{
+//		Name:        collection.Name,
+//		Slug:        collection.Collection.Slug,
+//		ImageURL:    collection.ImageURL,
+//		Chain:       "ETH",
+//		Description: collection.Description,
+//		Address:     strings.ToLower(collection.Address),
+//		TokenType:   strings.ToUpper(collection.SchemaName),
+//	}
+//	nft.GetNFTDb().Clauses(clause.OnConflict{
+//		UpdateAll: true,
+//	}).Create(&collectionModel)
+//}
