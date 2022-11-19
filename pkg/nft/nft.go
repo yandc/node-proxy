@@ -35,6 +35,8 @@ func InitNFT(db *gorm.DB, logger log.Logger, nftList *conf.NFTList) {
 var chainFullName = map[string]string{
 	"ETH":           "Ethereum",
 	"ETHGoerliTEST": "Ethereum",
+	"Aptos":         "Aptos",
+	"AptosTEST":     "Aptos",
 }
 
 func GetFullName(chain string) string {
@@ -56,7 +58,7 @@ func GetIPFS() string {
 	return nftConfig.ipfs
 }
 
-func DoOpenSeaRequest(url string) (string, error) {
+func DoWebRequest(url string) (string, error) {
 	client, err := cloudscraper.Init(false, false)
 	options := cycletls.Options{
 		Headers: map[string]string{"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 12_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36",

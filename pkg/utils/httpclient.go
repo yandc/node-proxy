@@ -143,9 +143,7 @@ func CommHttpsForm(url, method string, params, headers map[string]string, reqBod
 	//tr := &http.Transport{
 	//	TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	//}
-	client := &http.Client{
-		//Transport: GlobalTransport,
-	}
+	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return err
