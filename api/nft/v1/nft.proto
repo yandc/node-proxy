@@ -8,7 +8,7 @@ option java_package = "api.nft.v1";
 
 service Nft {
   rpc GetNftInfo (GetNftInfoRequest) returns (GetNftReply);
-  rpc NetNftCollectionInfo (GetNftCollectionInfoReq) returns (GetNftCollectionInfoReply);
+  rpc GetNftCollectionInfo (GetNftCollectionInfoReq) returns (GetNftCollectionInfoReply);
 }
 
 message GetNftInfoRequest {
@@ -60,6 +60,7 @@ message GetNftCollectionInfoReply{
     string slug = 4;
     string imageURL = 5;
     string description = 6;
+    string tokenType = 7;
   }
   bool ok = 1;
   string errMsg = 2;

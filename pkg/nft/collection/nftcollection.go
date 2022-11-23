@@ -79,7 +79,7 @@ func GetNFTCollectionInfo(chain, address string) (*v1.GetNftCollectionInfoReply_
 	}
 	err := nft.GetNFTDb().Where("chain = ? and address = ?", chain, tempAddress).First(&collectionInfo).Error
 	if err != nil {
-		return nil, err
+		nft.GetNFTLog().Error("get collection error:", err)
 	}
 	if collectionInfo.ID > 0 {
 		return &v1.GetNftCollectionInfoReply_Data{
@@ -89,14 +89,15 @@ func GetNFTCollectionInfo(chain, address string) (*v1.GetNftCollectionInfoReply_
 			Slug:        collectionInfo.Slug,
 			Description: collectionInfo.Description,
 			ImageURL:    collectionInfo.ImageURL,
+			TokenType:   collectionInfo.TokenType,
 		}, nil
 	}
 
 	//select nft list
 	var nftList models.NftList
-	err = nft.GetNFTDb().Where("chain = ? and address = ?", chain, tempAddress).First(&nftList).Error
+	err = nft.GetNFTDb().Where("chain = ? and token_address = ?", chain, tempAddress).First(&nftList).Error
 	if err != nil {
-		return nil, err
+		nft.GetNFTLog().Error("get nft list error:", err)
 	}
 	if nftList.ID > 0 {
 		return &v1.GetNftCollectionInfoReply_Data{
@@ -106,6 +107,7 @@ func GetNFTCollectionInfo(chain, address string) (*v1.GetNftCollectionInfoReply_
 			Slug:        nftList.CollectionSlug,
 			Description: nftList.CollectionDescription,
 			ImageURL:    nftList.CollectionImageURL,
+			TokenType:   nftList.TokenType,
 		}, nil
 	}
 
@@ -129,6 +131,7 @@ func GetNFTCollectionInfo(chain, address string) (*v1.GetNftCollectionInfoReply_
 		Slug:        collectionModel.Slug,
 		Description: collectionModel.Description,
 		ImageURL:    collectionModel.ImageURL,
+		TokenType:   collectionModel.TokenType,
 	}, nil
 }
 
