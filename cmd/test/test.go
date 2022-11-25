@@ -223,7 +223,7 @@ func testGetTokenInfo() {
 	data := []*v1.GetTokenInfoReq_Data{
 		{Chain: "ETH", Address: "0x31903E333809897eE57Af57567f4377a1a78756c"},
 		{Chain: "ETH", Address: "0x0000000DE40dfa9B17854cBC7869D80f9F98D823"},
-		{Chain: "HECO", Address: "0x0298c2b32eae4da002a15f36fdf7615bea3da047"},
+		{Chain: "Aptos", Address: "0xf22bede237a07e121b56d91a491eb7bcdfd1f5907926a9e58338f964a01b17fa::asset::WETH"},
 	}
 	req := &v1.GetTokenInfoReq{
 		Data: data,

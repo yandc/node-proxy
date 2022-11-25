@@ -64,11 +64,12 @@ func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error
 	if strings.Contains(token, "::") {
 		sourceToken = strings.Split(token, "::")[0]
 	}
+	tokenResource := fmt.Sprintf("%s<%s>", TOKEN_INFO_PREFIX, token)
 	for i := 0; i < len(p.rpcURL); i++ {
 		resources := getResourceByAddress(p.rpcURL[i], sourceToken)
 		if resources != nil {
 			for _, r := range *resources {
-				if strings.HasPrefix(r.Type, TOKEN_INFO_PREFIX) {
+				if r.Type == tokenResource {
 					var tokenInfo types.AptosTokenInfo
 					b, _ := json.Marshal(r.Data)
 					json.Unmarshal(b, &tokenInfo)
