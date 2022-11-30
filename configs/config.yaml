@@ -201,6 +201,12 @@ platform:
       - https://arb1.arbitrum.io/rpc
       - https://rpc.ankr.com/arbitrum
       - https://arbitrum-mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161
+  - chain: Cosmos
+    type: COSMOS
+    rpcURL:
+      - https://cosmos-mainnet-rpc.allthatnode.com:1317
+      - https://api.cosmos.network
+      - https://us-atom-restapi.binancechain.io
 
   - chain: AvalancheTEST
     type: EVM
@@ -281,3 +287,7 @@ platform:
     rpcURL:
       - https://rinkeby.arbitrum.io/rpc
       - https://arbitrum-rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161
+  - chain: CosmosTEST
+    type: COSMOS
+    rpcURL:
+      - https://cosmos-testnet-rpc.allthatnode.com:1317
