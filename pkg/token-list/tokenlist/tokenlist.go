@@ -482,8 +482,8 @@ func GetDBTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfo
 		key := addressInfo.Chain + ":" + addressInfo.Address
 		chain := utils.GetChainNameByChain(addressInfo.Chain)
 		address := addressInfo.Address
-		if strings.HasPrefix(addressInfo.Address, "0x") && chain != utils.STARCOIN_CHAIN &&
-			chain != utils.APTOS_CHAIN {
+		if (strings.HasPrefix(addressInfo.Address, "0x") && chain != utils.STARCOIN_CHAIN &&
+			chain != utils.APTOS_CHAIN) || (strings.Contains(chain, utils.COSMOS_CHAIN)) {
 			address = strings.ToLower(addressInfo.Address)
 		}
 		params = append(params, []interface{}{chain, address})
@@ -530,8 +530,8 @@ func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoRe
 		chain := utils.GetChainNameByChain(addressInfo.Chain)
 		address := addressInfo.Address
 
-		if strings.HasPrefix(addressInfo.Address, "0x") && chain != utils.STARCOIN_CHAIN &&
-			chain != utils.APTOS_CHAIN {
+		if (strings.HasPrefix(addressInfo.Address, "0x") && chain != utils.STARCOIN_CHAIN &&
+			chain != utils.APTOS_CHAIN) || (strings.Contains(chain, utils.COSMOS_CHAIN)) {
 			address = strings.ToLower(addressInfo.Address)
 		}
 		params = append(params, []interface{}{chain, address})
@@ -852,6 +852,7 @@ func UpLoadJsonToCDN(chains []string) {
 			chains = append(chains, utils.GetChainNameByChain(chain))
 		}
 	}
+
 	var tokenLists []models.TokenList
 	var err error
 	if len(chains) > 0 {
@@ -984,6 +985,8 @@ func DownLoadImages(tokenLists []models.TokenList) {
 			json.Unmarshal([]byte(t.Logo), &cgImage)
 			if value, ok := cgImage["small"]; ok {
 				image = value
+			} else {
+				image = t.Logo
 			}
 		} else {
 			image = t.Logo
@@ -1248,6 +1251,8 @@ func UpdateChainToken(chain string) {
 		UpdateNervosToken()
 	case "aptos":
 		UpdateAptosToken()
+	case "cosmos":
+		UpdateCosmosToken()
 		//default:
 		//	utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")
 	}

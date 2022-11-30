@@ -122,7 +122,7 @@ func main() {
 
 func testRefreshLogoURI() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.RefreshLogoURI("nervos")
+	tokenlist.RefreshLogoURI("cosmos")
 }
 
 func testAutoUpdateTokenList() {
@@ -308,7 +308,7 @@ func testUpdateDecimalsByChain() {
 
 func testUpLoadTokenList() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.UpLoadJsonToCDN([]string{"arbitrum-one"})
+	tokenlist.UpLoadJsonToCDN([]string{})
 }
 
 func testUpLoadLocalImage() {
@@ -343,7 +343,7 @@ func testGetGasEstimate() {
 
 func testUpdateChainList() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.UpdateChainToken("nervos")
+	tokenlist.UpdateChainToken("cosmos")
 }
 
 func testGetTop20TokenList() {

@@ -30,6 +30,7 @@ const (
 	REDIS_TOKENLIST_INTERVAL  = 86400 //24H
 	STARCOIN_CHAIN            = "starcoin"
 	APTOS_CHAIN               = "aptos"
+	COSMOS_CHAIN              = "Cosmos"
 	REDIS_TOKENLIST_TOP20     = "tokenTop20"
 )
 
@@ -124,6 +125,7 @@ var handlerNameMap = map[string]string{
 	"solana":    "solana",
 	"aptos":     "aptos",
 	"nervos":    "nervos",
+	"cosmos":    "cosmos",
 }
 
 var chainNameMap = map[string]string{
@@ -147,6 +149,7 @@ var chainNameMap = map[string]string{
 	"Solana":    "solana",
 	"Aptos":     "aptos",
 	"Nervos":    "nervos",
+	"Cosmos":    "cosmos",
 
 	"ETHTEST":       "ethereum",
 	"HECOTEST":      "huobi-token",
@@ -168,6 +171,7 @@ var chainNameMap = map[string]string{
 	"SolanaTEST":    "solana",
 	"AptosTEST":     "aptos",
 	"NervosTEST":    "nervos",
+	"CosmosTEST":    "cosmos",
 }
 
 var db2Chain = map[string]string{
@@ -191,6 +195,7 @@ var db2Chain = map[string]string{
 	"solana":              "Solana",
 	"aptos":               "Aptos",
 	"nervos":              "Nervos",
+	//"cosmos":              "Cosmos",
 }
 
 var TokenFileMap = map[string][]string{
