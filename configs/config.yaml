@@ -291,3 +291,7 @@ platform:
     type: COSMOS
     rpcURL:
       - https://cosmos-testnet-rpc.allthatnode.com:1317
+  - chain: zkSyncTEST
+    type: EVM
+    rpcURL:
+      - https://zksync2-testnet.zksync.dev
