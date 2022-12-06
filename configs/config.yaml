@@ -302,4 +302,4 @@ platform:
   - chain: ScrollL2TEST
     type: EVM
     rpcURL:
-      - https://prealpha.scroll.io/l2"
+      - https://prealpha.scroll.io/l2
