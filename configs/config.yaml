@@ -295,3 +295,11 @@ platform:
     type: EVM
     rpcURL:
       - https://zksync2-testnet.zksync.dev
+  - chain: ScrollL1TEST
+    type: EVM
+    rpcURL:
+      - https://prealpha.scroll.io/l1
+  - chain: ScrollL2TEST
+    type: EVM
+    rpcURL:
+      - https://prealpha.scroll.io/l2
