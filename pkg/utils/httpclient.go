@@ -164,6 +164,38 @@ func CommHttpsForm(url, method string, params, headers map[string]string, reqBod
 	return nil
 }
 
+func HttpsParamsPost(url string, params interface{}) (string, error) {
+	var bodyReader string
+	if value, ok := params.(string); ok {
+		bodyReader = value
+	} else {
+		bytes, err := json.Marshal(params)
+		if err != nil {
+			return "", err
+		}
+		bodyReader = string(bytes)
+	}
+	req, err := http.NewRequest(http.MethodPost, url, strings.NewReader(bodyReader))
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	client := http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return "", errors.New(string(body))
+	}
+	return string(body), nil
+}
+
 //var GlobalTransport *http.Transport
 //
 //func init() {

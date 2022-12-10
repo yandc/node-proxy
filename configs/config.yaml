@@ -207,6 +207,10 @@ platform:
       - https://cosmos-mainnet-rpc.allthatnode.com:1317
       - https://api.cosmos.network
       - https://us-atom-restapi.binancechain.io
+  - chain: Casper
+    type: CSPR
+    rpcURL:
+      - https://node-clarity-mainnet.make.services/rpc
 
   - chain: AvalancheTEST
     type: EVM
@@ -303,3 +307,7 @@ platform:
     type: EVM
     rpcURL:
       - https://prealpha.scroll.io/l2
+  - chain: CasperTEST
+    type: CSPR
+    rpcURL:
+      - https://node-clarity-testnet.make.services/rpc

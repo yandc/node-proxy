@@ -25,6 +25,8 @@ const (
 	RESPONSE_TOKEN_INFO        = "tokenInfo"
 	RESPONSE_ACCOUNTS          = "accounts"
 	NFTINFO                    = "nftInfo"
+	RESPONSE_STATEROOTHASH     = "stateRootHash"
+	RESPONSE_MAINPURSE         = "mainPurse"
 
 	BUILD_HEIGHT   = "height"
 	BUILD_ACCOUNTS = "accounts"

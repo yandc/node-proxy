@@ -57,6 +57,7 @@ var responseFunc = map[string]cosmosAnalysisResponseType{
 	types.RESPONSE_TXHASH:   analysisTxHash,
 	types.RESPONSE_ACCOUNTS: analysisAccounts,
 	types.RESPONSE_HEIGHT:   analysisTxHeight,
+	types.RESPONSE_TXPARAMS: analysisTxParams,
 }
 
 func (p *platform) AnalysisWasmResponse(ctx context.Context, functionName, params, response string) (string, error) {
@@ -108,7 +109,7 @@ func analysisTxHash(params string, result string) (interface{}, error) {
 	if resp.Code != 0 || resp.Message != "" {
 		return "", errors.New(resp.Message)
 	}
-	if resp.TxResponse.Height == "0" {
+	if resp.TxResponse.Height == "0" && resp.TxResponse.RawLog != "" {
 		return "", errors.New(resp.TxResponse.RawLog)
 	}
 	return resp.TxResponse.Txhash, nil
@@ -128,9 +129,20 @@ func analysisAccounts(params string, result string) (interface{}, error) {
 	}, nil
 }
 
-//func analysisTxParams(params string, result string) (interface{}, error) {
-//
-//}
+func analysisTxParams(params string, result string) (interface{}, error) {
+	var paramsMap map[string]string
+	if err := json.Unmarshal([]byte(params), &paramsMap); err != nil {
+		return nil, err
+	}
+	return map[string]interface{}{
+		"accountNumber": paramsMap["accountNumber"],
+		"nonce":         paramsMap["sequence"],
+		"lowFee":        "0.0025",
+		"mediumFee":     "0.0025",
+		"highFee":       "0.025",
+		"gasLimit":      "100000",
+	}, nil
+}
 
 func (p *platform) GetRpcURL() []string {
 	return p.rpcURL
@@ -140,7 +152,7 @@ func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error
 	return nil, nil
 }
 
-func NewSuiPlatform(chain string, rpcURL []string, logger log.Logger) types.Platform {
+func NewCosmosPlatform(chain string, rpcURL []string, logger log.Logger) types.Platform {
 	log := log.NewHelper(log.With(logger, "module", "platform/sui"))
 	return &platform{rpcURL: rpcURL, log: log, chain: chain}
 }
