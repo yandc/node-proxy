@@ -10,6 +10,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-redis/redis"
+	v13 "gitlab.bixin.com/mili/node-proxy/api/commRPC/v1"
 	v12 "gitlab.bixin.com/mili/node-proxy/api/nft/v1"
 	pb "gitlab.bixin.com/mili/node-proxy/api/platform/v1"
 	v1 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
@@ -116,6 +117,8 @@ func main() {
 		testGetNFTInfo()
 	case "nftCollection":
 		testCreateNFTCollection()
+	case "commRPC":
+		testCommRPC()
 	}
 	fmt.Println("test main end")
 }
@@ -127,6 +130,27 @@ func testRefreshLogoURI() {
 
 func testAutoUpdateTokenList() {
 	tokenlist.AutoUpdateTokenList(false, false, true)
+}
+
+func testCommRPC() {
+	conn, err := grpc.Dial("127.0.0.1:9001", grpc.WithInsecure())
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+	defer conn.Close()
+	p := v13.NewCommRPCClient(conn)
+	//
+	req := new(v13.ExecNodeProxyRPCRequest)
+	req.Id = 1
+	//req.Chain = "ETH"
+	//req.Address = "0xa06ef134313C13e03B8682B0616147607B4E375E"
+	//req.TokenAddress = "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+	//req.Decimals = "6"
+	resp, err := p.ExecNodeProxyRPC(context.Background(), req)
+	if err != nil {
+		fmt.Println("get balacne error", err)
+	}
+	fmt.Println("result:", resp)
 }
 
 func testGetBalance() {

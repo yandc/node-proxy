@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package api.commRPC.v1;
+
+option go_package = "gitlab.bixin.com/mili/node-proxy/api/commRPC/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.commRPC.v1";
+
+service CommRPC {
+  rpc ExecNodeProxyRPC (ExecNodeProxyRPCRequest) returns (ExecNodeProxyRPCReply);
+}
+
+message ExecNodeProxyRPCRequest{
+  int32 id = 1;
+  string jsonrpc = 2;
+  string method = 3;
+  string params = 4;
+}
+
+message ExecNodeProxyRPCReply{
+  bool ok = 1;
+  string result = 2;
+  string errMsg = 3;
+}

@@ -10,6 +10,7 @@ import (
 	"gitlab.bixin.com/mili/node-proxy/internal/conf"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/aptos"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/bitcoin"
+	"gitlab.bixin.com/mili/node-proxy/pkg/platform/casper"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/ethereum"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/solana"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/starcoin"
@@ -27,6 +28,7 @@ const (
 	SUI   = "SUI"
 	APTOS = "APTOS"
 	SOL   = "SOL"
+	CSPR  = "CSPR"
 )
 
 type TypeAndRpc struct {
@@ -74,7 +76,11 @@ func BuildWasmRequest(ctx context.Context, chain, nodeRpc, functionName, params 
 		c.log.Error("get platform is nil")
 		return nil, errors.New("platform is nil")
 	}
-	return platform.BuildWasmRequest(ctx, nodeRpc, functionName, params)
+	result, err := platform.BuildWasmRequest(ctx, nodeRpc, functionName, params)
+	if err != nil {
+		c.log.Error("BuildWasmRequest Error:", err)
+	}
+	return result, err
 }
 
 func AnalysisWasmResponse(ctx context.Context, chain, functionName, params, response string) (string, error) {
@@ -112,6 +118,8 @@ func newPlatform(chain string) types.Platform {
 			return aptos.NewAptosPlatform(chain, value.RpcURL, c.logger)
 		case SOL:
 			return solana.NewSolanaPlatform(chain, value.RpcURL, c.logger)
+		case CSPR:
+			return casper.NewCasperPlatform(chain, value.RpcURL, c.logger)
 		}
 	}
 	return nil
