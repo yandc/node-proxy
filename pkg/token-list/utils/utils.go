@@ -474,7 +474,6 @@ func HttpsGetForm(url string, params map[string]string, out interface{}) error {
 }
 
 //var globalTransport *http.Transport
-
 //func init() {
 //	uu, _ := url.Parse("http://127.0.0.1:1087")
 //	globalTransport = &http.Transport{
