@@ -252,12 +252,21 @@ func GetTokenListPrice(chains, addresses []string, currency string) map[string]m
 		}
 		tempChain := make([]string, 0, len(chains))
 		if len(cmLists) > 0 {
+			tempChainMap := make(map[string]struct{}, len(cmLists))
 			for _, cm := range cmLists {
 				tempChain = append(tempChain, cm.Id)
+				tempChainMap[cm.Id] = struct{}{}
 				if cm.Name == "Huobi" {
 					chainMap[cm.Id] = append(chainMap[cm.Id], "Huobi-Token")
 				} else {
 					chainMap[cm.Id] = append(chainMap[cm.Id], cm.Name)
+				}
+			}
+			if len(chains) != len(cmLists) {
+				for _, chain := range chains {
+					if _, ok := tempChainMap[chain]; !ok {
+						tempChain = append(tempChain, chain)
+					}
 				}
 			}
 		} else {

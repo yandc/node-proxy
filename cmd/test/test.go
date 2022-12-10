@@ -270,7 +270,7 @@ func testGetPrice() {
 
 	//coin name
 	reqs = append(reqs, &v1.PriceReq{
-		CoinNames: "ethereum",
+		CoinNames: "dogecoin,ethereum,ethereum,matic-network,nervos-network,klay-token,fantom,aptos,tron,casper-network,ethereum-classic,oec-token,bitcoin,Ethereum,crypto-com-chain,xdai,litecoin,starcoin,solana,huobi-token,avalanche-2,cosmos,binancecoin",
 		Currency:  "USD",
 	})
 	//coin name and coin address
