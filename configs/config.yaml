@@ -61,6 +61,7 @@ tokenList:
     - Aptos
     - Nervos
     - STC
+    - SmartBCH
 nftList:
   ipfs: https://cloudflare-ipfs.com/ipfs/
 
@@ -211,6 +212,11 @@ platform:
     type: CSPR
     rpcURL:
       - https://node-clarity-mainnet.make.services/rpc
+  - chain: SmartBCH
+    type: EVM
+    rpcURL:
+      - https://global.uat.cash
+      - https://smartbch.greyh.at
 
   - chain: AvalancheTEST
     type: EVM
