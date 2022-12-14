@@ -126,6 +126,7 @@ var handlerNameMap = map[string]string{
 	"aptos":     "aptos",
 	"nervos":    "nervos",
 	"cosmos":    "cosmos",
+	"smartbch":  "bitcoin-cash",
 }
 
 var chainNameMap = map[string]string{
@@ -150,6 +151,7 @@ var chainNameMap = map[string]string{
 	"Aptos":     "aptos",
 	"Nervos":    "nervos",
 	"Cosmos":    "cosmos",
+	"SmartBCH":  "bitcoin-cash",
 
 	"ETHTEST":       "ethereum",
 	"HECOTEST":      "huobi-token",
@@ -172,6 +174,7 @@ var chainNameMap = map[string]string{
 	"AptosTEST":     "aptos",
 	"NervosTEST":    "nervos",
 	"CosmosTEST":    "cosmos",
+	"SmartBCHTEST":  "bitcoin-cash",
 }
 
 var db2Chain = map[string]string{
@@ -196,6 +199,7 @@ var db2Chain = map[string]string{
 	"aptos":               "Aptos",
 	"nervos":              "Nervos",
 	//"cosmos":              "Cosmos",
+	"bitcoin-cash": "SmartBCH",
 }
 
 var TokenFileMap = map[string][]string{
@@ -228,6 +232,7 @@ var chainURLMap = map[string]string{
 	"cronos":              "https://rpc.artemisone.org/cronos",
 	"xdai":                "https://rpc.ankr.com/gnosis",
 	"ethereum-classic":    "https://etc.mytokenpocket.vip",
+	"bitcoin-cash":        "https://smartbch.greyh.at",
 }
 
 var OtherTokenFileMap = map[string][]string{

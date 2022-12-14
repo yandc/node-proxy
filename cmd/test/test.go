@@ -125,7 +125,7 @@ func main() {
 
 func testRefreshLogoURI() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.RefreshLogoURI("cosmos")
+	tokenlist.RefreshLogoURI("bitcoin-cash")
 }
 
 func testAutoUpdateTokenList() {
@@ -315,7 +315,8 @@ func testGetPrice() {
 }
 
 func testUpdateEVMDecimals() {
-	chains := []string{"solana"}
+	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
+	chains := []string{"bitcoin-cash"}
 	for _, chain := range chains {
 		tokenlist.UpdateEVMDecimasl(chain)
 	}
@@ -323,6 +324,7 @@ func testUpdateEVMDecimals() {
 }
 
 func testUpdateDecimalsByChain() {
+	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
 	chains := []string{"solana"}
 	for _, chain := range chains {
 		tokenlist.UpdateDecimalsByChain(chain)
@@ -332,7 +334,7 @@ func testUpdateDecimalsByChain() {
 
 func testUpLoadTokenList() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.UpLoadJsonToCDN([]string{})
+	tokenlist.UpLoadJsonToCDN([]string{"bitcoin-cash"})
 }
 
 func testUpLoadLocalImage() {
