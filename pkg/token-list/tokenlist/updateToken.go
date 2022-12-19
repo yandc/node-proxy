@@ -1,12 +1,67 @@
 package tokenlist
 
 import (
+	"encoding/json"
+	"fmt"
 	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
+	"gitlab.bixin.com/mili/node-proxy/pkg/nft"
+	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/types"
 	"gorm.io/gorm/clause"
+	"strings"
 )
+
+func UpdateOsmosisToken() {
+	out := &types.OsmosisTokenInfo{}
+	url := "https://api.mintscan.io/v2/assets/osmosis"
+	body, err := nft.DoWebRequest(url)
+	if err != nil {
+		fmt.Println("error==", err)
+		return
+	}
+	if err := json.Unmarshal([]byte(body), out); err != nil {
+		fmt.Println("json error=", err)
+		return
+	}
+
+	//err := utils.HttpsGet(url, nil, nil, out)
+	//if err != nil {
+	//	fmt.Println("error==", err)
+	//	return
+	//}
+	if out != nil && len(out.Assets) > 0 {
+		tokenLists := make([]models.TokenList, 0, len(out.Assets))
+		for _, asset := range out.Assets {
+			if asset.DpDenom == "OSMO" {
+				continue
+			}
+			address := asset.Denom
+			if strings.Contains(address, "/") {
+				addressInfo := strings.Split(address, "/")
+				address = fmt.Sprintf("%s/%s", strings.ToLower(addressInfo[0]), strings.ToUpper(addressInfo[1]))
+			}
+			tokenLists = append(tokenLists, models.TokenList{
+				Chain:    asset.Chain,
+				Address:  address,
+				Name:     asset.BaseDenom,
+				Symbol:   asset.DpDenom,
+				Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/" + asset.Image,
+				Decimals: asset.Decimal,
+				CgId:     asset.CoinGeckoID,
+			})
+		}
+		result := c.db.Clauses(clause.OnConflict{
+			UpdateAll: true,
+		}).Create(&tokenLists)
+		if result.Error != nil {
+			c.log.Error("create db aptos error:", result.Error)
+		}
+	}
+
+}
 
 func UpdateCosmosToken() {
 	//https://api.mintscan.io/v2/assets/cosmos
+
 	var tokenLists = []models.TokenList{
 		{
 			Chain:    "cosmos",

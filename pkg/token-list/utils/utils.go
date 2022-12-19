@@ -127,6 +127,7 @@ var handlerNameMap = map[string]string{
 	"nervos":    "nervos",
 	"cosmos":    "cosmos",
 	"smartbch":  "bitcoin-cash",
+	"osmosis":   "osmosis",
 }
 
 var chainNameMap = map[string]string{
@@ -152,6 +153,7 @@ var chainNameMap = map[string]string{
 	"Nervos":    "nervos",
 	"Cosmos":    "cosmos",
 	"SmartBCH":  "bitcoin-cash",
+	"Osmosis":   "osmosis",
 
 	"ETHTEST":       "ethereum",
 	"HECOTEST":      "huobi-token",
@@ -175,6 +177,7 @@ var chainNameMap = map[string]string{
 	"NervosTEST":    "nervos",
 	"CosmosTEST":    "cosmos",
 	"SmartBCHTEST":  "bitcoin-cash",
+	"OsmosisTEST":   "osmosis",
 }
 
 var db2Chain = map[string]string{
@@ -198,6 +201,7 @@ var db2Chain = map[string]string{
 	"solana":              "Solana",
 	"aptos":               "Aptos",
 	"nervos":              "Nervos",
+	"osmosis":             "Osmosis",
 	//"cosmos":              "Cosmos",
 	"bitcoin-cash": "SmartBCH",
 }
