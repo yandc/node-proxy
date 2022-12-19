@@ -62,6 +62,8 @@ tokenList:
     - Nervos
     - STC
     - SmartBCH
+    - Osmosis
+
 nftList:
   ipfs: https://cloudflare-ipfs.com/ipfs/
 
@@ -217,6 +219,12 @@ platform:
     rpcURL:
       - https://global.uat.cash
       - https://smartbch.greyh.at
+  - chain: Osmosis
+    type: COSMOS
+    rpcURL:
+      - https://osmosis-mainnet-rpc.allthatnode.com:1317
+      - https://lcd-osmosis.cosmostation.io
+      - https://lcd.osmosis.zone
 
   - chain: AvalancheTEST
     type: EVM

@@ -173,3 +173,27 @@ type NervosTokenList struct {
 		} `json:"attributes"`
 	} `json:"data"`
 }
+
+type OsmosisTokenInfo struct {
+	Assets []struct {
+		Chain        string `json:"chain"`
+		Denom        string `json:"denom"`
+		Type         string `json:"type"`
+		BaseDenom    string `json:"base_denom"`
+		BaseType     string `json:"base_type"`
+		DpDenom      string `json:"dp_denom"`
+		OriginChain  string `json:"origin_chain"`
+		Decimal      int    `json:"decimal"`
+		Description  string `json:"description,omitempty"`
+		Image        string `json:"image"`
+		CoinGeckoID  string `json:"coinGeckoId,omitempty"`
+		Path         string `json:"path,omitempty"`
+		Channel      string `json:"channel,omitempty"`
+		Port         string `json:"port,omitempty"`
+		CounterParty struct {
+			Channel string `json:"channel"`
+			Port    string `json:"port"`
+			Denom   string `json:"denom"`
+		} `json:"counter_party,omitempty"`
+	} `json:"assets"`
+}

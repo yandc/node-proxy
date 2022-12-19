@@ -125,7 +125,7 @@ func main() {
 
 func testRefreshLogoURI() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.RefreshLogoURI("bitcoin-cash")
+	tokenlist.RefreshLogoURI("osmosis")
 }
 
 func testAutoUpdateTokenList() {
@@ -334,7 +334,7 @@ func testUpdateDecimalsByChain() {
 
 func testUpLoadTokenList() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.UpLoadJsonToCDN([]string{"bitcoin-cash"})
+	tokenlist.UpLoadJsonToCDN([]string{"osmosis"})
 }
 
 func testUpLoadLocalImage() {
@@ -369,7 +369,7 @@ func testGetGasEstimate() {
 
 func testUpdateChainList() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.UpdateChainToken("cosmos")
+	tokenlist.UpdateChainToken("osmosis")
 }
 
 func testGetTop20TokenList() {

@@ -1010,7 +1010,11 @@ func DownLoadImages(tokenLists []models.TokenList) {
 			if strings.Contains(image, ".svg") {
 				fileSuffix = ".svg"
 			}
-			fileName := path + "/" + t.Chain + "_" + t.Address + fileSuffix
+			address := t.Address
+			if t.Chain == "osmosis" && strings.Contains(t.Address, "/") {
+				address = strings.Split(t.Address, "/")[1]
+			}
+			fileName := path + "/" + t.Chain + "_" + address + fileSuffix
 			wg.Add(1)
 			go func(f, i string) {
 				defer wg.Done()
@@ -1124,6 +1128,9 @@ func InsertLogoURI() {
 			if len(chainAddress) == 2 {
 				chain := chainAddress[0]
 				address := chainAddress[1]
+				if chain == "osmosis" && len(address) == 64 {
+					address = fmt.Sprintf("ibc/%s", address)
+				}
 				err := c.db.Model(&models.TokenList{}).Where("chain = ? AND address = ?", chain, address).Update("logo_uri", logoURI).Error
 				if err != nil {
 					c.log.Error("update token logo uri error:", err, ",logoURI:", logoURI, ",infoName:", info.Name())
@@ -1210,6 +1217,7 @@ func UploadFileToS3(localFiles []string) {
 			})
 			if err != nil {
 				c.log.Error("new session error:", err)
+				return
 			}
 			//upload file
 			for _, localFile := range localFiles {
@@ -1262,6 +1270,8 @@ func UpdateChainToken(chain string) {
 		UpdateAptosToken()
 	case "cosmos":
 		UpdateCosmosToken()
+	case "osmosis":
+		UpdateOsmosisToken()
 		//default:
 		//	utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")
 	}
