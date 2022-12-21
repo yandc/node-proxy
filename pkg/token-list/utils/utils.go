@@ -128,6 +128,7 @@ var handlerNameMap = map[string]string{
 	"cosmos":    "cosmos",
 	"smartbch":  "bitcoin-cash",
 	"osmosis":   "osmosis",
+	"harmony":   "harmony-shard-0",
 }
 
 var chainNameMap = map[string]string{
@@ -154,6 +155,7 @@ var chainNameMap = map[string]string{
 	"Cosmos":    "cosmos",
 	"SmartBCH":  "bitcoin-cash",
 	"Osmosis":   "osmosis",
+	"Harmony":   "harmony-shard-0",
 
 	"ETHTEST":       "ethereum",
 	"HECOTEST":      "huobi-token",
@@ -178,6 +180,7 @@ var chainNameMap = map[string]string{
 	"CosmosTEST":    "cosmos",
 	"SmartBCHTEST":  "bitcoin-cash",
 	"OsmosisTEST":   "osmosis",
+	"HarmonyTEST":   "harmony-shard-0",
 }
 
 var db2Chain = map[string]string{
@@ -203,7 +206,8 @@ var db2Chain = map[string]string{
 	"nervos":              "Nervos",
 	"osmosis":             "Osmosis",
 	//"cosmos":              "Cosmos",
-	"bitcoin-cash": "SmartBCH",
+	"bitcoin-cash":    "SmartBCH",
+	"harmony-shard-0": "Harmony",
 }
 
 var TokenFileMap = map[string][]string{
@@ -237,6 +241,7 @@ var chainURLMap = map[string]string{
 	"xdai":                "https://rpc.ankr.com/gnosis",
 	"ethereum-classic":    "https://etc.mytokenpocket.vip",
 	"bitcoin-cash":        "https://smartbch.greyh.at",
+	"harmony-shard-0":     "https://harmony-0-rpc.gateway.pokt.network",
 }
 
 var OtherTokenFileMap = map[string][]string{

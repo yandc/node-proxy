@@ -63,6 +63,7 @@ tokenList:
     - STC
     - SmartBCH
     - Osmosis
+    - Harmony
 
 nftList:
   ipfs: https://cloudflare-ipfs.com/ipfs/
@@ -225,6 +226,14 @@ platform:
       - https://osmosis-mainnet-rpc.allthatnode.com:1317
       - https://lcd-osmosis.cosmostation.io
       - https://lcd.osmosis.zone
+  - chain: Harmony
+    type: EVM
+    rpcURL:
+      - https://harmony-0-rpc.gateway.pokt.network
+      - https://rpc.ankr.com/harmony
+      - https://harmony-mainnet.chainstacklabs.com
+      - https://api.s0.t.hmny.io
+      - https://api.harmony.one
 
   - chain: AvalancheTEST
     type: EVM
