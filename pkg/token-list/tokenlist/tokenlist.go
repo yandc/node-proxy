@@ -850,7 +850,6 @@ func RefreshLogoURI(chain string) {
 	if err != nil {
 		c.log.Error("delete images path:", err)
 	}
-
 }
 
 func UpLoadJsonToCDN(chains []string) {
