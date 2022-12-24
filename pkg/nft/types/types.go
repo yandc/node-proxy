@@ -304,7 +304,7 @@ type NFTGONFTInfo struct {
 type TraitsInfo struct {
 	TraitType  string      `json:"trait_type"`
 	Value      interface{} `json:"value"`
-	TraitCount float64     `json:"trait_count"`
+	TraitCount interface{} `json:"trait_count"`
 }
 
 type NFTScanInfo struct {

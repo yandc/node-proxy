@@ -450,11 +450,9 @@ func testGetNFTInfo() {
 	p := v12.NewNftClient(conn)
 
 	req := new(v12.GetNftInfoRequest)
-	req.Chain = "ETH"
+	req.Chain = "BSC"
 	tokenInfo := []*v12.GetNftInfoRequest_NftInfo{
-		{TokenAddress: "0x495f947276749ce646f68ac8c248420045cb7b5e", TokenId: "7913402202769379533690164279743878593095549349620263384589938601384149516289"},
-		{TokenAddress: "0xc8ff927b56d617ea04976f5d5f77383cf72712d3", TokenId: "907"},
-		{TokenAddress: "0xc8ff927b56d617ea04976f5d5f77383cf72712d3", TokenId: "908"},
+		{TokenAddress: "0x85f0e02cb992aa1f9f47112f815f519ef1a59e2d", TokenId: "10005032506"},
 	}
 	req.NftInfo = tokenInfo
 	resp, err := p.GetNftInfo(context.Background(), req)

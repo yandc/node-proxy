@@ -37,6 +37,12 @@ var chainFullName = map[string]string{
 	"ETHGoerliTEST": "Ethereum",
 	"Aptos":         "Aptos",
 	"AptosTEST":     "Aptos",
+	"Arbitrum":      "Arbitrum",
+	"ArbitrumTEST":  "Arbitrum",
+	"BSC":           "BSC",
+	"BSCTEST":       "BSC",
+	"Polygon":       "Polygon",
+	"PolygonTEST":   "Polygon",
 }
 
 func GetFullName(chain string) string {

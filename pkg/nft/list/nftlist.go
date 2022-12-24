@@ -11,6 +11,7 @@ import (
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/aptosNFT"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/ethNFT"
+	"gitlab.bixin.com/mili/node-proxy/pkg/nft/opensea"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/types"
 	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
 	"gorm.io/gorm/clause"
@@ -69,52 +70,6 @@ func GetNFTList(chain, cursor string) (*types.AssetList, error) {
 	}
 	return out, err
 }
-
-//func GetOpenSeaAsset(chain, contractAddress, tokenId string) (types.Asset, error) {
-//	var url string
-//	var result types.Asset
-//	if strings.HasSuffix(chain, "TEST") {
-//		url = nft.TESTBASEURL + "asset/" + fmt.Sprintf("%s/%s?format=json", contractAddress, tokenId)
-//	} else {
-//		url = nft.BASEURL + "asset/" + fmt.Sprintf("%s/%s?format=json", contractAddress, tokenId)
-//	}
-//	resp, err := nft.DoWebRequest(url)
-//	if err != nil {
-//		for i := 0; err != nil && i < 3; i++ {
-//			time.Sleep(time.Duration(i) * time.Second)
-//			resp, err = nft.DoWebRequest(url)
-//		}
-//	}
-//	if err != nil {
-//		return result, err
-//	}
-//	err = json.Unmarshal([]byte(resp), &result)
-//	return result, err
-//}
-
-/*func GetAsset(chain, contractAddress, tokenId string) (*types.Asset, error) {
-	var url string
-	var headers map[string]string
-	if strings.HasSuffix(chain, "TEST") {
-		url = nft.TESTBASEURL + "asset/" + fmt.Sprintf("%s/%s", contractAddress, tokenId)
-	} else {
-		url = nft.BASEURL + "asset/" + fmt.Sprintf("%s/%s", contractAddress, tokenId)
-		headers = map[string]string{
-			"X-API-KEY": nft.OPENSEA_KEY,
-			"accept":    "application/json",
-		}
-	}
-	out := &types.Asset{}
-	err := utils.HttpsGet(url, nil, headers, out)
-	if err != nil {
-		for i := 0; err != nil && i < 3; i++ {
-			time.Sleep(1 * time.Second)
-			err = utils.HttpsGet(url, nil, headers, out)
-		}
-	}
-	return out, err
-}
-*/
 func AssetType2Models(chain string, assets []types.Asset) {
 	assetModel := make([]models.NftList, len(assets))
 	for i := 0; i < len(assets); i++ {
@@ -153,39 +108,6 @@ func AssetType2Models(chain string, assets []types.Asset) {
 		}
 	}
 
-}
-
-func OpenSea2Models(chain string, asset types.Asset) models.NftList {
-	var properties, rarity string
-	if len(asset.Traits) > 0 {
-		b, _ := json.Marshal(asset.Traits)
-		properties = string(b)
-	}
-	if asset.RarityData != nil {
-		b, _ := json.Marshal(asset.Traits)
-		rarity = string(b)
-	}
-	network := nft.GetFullName(chain)
-	return models.NftList{
-		TokenId:               asset.TokenID,
-		TokenAddress:          strings.ToLower(asset.AssetContract.Address),
-		Name:                  asset.AssetContract.Name,
-		Symbol:                asset.AssetContract.Symbol,
-		TokenType:             strings.ToUpper(asset.AssetContract.SchemaName),
-		Description:           asset.Description,
-		ImageURL:              asset.ImageURL,
-		ImageOriginalURL:      asset.ImageOriginalURL,
-		Chain:                 chain,
-		Rarity:                rarity,
-		Network:               network,
-		Properties:            properties,
-		CollectionName:        asset.Collection.Name,
-		CollectionSlug:        asset.Collection.Slug,
-		CollectionDescription: asset.Collection.Description,
-		CollectionImageURL:    asset.Collection.ImageURL,
-		NftName:               asset.Name,
-		AnimationURL:          asset.AnimationURL,
-	}
 }
 
 // GetNFTInfo get nft info
@@ -248,8 +170,10 @@ func GetNFTInfo(chain string, tokenInfos []*v1.GetNftInfoRequest_NftInfo) ([]*v1
 			AnimationURL:          nftList.AnimationURL,
 		})
 	}
+
 	if len(addressMap) > 0 {
 		var wg sync.WaitGroup
+		var resultErr error
 		for key, value := range addressMap {
 			wg.Add(1)
 			go func(addressInfo, oldAddress string) {
@@ -260,6 +184,7 @@ func GetNFTInfo(chain string, tokenInfos []*v1.GetNftInfoRequest_NftInfo) ([]*v1
 					nftListModel, err := GetNFTListModel(chain, address, tokenId)
 					if err != nil {
 						nft.GetNFTLog().Error("get nft list model error:", err)
+						resultErr = err
 						return
 					}
 					if nftListModel.TokenId != "" {
@@ -268,6 +193,8 @@ func GetNFTInfo(chain string, tokenInfos []*v1.GetNftInfoRequest_NftInfo) ([]*v1
 						}).Create(&nftListModel)
 						if dbresult.Error != nil {
 							nft.GetNFTLog().Error("create db error:", dbresult.Error)
+							resultErr = err
+							return
 						}
 
 						//nftListModel.TokenType = strings.ToUpper(nftListModel.TokenType)
@@ -314,8 +241,8 @@ func GetNFTInfo(chain string, tokenInfos []*v1.GetNftInfoRequest_NftInfo) ([]*v1
 			}(key, value)
 			wg.Wait()
 		}
+		return result, resultErr
 	}
-
 	return result, nil
 }
 
@@ -326,6 +253,9 @@ func GetNFTListModel(chain, tokenAddress, tokenId string) (models.NftList, error
 		return ethNFT.GetETHNFTAsset(chain, tokenAddress, tokenId)
 	case "Aptos":
 		return aptosNFT.GetAptosNFTAsset(chain, tokenAddress, tokenId)
+	case "Arbitrum", "BSC", "Polygon":
+		return opensea.GetOpenSeaNFTAsset(chain, tokenAddress, tokenId)
+
 	}
 	return models.NftList{}, nil
 }
