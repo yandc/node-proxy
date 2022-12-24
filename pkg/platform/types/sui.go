@@ -19,7 +19,7 @@ type SuiObjectRead struct {
 			Type              string `json:"type"`
 			HasPublicTransfer bool   `json:"has_public_transfer"`
 			Fields            struct {
-				Balance int `json:"balance"`
+				Balance string `json:"balance"`
 				ID      struct {
 					ID string `json:"id"`
 				} `json:"id"`

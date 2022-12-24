@@ -137,7 +137,7 @@ func analysisBalance(params string, result json.RawMessage) (interface{}, error)
 	if err := json.Unmarshal(result, &objectRead); err != nil {
 		return nil, err
 	}
-	return objectRead.Details.Data.Fields.Balance, nil
+	return strconv.Atoi(objectRead.Details.Data.Fields.Balance)
 }
 
 func analysisObjectRead(params string, result json.RawMessage) (interface{}, error) {
@@ -183,11 +183,16 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 	gasLimit := 60
 	balance := 0
 	sort.Slice(objectReads, func(i, j int) bool {
-		return objectReads[i].Details.Data.Fields.Balance > objectReads[j].Details.Data.Fields.Balance
+		balanceI, _ := strconv.Atoi(objectReads[i].Details.Data.Fields.Balance)
+		balanceJ, _ := strconv.Atoi(objectReads[j].Details.Data.Fields.Balance)
+		return balanceI > balanceJ
 	})
 	suiObjects := make([]interface{}, 0, len(objectReads))
 	for _, objectRead := range objectReads {
-		filedBalance := objectRead.Details.Data.Fields.Balance
+		filedBalance, err := strconv.Atoi(objectRead.Details.Data.Fields.Balance)
+		if err != nil {
+			return nil, err
+		}
 		suiObjects = append(suiObjects, map[string]interface{}{
 			"objectId": objectRead.Details.Reference.ObjectID,
 			"seqNo":    fmt.Sprintf("%v", objectRead.Details.Reference.Version),
