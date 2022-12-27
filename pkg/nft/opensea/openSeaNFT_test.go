@@ -7,7 +7,7 @@ import (
 )
 
 func TestGetOpenSeaNFTAsset(t *testing.T) {
-	model, err := GetOpenSeaNFTAsset("Arbitrum", "0x43111161dc2eb245a0f51bb79310c1e80d0129b4", "19486")
+	model, err := GetOpenSeaNFTAsset("Polygon", "0x4d544035500D7aC1B42329c70eb58E77f8249f0F", "17032613055")
 	if err != nil {
 		fmt.Println("error=", err)
 	}
