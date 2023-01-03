@@ -66,22 +66,18 @@ func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error
 	}
 	tokenResource := fmt.Sprintf("%s<%s>", TOKEN_INFO_PREFIX, token)
 	for i := 0; i < len(p.rpcURL); i++ {
-		resources := getResourceByAddress(p.rpcURL[i], sourceToken)
+		resources := getResourceByAddress(p.rpcURL[i], sourceToken, tokenResource)
 		if resources != nil {
-			for _, r := range *resources {
-				if r.Type == tokenResource {
-					var tokenInfo types.AptosTokenInfo
-					b, _ := json.Marshal(r.Data)
-					json.Unmarshal(b, &tokenInfo)
-					return &v12.GetTokenInfoResp_Data{
-						Chain:    p.chain,
-						Address:  token,
-						Decimals: uint32(tokenInfo.Decimals),
-						Symbol:   strings.ToUpper(tokenInfo.Symbol),
-						Name:     tokenInfo.Name,
-					}, nil
-				}
-			}
+			var tokenInfo types.AptosTokenInfo
+			b, _ := json.Marshal(resources.Data)
+			json.Unmarshal(b, &tokenInfo)
+			return &v12.GetTokenInfoResp_Data{
+				Chain:    p.chain,
+				Address:  token,
+				Decimals: uint32(tokenInfo.Decimals),
+				Symbol:   strings.ToUpper(tokenInfo.Symbol),
+				Name:     tokenInfo.Name,
+			}, nil
 		}
 	}
 	return nil, nil
@@ -102,8 +98,8 @@ func getBalance(noderpc, address string, resourceType string, decimals int) (str
 	return balance, nil
 }
 
-func getResourceByAddress(noderpc, address string) *types.AptosResourceResp {
-	url := fmt.Sprintf("%s/accounts/%s/resources", noderpc, address)
+func getResourceByAddress(noderpc, address, resourceType string) *types.AptosResourceResp {
+	url := fmt.Sprintf("%s/accounts/%s/resource/%s", noderpc, address, resourceType)
 	out := &types.AptosResourceResp{}
 	err := utils.HttpsGetForm(url, nil, out)
 	if err != nil {
