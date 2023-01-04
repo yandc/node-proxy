@@ -176,3 +176,17 @@ type Response struct {
 //	Message string   `json:"message"`
 //	Data    Response `json:"data"`
 //}
+
+type STCListResource struct {
+	Resources map[string]STCResource `json:"resources"`
+}
+
+type STCResource struct {
+	Json struct {
+		ScalingFactor int `json:"scaling_factor"`
+	} `json:"json"`
+}
+
+type STCDecimal struct {
+	ScalingFactor int `json:"scaling_factor"`
+}
