@@ -15,7 +15,7 @@ type AptosBadResp struct {
 	AptosLedgerVersion string `json:"aptos_ledger_version"`
 }
 
-type AptosResourceResp []struct {
+type AptosResourceResp struct {
 	Type string      `json:"type"`
 	Data interface{} `json:"data"`
 }
