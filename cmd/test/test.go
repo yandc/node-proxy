@@ -125,7 +125,7 @@ func main() {
 
 func testRefreshLogoURI() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.RefreshLogoURI("harmony-shard-0")
+	tokenlist.RefreshLogoURI("ronin")
 }
 
 func testAutoUpdateTokenList() {
@@ -316,7 +316,7 @@ func testGetPrice() {
 
 func testUpdateEVMDecimals() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	chains := []string{"harmony-shard-0"}
+	chains := []string{"ronin"}
 	for _, chain := range chains {
 		tokenlist.UpdateEVMDecimasl(chain)
 	}
@@ -334,7 +334,7 @@ func testUpdateDecimalsByChain() {
 
 func testUpLoadTokenList() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.UpLoadJsonToCDN([]string{"harmony-shard-0"})
+	tokenlist.UpLoadJsonToCDN([]string{"ronin"})
 }
 
 func testUpLoadLocalImage() {

@@ -129,6 +129,7 @@ var handlerNameMap = map[string]string{
 	"smartbch":  "bitcoin-cash",
 	"osmosis":   "osmosis",
 	"harmony":   "harmony-shard-0",
+	"ronin":     "ronin",
 }
 
 var chainNameMap = map[string]string{
@@ -156,6 +157,7 @@ var chainNameMap = map[string]string{
 	"SmartBCH":  "bitcoin-cash",
 	"Osmosis":   "osmosis",
 	"Harmony":   "harmony-shard-0",
+	"Ronin":     "ronin",
 
 	"ETHTEST":       "ethereum",
 	"HECOTEST":      "huobi-token",
@@ -181,6 +183,7 @@ var chainNameMap = map[string]string{
 	"SmartBCHTEST":  "bitcoin-cash",
 	"OsmosisTEST":   "osmosis",
 	"HarmonyTEST":   "harmony-shard-0",
+	"RoninTEST":     "ronin",
 }
 
 var db2Chain = map[string]string{
@@ -208,6 +211,7 @@ var db2Chain = map[string]string{
 	//"cosmos":              "Cosmos",
 	"bitcoin-cash":    "SmartBCH",
 	"harmony-shard-0": "Harmony",
+	"ronin":           "Ronin",
 }
 
 var TokenFileMap = map[string][]string{
@@ -242,6 +246,7 @@ var chainURLMap = map[string]string{
 	"ethereum-classic":    "https://etc.mytokenpocket.vip",
 	"bitcoin-cash":        "https://smartbch.greyh.at",
 	"harmony-shard-0":     "https://harmony-0-rpc.gateway.pokt.network",
+	"ronin":               "https://api.roninchain.com/rpc",
 }
 
 var OtherTokenFileMap = map[string][]string{
@@ -369,7 +374,11 @@ func GetBatchDecimals(chain string, tokens []string) map[string]int {
 		tokenAddrs = append(tokenAddrs, token)
 	}
 	fmt.Println("GetBatchDecimals:", chain, len(tokens))
-	rpcClient.BatchCall(be)
+	err := rpcClient.BatchCall(be)
+	if err != nil {
+		fmt.Println("error==", err)
+		return result
+	}
 	for index, b := range be {
 		hexAmount := b.Result.(*string)
 		bi := new(big.Int)

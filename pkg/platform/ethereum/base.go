@@ -30,6 +30,10 @@ func NewEVMPlatform(chain string, rpcURL []string, logger log.Logger) types.Plat
 }
 
 func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error) {
+	sourceToken := token
+	if strings.HasPrefix(p.chain, "Ronin") && strings.HasPrefix(token, "ronin:") {
+		token = strings.Replace(token, "ronin:", "0x", -1)
+	}
 	tokenAddress := common.HexToAddress(token)
 	for i := 0; i < len(p.rpcURL); i++ {
 		client, err := ethclient.Dial(p.rpcURL[i])
@@ -45,7 +49,7 @@ func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error
 			}
 			return &v12.GetTokenInfoResp_Data{
 				Chain:    p.chain,
-				Address:  token,
+				Address:  sourceToken,
 				Symbol:   strings.ToUpper(symbol),
 				Decimals: uint32(decimals),
 			}, nil

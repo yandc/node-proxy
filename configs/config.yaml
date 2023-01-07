@@ -64,6 +64,7 @@ tokenList:
     - SmartBCH
     - Osmosis
     - Harmony
+    - Ronin
 
 nftList:
   ipfs: https://cloudflare-ipfs.com/ipfs/
@@ -234,6 +235,10 @@ platform:
       - https://harmony-mainnet.chainstacklabs.com
       - https://api.s0.t.hmny.io
       - https://api.harmony.one
+  - chain: Ronin
+    type: EVM
+    rpcURL:
+      - https://api.roninchain.com/rpc
 
   - chain: AvalancheTEST
     type: EVM
