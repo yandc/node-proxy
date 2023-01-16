@@ -125,7 +125,7 @@ func main() {
 
 func testRefreshLogoURI() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.RefreshLogoURI("ronin")
+	tokenlist.RefreshLogoURI("arbitrum-nova")
 }
 
 func testAutoUpdateTokenList() {
@@ -316,7 +316,7 @@ func testGetPrice() {
 
 func testUpdateEVMDecimals() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	chains := []string{"ronin"}
+	chains := []string{"arbitrum-nova"}
 	for _, chain := range chains {
 		tokenlist.UpdateEVMDecimasl(chain)
 	}
@@ -334,7 +334,7 @@ func testUpdateDecimalsByChain() {
 
 func testUpLoadTokenList() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.UpLoadJsonToCDN([]string{"ronin"})
+	tokenlist.UpLoadJsonToCDN([]string{"arbitrum-nova"})
 }
 
 func testUpLoadLocalImage() {
@@ -369,7 +369,7 @@ func testGetGasEstimate() {
 
 func testUpdateChainList() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.UpdateChainToken("osmosis")
+	tokenlist.UpdateChainToken("arbitrum-nova")
 }
 
 func testGetTop20TokenList() {
