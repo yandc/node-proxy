@@ -1271,6 +1271,9 @@ func UpdateChainToken(chain string) {
 		UpdateCosmosToken()
 	case "osmosis":
 		UpdateOsmosisToken()
+	case "arbitrum-nova":
+		UpdateArbitrumNovaToken()
+
 		//default:
 		//	utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")
 	}

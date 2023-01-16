@@ -51,6 +51,7 @@ func getOpenSeaAsset(chain, contractAddress, tokenId string) (types.Asset, error
 		}
 	}
 	if err != nil {
+		nft.GetNFTLog().Error(chain, ",getOpenSeaAsset error:", err)
 		return result, err
 	}
 	err = json.Unmarshal([]byte(resp), &result)

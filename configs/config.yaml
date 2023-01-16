@@ -65,6 +65,7 @@ tokenList:
     - Osmosis
     - Harmony
     - Ronin
+    - ArbitrumNova
 
 nftList:
   ipfs: https://cloudflare-ipfs.com/ipfs/
@@ -240,6 +241,10 @@ platform:
     type: EVM
     rpcURL:
       - https://api.roninchain.com/rpc
+  - chain: ArbitrumNova
+    type: EVM
+    rpcURL:
+      - https://nova.arbitrum.io/rpc
 
   - chain: AvalancheTEST
     type: EVM
