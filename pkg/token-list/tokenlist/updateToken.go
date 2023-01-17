@@ -387,13 +387,93 @@ yer enabled wallet. Tether has no transaction fees, although external wallets an
 			Decimals:    8,
 			CgId:        "wrapped-bitcoin",
 			WebSite:     "https://www.wbtc.network/c",
-			Description: ` {"en":""}`,
+			Description: `{"en":""}`,
+		},
+		//add
+		{
+			Chain:       "arbitrum-nova",
+			Address:     "0x6ab6d61428fde76768d7b45d8bfeec19c6ef91a8",
+			Name:        "DPS Rum",
+			Symbol:      "RUM",
+			Logo:        `{"thumb":"https://assets.coingecko.com/coins/images/27656/thumb/rum.png?1665099688","small":"https://assets.coingecko.com/coins/images/27656/small/rum.png?1665099688","large":"https://assets.coingecko.com/coins/images/27656/large/rum.png?1665099688"}`,
+			Decimals:    18,
+			CgId:        "dps-rum",
+			WebSite:     "https://damnedpiratessociety.io/",
+			Description: `{"en":"Damned Pirates Society RUM is an LP reward which allows you to mint exclusive NFT's and cosmetics for the Pirateverse"}`,
+		},
+		{
+			Chain:       "arbitrum-nova",
+			Address:     "0xefaeee334f0fd1712f9a8cc375f427d9cdd40d73",
+			Name:        "DPSDoubloon",
+			Symbol:      "DOUBLOON",
+			Logo:        `{"thumb":"https://assets.coingecko.com/coins/images/27642/thumb/6lCO7C9y_400x400.jpeg?1665019747","small":"https://assets.coingecko.com/coins/images/27642/small/6lCO7C9y_400x400.jpeg?1665019747","large":"https://assets.coingecko.com/coins/images/27642/large/6lCO7C9y_400x400.jpeg?1665019747"}`,
+			Decimals:    18,
+			CgId:        "dps-doubloon",
+			WebSite:     "https://damnedpiratessociety.io",
+			Description: `{"en":""}`,
+		},
+		{
+			Chain:       "arbitrum-nova",
+			Address:     "0x80a16016cc4a2e6a2caca8a4a498b1699ff0f844",
+			Name:        "TreasureMaps",
+			Symbol:      "TMAP",
+			Logo:        `{"thumb":"https://assets.coingecko.com/coins/images/27655/thumb/tmap.png?1665099449","small":"https://assets.coingecko.com/coins/images/27655/small/tmap.png?1665099449","large":"https://assets.coingecko.com/coins/images/27655/large/tmap.png?1665099449"}`,
+			Decimals:    18,
+			CgId:        "dps-treasuremaps",
+			WebSite:     "https://damnedpiratessociety.io/",
+			Description: `{"en":"Treasure Map Tokens are the tickets to voyage in the Damned Pirates Society universe. Exchange them at the cartographer for a voyage and set sail in search of chests of Doubloons. Ye be warned dangers lurk on the high seas."}`,
+		},
+
+		//db old
+		{
+			Chain:       "arbitrum-nova",
+			Address:     "0x6dcb98f460457fe4952e12779ba852f82ecc62c1",
+			Name:        "r/FortNiteBR Bricks",
+			Symbol:      "BRICK",
+			Logo:        `{"thumb":"https://assets.coingecko.com/coins/images/11223/thumb/Brick.png?1589620469","small":"https://assets.coingecko.com/coins/images/11223/small/Brick.png?1589620469","large":"https://assets.coingecko.com/coins/images/11223/large/Brick.png?1589620469"}`,
+			Decimals:    18,
+			CgId:        "brick",
+			WebSite:     "https://www.reddit.com/r/FortNiteBR/",
+			Description: `{"en":"Bricks are ERC-20 Tokens given as rewards for an individuals contributions to r/Fortnite either via posts or comments etc. They can be freely transferred, tipped and spent in r/CryptoCurrency. Moons are distributed monthly using Reddit Karma as a basis for contributions.\r\n\r\nBricks can be traded freely and used for any number of purposes within the community. At this time, they can be used to display reputation within the subreddit, unlock exclusive features like badges and GIFs in comments with a Special Membership, and add weight to votes in polls."}`,
+		},
+		{
+			Chain:       "arbitrum-nova",
+			Address:     "0x750ba8b76187092b0d1e87e28daaf484d1b5273b",
+			Name:        "USD Coin",
+			Symbol:      "USDC",
+			Logo:        `{"thumb":"https://assets.coingecko.com/coins/images/6319/thumb/USD_Coin_icon.png?1547042389","small":"https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png?1547042389","large":"https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png?1547042389"}`,
+			Decimals:    6,
+			CgId:        "usd-coin",
+			WebSite:     "https://www.circle.com/en/usdc",
+			Description: `{"en":"USDC is a fully collateralized US dollar stablecoin. USDC is the bridge between dollars and trading on cryptocurrency exchanges. The technology behind CENTRE makes it possible to exchange value between people, businesses and financial institutions just like email between mail services and texts between SMS providers. We believe by removing artificial economic borders, we can create a more inclusive global economy."}`,
+		},
+		{
+			Chain:       "arbitrum-nova",
+			Address:     "0x722e8bdd2ce80a4422e880164f2079488e115365",
+			Name:        "WETH",
+			Symbol:      "WETH",
+			Logo:        `{"thumb":"https://assets.coingecko.com/coins/images/2518/thumb/weth.png?1628852295","small":"https://assets.coingecko.com/coins/images/2518/small/weth.png?1628852295","large":"https://assets.coingecko.com/coins/images/2518/large/weth.png?1628852295"}`,
+			Decimals:    18,
+			CgId:        "weth",
+			WebSite:     "https://weth.io/",
+			Description: `{"en":"What is WETH (Wrapped ETH)?\r\nWETH is the tokenized/packaged form of ETH that you use to pay for items when you interact with Ethereum dApps. WETH follows the ERC-20 token standards, enabling it to achieve interoperability with other ERC-20 tokens. \r\n\r\nThis offers more utility to holders as they can use it across networks and dApps. You can stake, yield farm, lend, and provide liquidity to various liquidity pools with WETH. \r\n\r\nAlso, unlike ETH, which doesn’t conform to its own ERC-20 standard and thus has lower interoperability as it can’t be used on other chains besides Ethereum, WETH can be used on cheaper and high throughput alternatives like Binance, Polygon, Solana, and Cardano.\r\n\r\nThe price of WETH will always be the same as ETH because it maintains a 1:1 wrapping ratio.\r\n\r\nHow to Wrap ETH?\r\nCustodians wrap and unwrap ETH. To wrap ETH, you send ETH to a custodian. This can be a multi-sig wallet, a Decentralized Autonomous Organization (DAO), or a smart contract. After connecting your web3 wallet to a DeFi exchange, you enter the amount of ETH you wish to wrap and click the swap function. Once the transaction is confirmed, you will receive WETH tokens equivalent to the ETH that you’ve swapped.\r\n\r\nOn a centralized exchange, the exchange burns the deposited ETH and mints a wrapped form for you. And when you want to unwrap it, the exchange will burn the wrapped version and mint the ETH on your behalf.\r\n\r\nWhat’s Next for WETH?\r\nAccording to the developers, hopefully there will be no future for WETH. According to the website, steps are being taken to update ETH to make it compliant with its own ERC-20 standards."}`,
+		},
+		{
+			Chain:       "arbitrum-nova",
+			Address:     "0x0057ac2d777797d31cd3f8f13bf5e927571d6ad0",
+			Name:        "r/CryptoCurrency Moons",
+			Symbol:      "MOON",
+			Logo:        `{"thumb":"https://assets.coingecko.com/coins/images/11222/thumb/Moons.png?1589620193","small":"https://assets.coingecko.com/coins/images/11222/small/Moons.png?1589620193","large":"https://assets.coingecko.com/coins/images/11222/large/Moons.png?1589620193"}`,
+			Decimals:    18,
+			CgId:        "moon",
+			WebSite:     "https://www.reddit.com/r/CryptoCurrency/",
+			Description: `{"en":"Moons are ERC-20 Tokens given as rewards for an individuals contributions to r/CryptoCurrency either via posts or comments etc. They can be freely transferred, tipped and spent in r/CryptoCurrency. Moons are distributed monthly using Reddit Karma as a basis for contributions.\r\n\r\nMoons can be traded freely and used for any number of purposes within the community. At this time, they can be used to display reputation within the subreddit, unlock exclusive features like badges and GIFs in comments with a Special Membership, and add weight to votes in polls."}`,
 		},
 	}
-	result := c.db.Clauses(clause.OnConflict{
-		UpdateAll: true,
-	}).Create(&tokenLists)
-	if result.Error != nil {
-		c.log.Error("create db aptos error:", result.Error)
+	for _, t := range tokenLists {
+		c.db.Clauses(clause.OnConflict{
+			UpdateAll: true,
+		}).Create(&t)
 	}
+
 }
