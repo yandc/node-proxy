@@ -24,7 +24,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, tokenList *conf.Token
 	tokenListRepo := data.NewTokenListRepo(tokenList, db, client, logger)
 	tokenListUsecase := biz.NewTokenListUsecase(tokenListRepo, logger)
 	tokenlistService := service.NewTokenlistService(tokenListUsecase)
-	platformRepo := data.NewPlatformRepo(arg, logger)
+	platformRepo := data.NewPlatformRepo(arg, logger, client)
 	platformUseCase := biz.NewPlatformUseCase(platformRepo, logger)
 	platformService := service.NewPlatformService(platformUseCase)
 	nftRepo := data.NewNFTRepo(db, logger, nftList)

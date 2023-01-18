@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-redis/redis"
 	v1 "gitlab.bixin.com/mili/node-proxy/api/platform/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/biz"
 	"gitlab.bixin.com/mili/node-proxy/internal/conf"
@@ -15,8 +16,8 @@ type platformRepo struct {
 	log *log.Helper
 }
 
-func NewPlatformRepo(conf []*conf.Platform, logger log.Logger) biz.PlatformRepo {
-	platform.InitPlatform(conf, logger)
+func NewPlatformRepo(conf []*conf.Platform, logger log.Logger, client *redis.Client) biz.PlatformRepo {
+	platform.InitPlatform(conf, logger, client)
 	return &platformRepo{
 		log: log.NewHelper(logger),
 	}
