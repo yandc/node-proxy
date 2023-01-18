@@ -6,12 +6,20 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/go-redis/redis"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/types"
 	"io/ioutil"
 	"math/big"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
+)
+
+const (
+	REDIS_ESTIME_DATA      = "data"
+	REDIS_ESTIME_TIMESTAMP = "timestamp"
+	REDIS_ESTIME_INTERVAL  = 20
 )
 
 func UpdateDecimals(amount string, decimals int) string {
@@ -168,4 +176,31 @@ func HttpsGetForm(url string, params map[string]string, out interface{}) error {
 		return err
 	}
 	return nil
+}
+
+// GetPriceRedisValueByKey get estime data,whether update
+func GetESTimeRedisValueByKey(redisClient *redis.Client, key string) (string, bool, error) {
+	result, err := redisClient.HGetAll(key).Result()
+	if err != nil || len(result) == 0 {
+		return "", true, err
+	}
+	flag := true
+	price := result[REDIS_ESTIME_DATA]
+	val := result[REDIS_ESTIME_TIMESTAMP]
+	timestamp, err := strconv.ParseInt(val, 10, 64)
+	if err != nil {
+		return price, flag, err
+	}
+	if time.Now().Unix()-timestamp < REDIS_ESTIME_INTERVAL {
+		flag = false
+	}
+	return price, flag, nil
+}
+
+func SetESTimeRedisKey(redisClient *redis.Client, key, data string) error {
+	fields := map[string]interface{}{
+		REDIS_ESTIME_DATA:      data,
+		REDIS_ESTIME_TIMESTAMP: time.Now().Unix(),
+	}
+	return redisClient.HMSet(key, fields).Err()
 }

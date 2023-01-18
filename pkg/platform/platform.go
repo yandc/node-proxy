@@ -4,7 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-redis/redis"
 	v1 "gitlab.bixin.com/mili/node-proxy/api/platform/v1"
 	v12 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/conf"
@@ -18,17 +20,20 @@ import (
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/tron"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/types"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/utils"
+	"math"
+	"math/big"
 )
 
 const (
-	STC   = "STC"
-	BTC   = "BTC"
-	EVM   = "EVM"
-	TVM   = "TVM"
-	SUI   = "SUI"
-	APTOS = "APTOS"
-	SOL   = "SOL"
-	CSPR  = "CSPR"
+	STC              = "STC"
+	BTC              = "BTC"
+	EVM              = "EVM"
+	TVM              = "TVM"
+	SUI              = "SUI"
+	APTOS            = "APTOS"
+	SOL              = "SOL"
+	CSPR             = "CSPR"
+	REDIS_ESTIME_KEY = "platform:estime:"
 )
 
 type TypeAndRpc struct {
@@ -37,14 +42,15 @@ type TypeAndRpc struct {
 }
 
 type config struct {
-	log       *log.Helper
-	logger    log.Logger
-	chainInfo map[string]TypeAndRpc
+	log         *log.Helper
+	logger      log.Logger
+	chainInfo   map[string]TypeAndRpc
+	redisClient *redis.Client
 }
 
 var c config
 
-func InitPlatform(conf []*conf.Platform, logger log.Logger) {
+func InitPlatform(conf []*conf.Platform, logger log.Logger, client *redis.Client) {
 	log := log.NewHelper(log.With(logger, "module", "platform/InitPlatform"))
 	tempMap := make(map[string]TypeAndRpc, len(conf))
 	for _, chainInfo := range conf {
@@ -54,9 +60,10 @@ func InitPlatform(conf []*conf.Platform, logger log.Logger) {
 		}
 	}
 	c = config{
-		log:       log,
-		logger:    logger,
-		chainInfo: tempMap,
+		log:         log,
+		logger:      logger,
+		chainInfo:   tempMap,
+		redisClient: client,
 	}
 }
 
@@ -130,8 +137,82 @@ func GetGasEstimateTime(chain string, gasInfo string) (string, error) {
 	switch chain {
 	case "ETH":
 		return getETHGasEstimate(gasInfo)
+	case "BSC", "Fantom", "Polygon", "Avalanche":
+		return getEVMGasEstimate(chain, gasInfo)
 	}
 	return "", nil
+}
+
+func getEVMGasEstimate(chain string, gasInfo string) (string, error) {
+	var url string
+	var blockInterval int
+	switch chain {
+	case "BSC":
+		url = "https://gbsc.blockscan.com/gasapi.ashx?apikey=key&method=pendingpooltxgweidata"
+		blockInterval = 3
+	case "Fantom":
+		url = "https://gftm.blockscan.com/gasapi.ashx?apikey=key&method=pendingpooltxgweidata"
+		blockInterval = 2
+	case "Polygon":
+		url = "https://gpoly.blockscan.com/gasapi.ashx?apikey=key&method=pendingpooltxgweidata"
+		blockInterval = 2
+	case "Avalanche":
+		url = "https://gavax.blockscan.com/gasapi.ashx?apikey=key&method=pendingpooltxgweidata"
+		blockInterval = 2
+	default:
+		return "", nil
+	}
+	var gasMap map[string]string
+	if err := json.Unmarshal([]byte(gasInfo), &gasMap); err != nil {
+		return "", err
+	}
+	gasPrice := gasMap["gas_price"]
+	tempGasPrice, flag := new(big.Float).SetString(gasPrice)
+	if !flag {
+		return "", errors.New("float set string error:" + gasPrice)
+	}
+	gasPriceGWei, _ := new(big.Float).Quo(tempGasPrice, big.NewFloat(1000000000)).Float64()
+	out := &types.EVMGasEstimate{}
+	redisKey := REDIS_ESTIME_KEY + chain
+	esTimeData, updateFlag, _ := utils.GetESTimeRedisValueByKey(c.redisClient, redisKey)
+	if esTimeData != "" {
+		if err := json.Unmarshal([]byte(esTimeData), &out.Result); err != nil {
+			return "", err
+		}
+	}
+	if esTimeData == "" || updateFlag {
+		err := utils.HttpsGetForm(url, nil, out)
+		if err != nil {
+			return "", err
+		}
+		if out.Status != "1" {
+			return "", errors.New(out.Message)
+		}
+		resultByte, _ := json.Marshal(out.Result)
+		err = utils.SetESTimeRedisKey(c.redisClient, redisKey, string(resultByte))
+		if err != nil {
+			c.log.Error("set estime redis error:", err)
+		}
+	}
+
+	var data [][]float64
+	if err := json.Unmarshal([]byte(out.Result.Data), &data); err != nil {
+		return "", err
+	}
+	txSum := 0
+	for i := 0; i < len(data); i++ {
+		if data[i][0] > gasPriceGWei {
+			txSum += int(data[i][1])
+		} else {
+			break
+		}
+	}
+	block := int(math.Ceil(float64(txSum) / float64(out.Result.Avgtxnsperblock)))
+	t := block * blockInterval
+	if t == 0 {
+		t = blockInterval
+	}
+	return fmt.Sprintf("%v", t), nil
 }
 
 func getETHGasEstimate(gasInfo string) (string, error) {

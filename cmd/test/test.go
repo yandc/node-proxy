@@ -353,9 +353,9 @@ func testGetGasEstimate() {
 	defer conn.Close()
 	p := pb.NewPlatformClient(conn)
 	req := new(pb.GetGasEstimateRequest)
-	req.Chain = "ETH"
+	req.Chain = "Fantom"
 	a := map[string]string{
-		"gas_price": "8000000000",
+		"gas_price": "345825200000",
 	}
 	b, _ := json.Marshal(a)
 	req.GasInfo = string(b)
