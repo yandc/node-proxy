@@ -334,7 +334,7 @@ func testUpdateDecimalsByChain() {
 
 func testUpLoadTokenList() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.UpLoadJsonToCDN([]string{"arbitrum-nova"})
+	tokenlist.UpLoadJsonToCDN([]string{"arbitrum-one"})
 }
 
 func testUpLoadLocalImage() {
