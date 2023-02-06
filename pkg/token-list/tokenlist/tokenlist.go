@@ -474,7 +474,7 @@ func GetDecimalsInfo() map[string]types.TokenInfo {
 	tokens := utils.ParseTokenListFile()
 	for chain, token := range tokens {
 		for _, t := range token {
-			if strings.HasPrefix(t.Address, "0x") && chain != utils.STARCOIN_CHAIN {
+			if strings.HasPrefix(t.Address, "0x") && chain != utils.STARCOIN_CHAIN && chain != utils.APTOS_CHAIN {
 				t.Address = strings.ToLower(t.Address)
 			}
 			result[chain+":"+t.Address] = t
@@ -491,8 +491,8 @@ func GetDBTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfo
 		key := addressInfo.Chain + ":" + addressInfo.Address
 		chain := utils.GetChainNameByChain(addressInfo.Chain)
 		address := addressInfo.Address
-		if (strings.HasPrefix(addressInfo.Address, "0x") && chain != utils.STARCOIN_CHAIN &&
-			chain != utils.APTOS_CHAIN) || (strings.Contains(chain, utils.COSMOS_CHAIN)) {
+		if strings.HasPrefix(addressInfo.Address, "0x") && chain != utils.STARCOIN_CHAIN &&
+			chain != utils.APTOS_CHAIN {
 			address = strings.ToLower(addressInfo.Address)
 		}
 		params = append(params, []interface{}{chain, address})
