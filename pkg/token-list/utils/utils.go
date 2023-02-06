@@ -273,7 +273,7 @@ func ParseTokenListFile() map[string][]types.TokenInfo {
 			out := &types.Token{}
 			HttpsGetForm(url, nil, out)
 			for _, t := range out.Tokens {
-				if strings.HasPrefix(t.Address, "0x") && chain != STARCOIN_CHAIN {
+				if strings.HasPrefix(t.Address, "0x") && chain != STARCOIN_CHAIN && chain != APTOS_CHAIN {
 					t.Address = strings.ToLower(t.Address)
 				}
 				tokenInfos = append(tokenInfos, t)
@@ -567,7 +567,7 @@ func ParseCoinAddress(coinAddress []string) map[string][]string {
 		addressInfo := strings.Split(chainAddress, "_")
 		chain := GetChainNameByPlatform(addressInfo[0])
 		address := addressInfo[1]
-		if strings.HasPrefix(address, "0x") && chain != STARCOIN_CHAIN {
+		if strings.HasPrefix(address, "0x") && chain != STARCOIN_CHAIN && chain != APTOS_CHAIN {
 			address = strings.ToLower(address)
 		}
 		key := fmt.Sprintf("%s_%s", chain, address)
