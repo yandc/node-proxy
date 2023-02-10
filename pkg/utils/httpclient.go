@@ -196,12 +196,22 @@ func HttpsParamsPost(url string, params interface{}) (string, error) {
 	return string(body), nil
 }
 
-//var GlobalTransport *http.Transport
-//
-//func init() {
-//	uu, _ := url.Parse("http://127.0.0.1:1087")
-//	GlobalTransport = &http.Transport{
-//		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-//		Proxy:           http.ProxyURL(uu),
-//	}
-//}
+var GlobalTransport *http.Transport
+
+var client *http.Client
+
+func init() {
+	//uu, _ := url.Parse("http://127.0.0.1:1087")
+	GlobalTransport = &http.Transport{
+		//TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		//Proxy:           http.ProxyURL(uu),
+		MaxConnsPerHost: 50,
+	}
+	client = &http.Client{
+		Transport: GlobalTransport,
+	}
+}
+
+func GetGlobalClient() *http.Client {
+	return client
+}

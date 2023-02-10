@@ -525,10 +525,11 @@ func GetChainNameByChain(chain string) string {
 }
 
 func DownLoad(base string, url string) error {
-	client := &http.Client{
-		//Transport: utils.GlobalTransport,
-	}
-	v, err := client.Get(url)
+	//client := &http.Client{
+	//	Transport: utils.GlobalTransport,
+	//}
+	//v, err := http.Get(url)
+	v, err := utils.GetGlobalClient().Get(url)
 	if err != nil {
 		return err
 	}
