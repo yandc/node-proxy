@@ -1076,6 +1076,7 @@ func UpLoadImages() {
 	mac := qbox.NewMac(c.qiniu.AccessKey, c.qiniu.SecretKey)
 	cdnManager := cdn.NewCdnManager(mac)
 	var paths []string
+	var wg sync.WaitGroup
 	filepath.Walk("images", func(path string, info fs.FileInfo, err error) error {
 		if !info.IsDir() {
 			paths = append(paths, path)
@@ -1093,20 +1094,24 @@ func UpLoadImages() {
 				"x:name": "github logo",
 			},
 		}
-		for _, path := range paths {
-			key := c.qiniu.KeyPrefix + path
-			putPolicy := storage.PutPolicy{
-				Scope: fmt.Sprintf("%s:%s", bucket, key),
-			}
-			upToken := putPolicy.UploadToken(mac)
-			err := formUploader.PutFile(context.Background(), &ret, upToken, key, path, &putExtra)
-			if err != nil {
-				c.log.Error("PutFile Error:", err)
-			}
-			c.log.Info("upload info:", ret.Bucket, ret.Key, ret.Fsize, ret.Hash, ret.Name)
+		for _, p := range paths {
+			wg.Add(1)
+			go func(path string) {
+				defer wg.Done()
+				key := c.qiniu.KeyPrefix + path
+				putPolicy := storage.PutPolicy{
+					Scope: fmt.Sprintf("%s:%s", bucket, key),
+				}
+				upToken := putPolicy.UploadToken(mac)
+				err := formUploader.PutFile(context.Background(), &ret, upToken, key, path, &putExtra)
+				if err != nil {
+					c.log.Error("PutFile Error:", err)
+				}
+				c.log.Info("upload info:", ret.Bucket, ret.Key, ret.Fsize, ret.Hash, ret.Name)
+			}(p)
 		}
 	}
-
+	wg.Wait()
 	_, err := cdnManager.RefreshDirs([]string{c.logoPrefix, c.awsLogoPrefie})
 	if err != nil {
 		c.log.Error("fetch dirs error:", err)
@@ -1206,6 +1211,7 @@ func UpdateDecimalsByChain(chain string) {
 
 func UploadFileToS3(localFiles []string) {
 	if c.aws != nil {
+		var wg sync.WaitGroup
 		for _, awsInfo := range c.aws {
 			sess, err := session.NewSession(&aws.Config{
 				Region: aws.String(awsInfo.Region), //桶所在的区域
@@ -1219,25 +1225,30 @@ func UploadFileToS3(localFiles []string) {
 				return
 			}
 			//upload file
-			for _, localFile := range localFiles {
-				exist, _ := utils.PathExists(localFile)
-				if !exist {
-					continue
-				}
+			for _, l := range localFiles {
+				wg.Add(1)
+				go func(localFile string) {
+					defer wg.Done()
+					exist, _ := utils.PathExists(localFile)
+					if !exist {
+						return
+					}
 
-				buffer, _ := os.ReadFile(localFile)
-				key := awsInfo.KeyPrefix + localFile
-				//fmt.Println("tokenList==", string(buffer))
-				ret, err := s3.New(sess).PutObject(&s3.PutObjectInput{
-					Bucket: aws.String(awsInfo.Bucket), //桶名
-					Key:    aws.String(key),
-					Body:   bytes.NewReader(buffer),
-				})
-				if err != nil {
-					c.log.Error("put file to s3 error:", err)
-				}
-				c.log.Info("upload s3 info:", ret)
+					buffer, _ := os.ReadFile(localFile)
+					key := awsInfo.KeyPrefix + localFile
+					//fmt.Println("tokenList==", string(buffer))
+					ret, err := s3.New(sess).PutObject(&s3.PutObjectInput{
+						Bucket: aws.String(awsInfo.Bucket), //桶名
+						Key:    aws.String(key),
+						Body:   bytes.NewReader(buffer),
+					})
+					if err != nil {
+						c.log.Error("put file to s3 error:", err)
+					}
+					c.log.Info("upload s3 info:", ret)
+				}(l)
 			}
+			wg.Wait()
 			//refresh dir
 			callerReference := time.Now().String()
 			svc := cloudfront.New(sess)
