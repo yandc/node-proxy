@@ -831,7 +831,7 @@ func RefreshLogoURI(chains []string) {
 	} else {
 		tokenLists, err = GetAllTokenList()
 	}
-	//err := c.db.Where("address = ?", "TN3W4H6rK2ce4vX9YnFQHwKENnHjoxb3m9").Find(&tokenLists).Error
+	//err := c.db.Where("address = ?", "0x75231f58b43240c9718dd58b4967c5114342a86c").Find(&tokenLists).Error
 	if err != nil {
 		c.log.Error("get token list error:", err)
 		return
@@ -994,10 +994,16 @@ func DownLoadImages(tokenLists []models.TokenList) {
 			if value, ok := cgImage["large"]; ok {
 				image = value
 			} else {
-				image = t.Logo
+				if strings.Contains(t.Logo, "/thumb/") {
+					image = strings.Replace(t.Logo, "/thumb/", "/large/", 1)
+				}
 			}
 		} else {
-			image = t.Logo
+			if strings.Contains(t.Logo, "/thumb/") {
+				image = strings.Replace(t.Logo, "/thumb/", "/large/", 1)
+			} else {
+				image = t.Logo
+			}
 		}
 		if image != "" && strings.HasPrefix(image, "https") {
 			path := "./images/" + t.Chain
@@ -1017,7 +1023,11 @@ func DownLoadImages(tokenLists []models.TokenList) {
 			wg.Add(1)
 			go func(f, i string) {
 				defer wg.Done()
-				err := utils.DownLoad(f, i)
+				err := utils.DownLoad(fileName, image)
+				for j := 0; j < 3 && err != nil; j++ {
+					time.Sleep(time.Duration(j) * time.Second)
+					err = utils.DownLoad(fileName, image)
+				}
 				if err == nil {
 					atomic.AddInt32(&count, 1)
 				} else {

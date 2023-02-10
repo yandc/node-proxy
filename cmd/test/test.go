@@ -337,7 +337,10 @@ func testUpdateDecimalsByChain() {
 
 func testUpLoadTokenList() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.UpLoadJsonToCDN([]string{"arbitrum-one"})
+	tokenlist.UpLoadJsonToCDN([]string{"ethereum", "huobi-token", "okex-chain", "binance-smart-chain", "polygon-pos", "fantom",
+		"avalanche", "cronos", "arbitrum-one", "klay-token", "aurora", "optimistic-ethereum",
+		"oasis", "tron", "xdai", "solana", "starcoin", "ethereum-classic", "aptos", "nervos", "osmosis",
+		"bitcoin-cash", "harmony-shard-0", "ronin", "arbitrum-nova"})
 }
 
 func testUpLoadLocalImage() {
