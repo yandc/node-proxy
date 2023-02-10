@@ -822,12 +822,12 @@ func AutoUpdateTokenList(cmcFlag, cgFlag, jsonFlag bool) {
 
 }
 
-func RefreshLogoURI(chain string) {
+func RefreshLogoURI(chains []string) {
 	//get all token list
 	var tokenLists []models.TokenList
 	var err error
-	if chain != "" {
-		err = c.db.Where("chain = ?", chain).Find(&tokenLists).Error
+	if len(chains) > 0 {
+		err = c.db.Where("chain in ?", chains).Find(&tokenLists).Error
 	} else {
 		tokenLists, err = GetAllTokenList()
 	}
@@ -991,7 +991,7 @@ func DownLoadImages(tokenLists []models.TokenList) {
 		if t.CgId != "" && t.CmcId == 0 {
 			var cgImage map[string]string
 			json.Unmarshal([]byte(t.Logo), &cgImage)
-			if value, ok := cgImage["small"]; ok {
+			if value, ok := cgImage["large"]; ok {
 				image = value
 			} else {
 				image = t.Logo

@@ -125,7 +125,10 @@ func main() {
 
 func testRefreshLogoURI() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.RefreshLogoURI("arbitrum-nova")
+	tokenlist.RefreshLogoURI([]string{"ethereum", "huobi-token", "okex-chain", "binance-smart-chain", "polygon-pos", "fantom",
+		"avalanche", "cronos", "arbitrum-one", "klay-token", "aurora", "optimistic-ethereum",
+		"oasis", "tron", "xdai", "solana", "starcoin", "ethereum-classic", "aptos", "nervos", "osmosis",
+		"bitcoin-cash", "harmony-shard-0", "ronin", "arbitrum-nova"})
 }
 
 func testAutoUpdateTokenList() {
