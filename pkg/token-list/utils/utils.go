@@ -34,6 +34,12 @@ const (
 	REDIS_TOKENLIST_TOP20     = "tokenTop20"
 )
 
+var noUpdateChainMap = map[string]struct{}{
+	"aptos":    struct{}{},
+	"starcoin": struct{}{},
+	"osmosis":  struct{}{},
+}
+
 var platformMap = map[string]string{
 	"aurora":      "aurora",
 	"aurora-near": "aurora",
@@ -263,6 +269,13 @@ func GetPlatform(chain string) string {
 		return value
 	}
 	return chain
+}
+
+func IsNotSupportChain(chain string) bool {
+	if _, ok := noUpdateChainMap[chain]; ok {
+		return true
+	}
+	return false
 }
 
 func ParseTokenListFile() map[string][]types.TokenInfo {
