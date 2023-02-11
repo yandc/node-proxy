@@ -38,6 +38,7 @@ var (
 	// flagconf is the config flag.
 	flagconf string
 	testFunc string
+	cgIds    string
 	id, _    = os.Hostname()
 	db       *gorm.DB
 	client   *redis.Client
@@ -49,6 +50,7 @@ func init() {
 
 	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
 	flag.StringVar(&testFunc, "name", "price", "test func name")
+	flag.StringVar(&cgIds, "cgIds", "", "coingecko id list(comma separation)")
 
 }
 
@@ -89,7 +91,7 @@ func main() {
 		testGetPrice()
 	case "balance":
 		testGetBalance()
-	case "tokenList":
+	case "updateTokenList":
 		testAutoUpdateTokenList()
 	case "tokenInfo":
 		testGetTokenInfo()
@@ -101,6 +103,8 @@ func main() {
 		testBuildRequest()
 	case "refreshLogo":
 		testRefreshLogoURI()
+	case "refreshDir":
+		testRefreshDirs()
 	case "EVMDecimals":
 		testUpdateEVMDecimals()
 	case "uploadImage":
@@ -132,7 +136,14 @@ func testRefreshLogoURI() {
 }
 
 func testAutoUpdateTokenList() {
-	tokenlist.AutoUpdateTokenList(false, false, true)
+	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
+	fmt.Println("cgIds=", cgIds)
+	ids := strings.Split(cgIds, ",")
+	if len(ids) == 0 {
+		fmt.Println("ids length is nil.")
+		return
+	}
+	tokenlist.AutoUpdateCGTokenList(ids)
 }
 
 func testCommRPC() {
@@ -341,6 +352,11 @@ func testUpLoadTokenList() {
 		"avalanche", "cronos", "arbitrum-one", "klay-token", "aurora", "optimistic-ethereum",
 		"oasis", "tron", "xdai", "solana", "starcoin", "ethereum-classic", "aptos", "nervos", "osmosis",
 		"bitcoin-cash", "harmony-shard-0", "ronin", "arbitrum-nova"})
+}
+
+func testRefreshDirs() {
+	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
+	tokenlist.RefreshCDNDirs()
 }
 
 func testUpLoadLocalImage() {

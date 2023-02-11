@@ -97,15 +97,21 @@ type CoinsListItem struct {
 	ID string `json:"id"`
 }
 
+type CGDetailPlatformInfo struct {
+	DecimalPlace    int    `json:"decimal_place"`
+	ContractAddress string `json:"contract_address"`
+}
+
 type CGCoinsID struct {
-	ID            string                 `json:"id"`
-	Symbol        string                 `json:"symbol"`
-	Name          string                 `json:"name"`
-	Platforms     map[string]string      `json:"platforms"`
-	Description   DescriptionItem        `json:"description"`
-	Links         map[string]interface{} `json:"links"`
-	Image         ImageItem              `json:"image"`
-	CoinGeckoRank uint16                 `json:"coingecko_rank"`
+	ID              string                          `json:"id"`
+	Symbol          string                          `json:"symbol"`
+	Name            string                          `json:"name"`
+	DetailPlatforms map[string]CGDetailPlatformInfo `json:"detail_platforms"`
+	Platforms       map[string]string               `json:"platforms"`
+	Description     DescriptionItem                 `json:"description"`
+	Links           map[string]interface{}          `json:"links"`
+	Image           ImageItem                       `json:"image"`
+	CoinGeckoRank   uint16                          `json:"coingecko_rank"`
 }
 type ImageItem struct {
 	Thumb string `json:"thumb"`

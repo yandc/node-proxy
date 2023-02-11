@@ -627,6 +627,103 @@ func InsertLogURI() {
 	fmt.Println("count==", count)
 }
 
+func AutoUpdateCGTokenList(ids []string) {
+	// get update cg platform
+	var coinGeckos []models.CoinGecko
+	if len(ids) > 0 {
+		coinGeckos = GetCoinGeckoByIds(ids)
+	} else {
+		coinGeckos = UpdateCoinGecko()
+	}
+	// get db all token list
+	tempDBTokenList, _ := GetAllTokenList()
+
+	tempDBTokenListMap := make(map[string]struct{}, len(tempDBTokenList))
+	//tokenListMap := make(map[string]*models.TokenList)
+	tokenLists := make([]models.TokenList, 0, len(coinGeckos))
+
+	for _, t := range tempDBTokenList {
+		tempDBTokenListMap[t.Chain+"_"+t.Address] = struct{}{}
+	}
+	for _, cgc := range coinGeckos {
+		var platform map[string]types.CGDetailPlatformInfo
+		json.Unmarshal([]byte(cgc.Platform), &platform)
+		for key, value := range platform {
+			if key != "" && value.ContractAddress != "" && value.DecimalPlace >= 0 {
+				if cgcValue, cgcOk := utils.CGCNameChainMap[key]; cgcOk {
+					key = cgcValue
+				}
+				chain := utils.GetPlatform(key)
+				if support := utils.IsNotSupportChain(chain); support {
+					continue
+				}
+				var address string
+				if strings.HasPrefix(value.ContractAddress, "0x") && chain != utils.STARCOIN_CHAIN &&
+					chain != utils.APTOS_CHAIN {
+					address = strings.ToLower(value.ContractAddress)
+				} else {
+					address = value.ContractAddress
+				}
+				if _, dbOk := tempDBTokenListMap[chain+"_"+address]; !dbOk {
+					tokenLists = append(tokenLists, models.TokenList{
+						CgId:        cgc.Id,
+						Name:        cgc.Name,
+						Symbol:      cgc.Symbol,
+						WebSite:     cgc.Homepage,
+						Description: cgc.Description,
+						Chain:       chain,
+						Address:     address,
+						Logo:        cgc.Image,
+						Decimals:    value.DecimalPlace,
+					})
+				}
+			}
+		}
+	}
+	c.log.Info("update tokenLists==", len(tokenLists))
+	if len(tokenLists) > 0 {
+		for i := 0; i < len(tokenLists); i++ {
+			if tokenLists[i].Address != "" {
+				tokenLists[i].Address = strings.Trim(tokenLists[i].Address, " ")
+			}
+		}
+		updateTokenChainMap := make(map[string]struct{})
+		for i := 0; i < len(tokenLists); i++ {
+			updateTokenChainMap[tokenLists[i].Chain] = struct{}{}
+			result := c.db.Clauses(clause.OnConflict{
+				UpdateAll: true,
+			}).Create(&tokenLists[i])
+			if result.Error != nil {
+				c.log.Error("create token list error:", result.Error)
+			}
+			c.log.Info("insert token list db length:", result.RowsAffected)
+		}
+
+		//download images
+		DownLoadImages(tokenLists)
+
+		//upload images
+		UpLoadImages()
+
+		//update logo uri
+		InsertLogoURI()
+
+		//delete images path
+		err := os.RemoveAll("images")
+		if err != nil {
+			c.log.Error("delete images path:", err)
+		}
+		upLoadchains := make([]string, 0, len(tokenLists))
+		for chain, _ := range updateTokenChainMap {
+			upLoadchains = append(upLoadchains, chain)
+		}
+		//upload token list json to cdn
+		if len(upLoadchains) > 0 {
+			UpLoadJsonToCDN(upLoadchains)
+		}
+	}
+}
+
 func AutoUpdateTokenList(cmcFlag, cgFlag, jsonFlag bool) {
 	var wg sync.WaitGroup
 	var coinMarketCaps []models.CoinMarketCap
@@ -935,6 +1032,50 @@ func UpLoadJsonToCDN(chains []string) {
 	}
 }
 
+func RefreshCDNDirs() {
+	mac := qbox.NewMac(c.qiniu.AccessKey, c.qiniu.SecretKey)
+	cdnManager := cdn.NewCdnManager(mac)
+	_, err := cdnManager.RefreshDirs([]string{c.logoPrefix, c.awsLogoPrefie})
+	if err != nil {
+		c.log.Error("fetch dirs error:", err)
+	}
+
+	if c.aws != nil {
+		for _, awsInfo := range c.aws {
+			sess, err := session.NewSession(&aws.Config{
+				Region: aws.String(awsInfo.Region), //桶所在的区域
+				Credentials: credentials.NewStaticCredentials(
+					awsInfo.AccessKey, // accessKey
+					awsInfo.SecretKey, // secretKey
+					""),               //sts的临时凭证
+			})
+			if err != nil {
+				c.log.Error("new session error:", err)
+				return
+			}
+
+			//refresh dir
+			callerReference := time.Now().String()
+			svc := cloudfront.New(sess)
+			paths := &cloudfront.Paths{
+				Items:    []*string{aws.String(awsInfo.KeyPrefix + "*")},
+				Quantity: aws.Int64(1),
+			}
+
+			input := &cloudfront.CreateInvalidationInput{DistributionId: aws.String(awsInfo.DistributionId),
+				InvalidationBatch: &cloudfront.InvalidationBatch{
+					CallerReference: aws.String(callerReference),
+					Paths:           paths,
+				}}
+			ret, err := svc.CreateInvalidation(input)
+			if err != nil {
+				c.log.Error("create invalidation error:", err)
+			}
+			c.log.Info("s3 refresh dir:", ret)
+		}
+	}
+}
+
 func UpLoadToken() {
 	mac := qbox.NewMac(c.qiniu.AccessKey, c.qiniu.SecretKey)
 	cdnManager := cdn.NewCdnManager(mac)
@@ -1112,6 +1253,7 @@ func UpLoadImages() {
 				putPolicy := storage.PutPolicy{
 					Scope: fmt.Sprintf("%s:%s", bucket, key),
 				}
+
 				upToken := putPolicy.UploadToken(mac)
 				err := formUploader.PutFile(context.Background(), &ret, upToken, key, path, &putExtra)
 				if err != nil {

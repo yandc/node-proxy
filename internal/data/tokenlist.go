@@ -50,6 +50,7 @@ func (r *tokenListRepo) GetTokenList(ctx context.Context, chain string) ([]*v1.G
 
 func (r *tokenListRepo) AutoUpdateTokenList(ctx context.Context) {
 	r.log.WithContext(ctx).Infof("AutoUpdateTokenList")
+	tokenlist.AutoUpdateCGTokenList([]string{})
 	//tokenlist.AutoUpdateTokenList(true, true, true)
 }
 

@@ -169,6 +169,23 @@ func GetAllCoinGecko() ([]models.CoinGecko, error) {
 	return coinGeckos, err
 }
 
+func GetCoinGeckoByIds(ids []string) (coinGeckos []models.CoinGecko) {
+	items := make([]types.CoinsListItem, 0, len(ids))
+	for _, id := range ids {
+		items = append(items, types.CoinsListItem{
+			ID: id,
+		})
+	}
+	errorItems, tempUpdateCgc := PatchCreateCGC(items)
+	coinGeckos = append(coinGeckos, tempUpdateCgc...)
+	for len(errorItems) != 0 {
+		time.Sleep(1 * time.Minute)
+		errorItems, tempUpdateCgc = PatchCreateCGC(errorItems)
+		coinGeckos = append(coinGeckos, tempUpdateCgc...)
+	}
+	return
+}
+
 func UpdateCoinGecko() (coinGeckos []models.CoinGecko) {
 	c.log.Info("UpdateCoinGecko start")
 	//get coin list
@@ -196,11 +213,11 @@ func UpdateCoinGecko() (coinGeckos []models.CoinGecko) {
 			tempCoinsList = append(tempCoinsList, coinsList[i])
 		}
 	}
-
+	c.log.Info("update coin length:", len(tempCoinsList))
 	if len(tempCoinsList) > 0 {
 		coinGeckos = make([]models.CoinGecko, 0, len(tempCoinsList))
 		var ids [][]types.CoinsListItem
-		pageSize := 50
+		pageSize := 30
 		pageEndIndex := 0
 		for i := 0; i < len(tempCoinsList); i += pageSize {
 			if i+pageSize > len(tempCoinsList) {
@@ -214,11 +231,11 @@ func UpdateCoinGecko() (coinGeckos []models.CoinGecko) {
 			errorItems, tempUpdateCgc := PatchCreateCGC(ids[i])
 			coinGeckos = append(coinGeckos, tempUpdateCgc...)
 			for len(errorItems) != 0 {
-				time.Sleep(70 * time.Second)
-				errorItems, tempUpdateCgc = PatchCreateCGC(ids[i])
+				time.Sleep(1 * time.Minute)
+				errorItems, tempUpdateCgc = PatchCreateCGC(errorItems)
 				coinGeckos = append(coinGeckos, tempUpdateCgc...)
 			}
-			time.Sleep(70 * time.Second)
+			time.Sleep(1 * time.Minute)
 		}
 	}
 	c.log.Info("UpdateCoinGecko end.result length:", len(coinGeckos))
@@ -226,7 +243,8 @@ func UpdateCoinGecko() (coinGeckos []models.CoinGecko) {
 }
 
 func PatchCreateCGC(items []types.CoinsListItem) (errorItems []types.CoinsListItem, coinGeckos []models.CoinGecko) {
-	coinGeckos = make([]models.CoinGecko, 0, len(items))
+	fmt.Println("PatchCreateCGC==length", len(items))
+	coinGeckos = make([]models.CoinGecko, 0, len(items)+2)
 	var wg sync.WaitGroup
 	var lock sync.RWMutex
 	for _, value := range items {
@@ -234,17 +252,14 @@ func PatchCreateCGC(items []types.CoinsListItem) (errorItems []types.CoinsListIt
 		go func(item types.CoinsListItem) {
 			defer wg.Done()
 			coinsId, err := CGCoinsId(item.ID)
-			if err != nil {
-				c.log.Error("coinsId error:", err)
-				return
-			}
-			if len(coinsId.ID) == 0 {
+			if err != nil || len(coinsId.ID) == 0 {
+				//c.log.Error("coinsId error:", err)
 				lock.Lock()
-				defer lock.Unlock()
 				errorItems = append(errorItems, item)
+				lock.Unlock()
 				return
 			}
-			p, _ := json.Marshal(coinsId.Platforms)
+			p, _ := json.Marshal(coinsId.DetailPlatforms)
 			image, _ := json.Marshal(coinsId.Image)
 			b, _ := json.Marshal(coinsId.Description)
 			var homepage string
@@ -252,7 +267,6 @@ func PatchCreateCGC(items []types.CoinsListItem) (errorItems []types.CoinsListIt
 				homepage = value.([]interface{})[0].(string)
 			}
 			lock.Lock()
-			defer lock.Unlock()
 			coinGeckos = append(coinGeckos, models.CoinGecko{
 				Id:            coinsId.ID,
 				Symbol:        coinsId.Symbol,
@@ -263,12 +277,15 @@ func PatchCreateCGC(items []types.CoinsListItem) (errorItems []types.CoinsListIt
 				Homepage:      homepage,
 				CoinGeckoRank: coinsId.CoinGeckoRank,
 			})
+			lock.Unlock()
 		}(value)
 	}
 	wg.Wait()
 	c.log.Info("cingecko insert db:", len(coinGeckos))
-	c.db.Clauses(clause.OnConflict{
-		UpdateAll: true,
-	}).Create(&coinGeckos)
+	if len(coinGeckos) > 0 {
+		c.db.Clauses(clause.OnConflict{
+			UpdateAll: true,
+		}).Create(&coinGeckos)
+	}
 	return
 }
