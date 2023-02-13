@@ -129,10 +129,17 @@ func main() {
 
 func testRefreshLogoURI() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.RefreshLogoURI([]string{"ethereum", "huobi-token", "okex-chain", "binance-smart-chain", "polygon-pos", "fantom",
-		"avalanche", "cronos", "arbitrum-one", "klay-token", "aurora", "optimistic-ethereum",
-		"oasis", "tron", "xdai", "solana", "starcoin", "ethereum-classic", "aptos", "nervos", "osmosis",
-		"bitcoin-cash", "harmony-shard-0", "ronin", "arbitrum-nova"})
+	fmt.Println("cgIds=", cgIds)
+	ids := strings.Split(cgIds, ",")
+	if len(ids) == 0 {
+		fmt.Println("ids length is nil.")
+		return
+	}
+	tokenlist.RefreshLogoURI(ids)
+	//tokenlist.RefreshLogoURI([]string{"ethereum", "huobi-token", "okex-chain", "binance-smart-chain", "polygon-pos", "fantom",
+	//	"avalanche", "cronos", "arbitrum-one", "klay-token", "aurora", "optimistic-ethereum",
+	//	"oasis", "tron", "xdai", "solana", "starcoin", "ethereum-classic", "aptos", "nervos", "osmosis",
+	//	"bitcoin-cash", "harmony-shard-0", "ronin", "arbitrum-nova"})
 }
 
 func testAutoUpdateTokenList() {
@@ -348,10 +355,17 @@ func testUpdateDecimalsByChain() {
 
 func testUpLoadTokenList() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.UpLoadJsonToCDN([]string{"ethereum", "huobi-token", "okex-chain", "binance-smart-chain", "polygon-pos", "fantom",
-		"avalanche", "cronos", "arbitrum-one", "klay-token", "aurora", "optimistic-ethereum",
-		"oasis", "tron", "xdai", "solana", "starcoin", "ethereum-classic", "aptos", "nervos", "osmosis",
-		"bitcoin-cash", "harmony-shard-0", "ronin", "arbitrum-nova"})
+	fmt.Println("cgIds=", cgIds)
+	ids := strings.Split(cgIds, ",")
+	if len(ids) == 0 {
+		fmt.Println("ids length is nil.")
+		return
+	}
+	tokenlist.UpLoadJsonToCDN(ids)
+	//tokenlist.UpLoadJsonToCDN([]string{"ethereum", "huobi-token", "okex-chain", "binance-smart-chain", "polygon-pos", "fantom",
+	//	"avalanche", "cronos", "arbitrum-one", "klay-token", "aurora", "optimistic-ethereum",
+	//	"oasis", "tron", "xdai", "solana", "starcoin", "ethereum-classic", "aptos", "nervos", "osmosis",
+	//	"bitcoin-cash", "harmony-shard-0", "ronin", "arbitrum-nova"})
 }
 
 func testRefreshDirs() {
