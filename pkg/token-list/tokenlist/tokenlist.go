@@ -1146,6 +1146,7 @@ func DownLoadImages(tokenLists []models.TokenList) {
 				image = t.Logo
 			}
 		}
+
 		if image != "" && strings.HasPrefix(image, "https") {
 			path := "./images/" + t.Chain
 			exist, _ := utils.PathExists(path)
@@ -1280,7 +1281,7 @@ func InsertLogoURI() {
 		if !info.IsDir() {
 			logoURI := path
 			fileName := info.Name()[:len(info.Name())-4]
-			chainAddress := strings.Split(fileName, "_")
+			chainAddress := strings.SplitN(fileName, "_", 2)
 			if len(chainAddress) == 2 {
 				chain := chainAddress[0]
 				address := chainAddress[1]
