@@ -123,6 +123,9 @@ func main() {
 		testCreateNFTCollection()
 	case "commRPC":
 		testCommRPC()
+	case "tokenTop20":
+		testInsertTokenTop20()
+
 	}
 	fmt.Println("test main end")
 }
@@ -496,4 +499,9 @@ func testGetNFTInfo() {
 		fmt.Println("get balacne error", err)
 	}
 	fmt.Println("result:", resp)
+}
+
+func testInsertTokenTop20() {
+	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
+	tokenlist.UpdateTokenTop20()
 }
