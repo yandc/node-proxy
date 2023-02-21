@@ -140,9 +140,6 @@ func CommHttpsForm(url, method string, params, headers map[string]string, reqBod
 		req.URL.RawQuery = q.Encode()
 	}
 
-	//tr := &http.Transport{
-	//	TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-	//}
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {

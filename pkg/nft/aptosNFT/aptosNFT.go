@@ -33,18 +33,26 @@ func GetAptosNFTAsset(chain, tokenAddress, tokenId string) (models.NftList, erro
 	var nftData *types.AptosNFTData
 	var collectionData *types.AptosCollectionData
 	var collectionURL string
-	var err error
+	var resultErr error
 	wg.Add(3)
 	go func() {
 		defer wg.Done()
+		var err error
 		//get nft info
 		nftData, err = getNFTDataByCollection(chain, collection, name, creator)
+		if err != nil {
+			resultErr = err
+		}
 	}()
 
 	go func() {
 		//get collection
 		defer wg.Done()
+		var err error
 		collectionData, err = getCollectionData(chain, collection, creator)
+		if err != nil {
+			resultErr = err
+		}
 	}()
 	go func() {
 		defer wg.Done()
@@ -55,8 +63,8 @@ func GetAptosNFTAsset(chain, tokenAddress, tokenId string) (models.NftList, erro
 		}
 	}()
 	wg.Wait()
-	if err != nil {
-		return models.NftList{}, err
+	if resultErr != nil {
+		return models.NftList{}, resultErr
 	}
 	if len(nftData.Data.CurrentTokenDatas) == 0 || len(collectionData.Data.CurrentCollectionDatas) == 0 {
 		return models.NftList{}, errors.New("not find nft")

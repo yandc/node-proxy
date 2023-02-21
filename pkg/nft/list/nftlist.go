@@ -17,6 +17,7 @@ import (
 	"gorm.io/gorm/clause"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -123,7 +124,7 @@ func GetNFTInfo(chain string, tokenInfos []*v1.GetNftInfoRequest_NftInfo) ([]*v1
 		addressMap[address+"_"+tokenInfo.TokenId] = tokenInfo.TokenAddress
 	}
 	var nftListModes []models.NftList
-	err := nft.GetNFTDb().Where("chain = ? and (token_address,token_id) IN ?", chain, params).Find(&nftListModes).Error
+	err := nft.GetNFTDb().Where("(chain = ? and (token_address,token_id) IN ?) or (chain = 'Aptos' and (token_address,nft_name) IN ? )", chain, params, params).Find(&nftListModes).Error
 	if err != nil {
 		nft.GetNFTLog().Error("get db nft list error:", err)
 		return nil, err
@@ -131,9 +132,13 @@ func GetNFTInfo(chain string, tokenInfos []*v1.GetNftInfoRequest_NftInfo) ([]*v1
 	result := make([]*v1.GetNftReply_NftInfoResp, 0, len(tokenInfos)+2)
 	for _, nftList := range nftListModes {
 		address := nftList.TokenAddress
-		if value, ok := addressMap[nftList.TokenAddress+"_"+nftList.TokenId]; ok {
+		tempId := nftList.TokenId
+		if chain == "Aptos" {
+			tempId = nftList.NftName
+		}
+		if value, ok := addressMap[nftList.TokenAddress+"_"+tempId]; ok {
 			address = value
-			delete(addressMap, nftList.TokenAddress+"_"+nftList.TokenId)
+			delete(addressMap, nftList.TokenAddress+"_"+tempId)
 		}
 		if nftList.ImageURL != "" && !strings.HasPrefix(nftList.ImageURL, "https") {
 			nftList.ImageURL = strings.Replace(nftList.ImageURL, "ipfs://", nft.GetIPFS(), 1)
@@ -431,4 +436,49 @@ func Assets2ModesList(chain string, asset types.Asset) models.NftList {
 	}
 
 	return tempModel
+}
+
+func AutoUpdateNFTInfo() {
+	nft.GetNFTLog().Info("AutoUpdateNFTInfo start")
+	var nftListModes []models.NftList
+	err := nft.GetNFTDb().Where("image_url = ? AND animation_url= ?", "", "").Find(&nftListModes).Error
+	if err != nil {
+		nft.GetNFTLog().Error("get db nft list error:", err)
+		return
+	}
+	if len(nftListModes) == 0 {
+		return
+	}
+	var wg sync.WaitGroup
+	var count uint64
+	for _, nftList := range nftListModes {
+		wg.Add(1)
+		go func(model models.NftList) {
+			defer wg.Done()
+			tokenId := model.TokenId
+			if strings.Contains(model.Chain, "Aptos") {
+				tokenId = model.NftName
+			}
+			updateModel, err := GetNFTListModel(model.Chain, model.TokenAddress, tokenId)
+			for i := 0; i < 3 && (err != nil || (updateModel.ImageURL == "" && updateModel.AnimationURL == "")); i++ {
+				time.Sleep(time.Duration(i) * time.Second)
+				updateModel, err = GetNFTListModel(model.Chain, model.TokenAddress, tokenId)
+			}
+			if err != nil {
+				nft.GetNFTLog().Error("get nft list model error:", err, model.Chain, model.TokenAddress, tokenId)
+				return
+			}
+			if updateModel.ImageURL != "" || updateModel.AnimationURL != "" {
+				updateModel.ID = model.ID
+				err = nft.GetNFTDb().Save(updateModel).Error
+				if err != nil {
+					nft.GetNFTLog().Error("update nft info error:", err, model.Chain, model.TokenAddress, tokenId)
+					return
+				}
+				atomic.AddUint64(&count, 1)
+			}
+		}(nftList)
+	}
+	wg.Wait()
+	nft.GetNFTLog().Info("AutoUpdateNFTInfo end", len(nftListModes), count)
 }
