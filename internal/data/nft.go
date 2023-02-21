@@ -55,3 +55,8 @@ func (r *nftListRepo) GetNftCollectionInfo(ctx context.Context, chain, address s
 		Data:   collectionInfo,
 	}, nil
 }
+
+func (r *nftListRepo) AutoUpdateNFTInfo(ctx context.Context) {
+	r.log.WithContext(ctx).Infof("AutoUpdateNFTInfo")
+	list.AutoUpdateNFTInfo()
+}
