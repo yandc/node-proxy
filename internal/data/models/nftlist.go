@@ -20,4 +20,5 @@ type NftList struct {
 	CollectionImageURL    string `json:"collection_image_url"`
 	NftName               string `json:"nft_name"`
 	AnimationURL          string `json:"animation_url"`
+	RefreshCount          int    `json:"refresh_count" gorm:"default:0;"`
 }

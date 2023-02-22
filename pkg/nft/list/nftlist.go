@@ -441,7 +441,7 @@ func Assets2ModesList(chain string, asset types.Asset) models.NftList {
 func AutoUpdateNFTInfo() {
 	nft.GetNFTLog().Info("AutoUpdateNFTInfo start")
 	var nftListModes []models.NftList
-	err := nft.GetNFTDb().Where("image_url = ? AND animation_url= ?", "", "").Find(&nftListModes).Error
+	err := nft.GetNFTDb().Where("image_url = ? AND animation_url= ? AND refresh_count < ?", "", "", nft.GetRefreshCount()).Find(&nftListModes).Error
 	if err != nil {
 		nft.GetNFTLog().Error("get db nft list error:", err)
 		return
@@ -468,14 +468,17 @@ func AutoUpdateNFTInfo() {
 				nft.GetNFTLog().Error("get nft list model error:", err, model.Chain, model.TokenAddress, tokenId)
 				return
 			}
+			tempModel := model
 			if updateModel.ImageURL != "" || updateModel.AnimationURL != "" {
-				updateModel.ID = model.ID
-				err = nft.GetNFTDb().Save(updateModel).Error
-				if err != nil {
-					nft.GetNFTLog().Error("update nft info error:", err, model.Chain, model.TokenAddress, tokenId)
-					return
-				}
+				tempModel = updateModel
 				atomic.AddUint64(&count, 1)
+			}
+			tempModel.ID = model.ID
+			tempModel.RefreshCount = model.RefreshCount + 1
+			err = nft.GetNFTDb().Save(tempModel).Error
+			if err != nil {
+				nft.GetNFTLog().Error("update nft info error:", err, model.Chain, model.TokenAddress, tokenId)
+				return
 			}
 		}(nftList)
 	}

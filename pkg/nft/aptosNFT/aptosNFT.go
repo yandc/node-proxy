@@ -24,8 +24,8 @@ const (
 func GetAptosNFTAsset(chain, tokenAddress, tokenId string) (models.NftList, error) {
 	var nftModel models.NftList
 	tokenAddressInfo := strings.Split(tokenAddress, "::")
-	if len(tokenAddressInfo) < 2 {
-		return nftModel, errors.New("tokenId invalid")
+	if len(tokenAddressInfo) < 3 {
+		return nftModel, errors.New("tokenAddress invalid")
 	}
 	name := tokenId
 	creator, collection, property_version := tokenAddressInfo[0], tokenAddressInfo[1], tokenAddressInfo[2]
