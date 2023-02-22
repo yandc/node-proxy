@@ -9,9 +9,10 @@ import (
 )
 
 type config struct {
-	db   *gorm.DB
-	log  *log.Helper
-	ipfs string
+	db           *gorm.DB
+	log          *log.Helper
+	ipfs         string
+	refreshCount uint32
 }
 
 const (
@@ -26,9 +27,10 @@ var nftConfig config
 func InitNFT(db *gorm.DB, logger log.Logger, nftList *conf.NFTList) {
 	log := log.NewHelper(log.With(logger, "module", "nft/nftList"))
 	nftConfig = config{
-		db:   db,
-		log:  log,
-		ipfs: nftList.Ipfs,
+		db:           db,
+		log:          log,
+		ipfs:         nftList.Ipfs,
+		refreshCount: nftList.RefreshCount,
 	}
 }
 
@@ -62,6 +64,10 @@ func GetNFTLog() *log.Helper {
 
 func GetIPFS() string {
 	return nftConfig.ipfs
+}
+
+func GetRefreshCount() uint32 {
+	return nftConfig.refreshCount
 }
 
 func DoWebRequest(url string) (string, error) {
