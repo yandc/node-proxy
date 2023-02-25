@@ -20,6 +20,7 @@ import (
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/collection"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/list"
 	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/tokenlist"
+	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
 	"google.golang.org/grpc"
 	"gorm.io/gorm"
 	"io/ioutil"
@@ -125,6 +126,8 @@ func main() {
 		testCommRPC()
 	case "tokenTop20":
 		testInsertTokenTop20()
+	case "tokenPrice":
+		testAutoUpdateTokenPrice()
 
 	}
 	fmt.Println("test main end")
@@ -147,6 +150,7 @@ func testRefreshLogoURI() {
 
 func testAutoUpdateTokenList() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
+	//tokenlist.AutoUpdatePrice()
 	fmt.Println("cgIds=", cgIds)
 	ids := strings.Split(cgIds, ",")
 	if len(ids) == 0 {
@@ -166,6 +170,17 @@ func testCommRPC() {
 	//
 	req := new(v13.ExecNodeProxyRPCRequest)
 	req.Id = 1
+	params := utils.GetPriceV2Req{
+		CoinName: []string{"ethereum"},
+		CoinAddress: []string{"aptos_0x5e156f1207d0ebfa19a9eeff00d62a282278fb8719f4fab3a586a0a2c0fffbea::coin::T",
+			"aptos_0x8d87a65ba30e09357fa2edea2c80dbac296e5dec2b18287113500b902942929d::celer_coin_manager::UsdcCoin",
+			"aptos_0xec42a352cc65eca17a9fa85d0fc602295897ed6b8b8af6a6c79ef490eb8f9eba::amm_swap::PoolLiquidityCoin<0x1::aptos_coin::AptosCoin, 0x5e156f1207d0ebfa19a9eeff00d62a282278fb8719f4fab3a586a0a2c0fffbea::coin::T>"},
+		Currency: "CNY",
+	}
+	b, _ := json.Marshal(params)
+	fmt.Println("params ==", string(b))
+	req.Params = string(b)
+	req.Method = "GetPriceV2"
 	//req.Chain = "ETH"
 	//req.Address = "0xa06ef134313C13e03B8682B0616147607B4E375E"
 	//req.TokenAddress = "0xdAC17F958D2ee523a2206206994597C13D831ec7"
@@ -504,4 +519,9 @@ func testGetNFTInfo() {
 func testInsertTokenTop20() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
 	tokenlist.UpdateTokenTop20()
+}
+
+func testAutoUpdateTokenPrice() {
+	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
+	tokenlist.AutoUpdatePrice()
 }

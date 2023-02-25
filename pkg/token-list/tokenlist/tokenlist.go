@@ -57,8 +57,13 @@ const (
 
 var c config
 
+var updatePriceChannel chan []string
+var createPriceChannel chan []string
+
 func InitTokenList(conf *conf.TokenList, db *gorm.DB, client *redis.Client, logger log.Logger) {
 	log := log.NewHelper(log.With(logger, "module", "tokenlist/InittokenList"))
+	updatePriceChannel = make(chan []string, 100)
+	createPriceChannel = make(chan []string, 200)
 	c = config{
 		db:            db,
 		log:           log,
@@ -77,6 +82,60 @@ func InitTokenList(conf *conf.TokenList, db *gorm.DB, client *redis.Client, logg
 
 	InitCG(conf.Coingecko.BaseURL, db, logger)
 	InitCMC(conf.Coinmarketcap.BaseURL, conf.Coinmarketcap.Key, db, logger)
+}
+
+func HandlerPrice() {
+	for {
+		select {
+		case priceChains := <-updatePriceChannel:
+			updateCreatePrice(priceChains)
+		case priceChains := <-createPriceChannel:
+			updateCreatePrice(priceChains)
+
+		}
+	}
+}
+
+func updateCreatePrice(priceChains []string) {
+	var cgIds, cmcIds []string
+	addressIdMap := make(map[string]string, len(priceChains))
+
+	//处理地址
+	for _, priceChain := range priceChains {
+		if !strings.Contains(priceChain, "_") {
+			cgIds = append(cgIds, priceChain)
+			continue
+		}
+		addressInfo := strings.Split(priceChain, "_")
+		chain := utils.GetChainNameByPlatform(addressInfo[0])
+		address := addressInfo[1]
+		if strings.HasPrefix(address, "0x") && chain != utils.STARCOIN_CHAIN && chain != utils.APTOS_CHAIN {
+			address = strings.ToLower(address)
+		}
+		var tempTokenList models.TokenList
+		err := c.db.Where("chain = ? AND address = ?", chain, address).First(&tempTokenList).Error
+		if err != nil {
+			continue
+		}
+		var id string
+		if tempTokenList.CgId != "" {
+			id = tempTokenList.CgId
+			cgIds = append(cgIds, tempTokenList.CgId)
+		} else if tempTokenList.CmcId > 0 {
+			id = fmt.Sprintf("%d", tempTokenList.CmcId)
+			cmcIds = append(cmcIds, fmt.Sprintf("%v", id))
+		}
+		if id != "" {
+			addressIdMap[id] = fmt.Sprintf("%s_%s", addressInfo[0], address)
+		}
+	}
+	if len(cgIds) > 0 {
+		handlerCgPrice(cgIds, addressIdMap)
+	}
+	if len(cmcIds) > 0 {
+		handlerCMCPrice(cmcIds, addressIdMap)
+	}
+
 }
 
 func CreateSource() {
@@ -237,6 +296,9 @@ func CreateTokenList() {
 
 func GetTokenListPrice(chains, addresses []string, currency string) map[string]map[string]string {
 	result := make(map[string]map[string]string)
+	updateChains := make([]string, 0, len(addresses))
+	createChains := make([]string, 0, len(addresses))
+
 	//native price
 	if len(chains) > 0 {
 		var cmLists []models.CoinGecko
@@ -255,7 +317,7 @@ func GetTokenListPrice(chains, addresses []string, currency string) map[string]m
 			tempChainMap := make(map[string]struct{}, len(cmLists))
 			for _, cm := range cmLists {
 				tempChain = append(tempChain, cm.Id)
-				tempChainMap[cm.Id] = struct{}{}
+				tempChainMap[cm.Name] = struct{}{}
 				if cm.Name == "Huobi" {
 					chainMap[cm.Id] = append(chainMap[cm.Id], "Huobi-Token")
 				} else {
@@ -272,122 +334,67 @@ func GetTokenListPrice(chains, addresses []string, currency string) map[string]m
 		} else {
 			tempChain = append(tempChain, chains...)
 		}
-		needUpdateChain := make([]string, 0, len(chains))
 		for _, chain := range tempChain {
 			//get id by chain
 			key := REDIS_PRICE_KEY + fmt.Sprintf("%s:%s", chain, strings.ToLower(currency))
-			//price, err := c.redisClient.Get(key).Result()
 			price, updateFlag, err := utils.GetPriceRedisValueByKey(c.redisClient, key)
 			if err != nil {
 				c.log.Error("get redis cache error:", err, key)
 			}
-			if price != "" {
-				if value, ok := chainMap[chain]; ok {
-					for _, addr := range value {
-						result[addr] = map[string]string{
-							currency: price,
-						}
-					}
-				} else {
-					result[chain] = map[string]string{
+			if updateFlag && price == "" {
+				createChains = append(createChains, chain)
+			} else if updateFlag {
+				updateChains = append(updateChains, chain)
+			}
+			if price == "" {
+				price = "0"
+			}
+			if value, ok := chainMap[chain]; ok {
+				for _, addr := range value {
+					result[addr] = map[string]string{
 						currency: price,
 					}
 				}
-				if updateFlag {
-					needUpdateChain = append(needUpdateChain, chain)
-				}
 			} else {
-				needUpdateChain = append(needUpdateChain, chain)
+				result[chain] = map[string]string{
+					currency: price,
+				}
 			}
-		}
-		if len(needUpdateChain) > 0 {
-			pricesMap, err := CGSimplePrice(needUpdateChain, currency)
-			if err != nil {
-				c.log.Error("CGSimplePrice Error:", err)
-			}
-			handlerPriceMap(pricesMap, map[string]string{}, chainMap, currency, result, true)
 		}
 	}
 	if len(addresses) > 0 {
 		//token price
 		newAddressMap := utils.ParseCoinAddress(addresses)
-		//addressMap := make(map[string]string, len(addresses))
-		needUpdateAddress := make([]string, 0, len(addresses))
 		for chainAddress, _ := range newAddressMap {
 			key := REDIS_PRICE_KEY + fmt.Sprintf("%s:%s", chainAddress, strings.ToLower(currency))
-			//price, err := c.redisClient.Get(key).Result()
 			price, updateFlag, err := utils.GetPriceRedisValueByKey(c.redisClient, key)
 			if err != nil {
 				c.log.Error("get redis cache error:", err, key)
 			}
-			if price != "" {
-				for _, addr := range newAddressMap[chainAddress] {
-					result[addr] = map[string]string{currency: price}
-				}
+			if updateFlag && price == "" {
+				createChains = append(createChains, chainAddress)
+			} else if updateFlag {
+				updateChains = append(updateChains, chainAddress)
+			}
+			if price == "" {
+				price = "0"
 
-				if updateFlag {
-					needUpdateAddress = append(needUpdateAddress, chainAddress)
-				}
-			} else {
-				//fmt.Println("add address", chainAddress)
-				needUpdateAddress = append(needUpdateAddress, chainAddress)
-				//addressMap[address] = addresses[i]
+			}
+			for _, addr := range newAddressMap[chainAddress] {
+				result[addr] = map[string]string{currency: price}
 			}
 		}
-		if len(needUpdateAddress) > 0 {
-			//get redisClient price
-			tokenList := make([]models.TokenList, 0, len(needUpdateAddress))
-			for _, chainAddress := range needUpdateAddress {
-				if strings.Contains(chainAddress, "_") {
-					addressInfo := strings.Split(chainAddress, "_")
-					chain, address := addressInfo[0], addressInfo[1]
-					var tempTokenList models.TokenList
-					err := c.db.Where("chain = ? AND address = ?", chain, address).First(&tempTokenList).Error
-					if err != nil {
-						c.log.Error("get token list error:", err)
-						for _, addr := range newAddressMap[chainAddress] {
-							result[addr] = map[string]string{currency: "0"}
-						}
-						continue
-					}
-					//addressMap[tempTokenList.CgId] = chainAddress
-					tokenList = append(tokenList, tempTokenList)
-				}
-			}
-			var cgIds, cmcIds []string
-			addressIdMap := make(map[string]string, len(tokenList))
-			for _, t := range tokenList {
-				var id string
-				if t.CgId != "" {
-					id = t.CgId
-					cgIds = append(cgIds, id)
-				} else if t.CmcId > 0 {
-					id = fmt.Sprintf("%d", t.CmcId)
-					cmcIds = append(cmcIds, id)
-				}
-				addressIdMap[id] = fmt.Sprintf("%s_%s", t.Chain, t.Address)
-			}
-			//coin gecko price
-			if len(cgIds) > 0 {
-				cgPricesMap, err := CGSimplePrice(cgIds, currency)
-				if err != nil {
-					c.log.Error("CGSimplePrice Error:", err)
-				} else {
-					handlerPriceMap(cgPricesMap, addressIdMap, newAddressMap, currency, result, true)
+	}
+	if len(updateChains) > 0 {
+		go func() {
+			updatePriceChannel <- updateChains
+		}()
+	}
 
-				}
-			}
-
-			if len(cmcIds) > 0 {
-				cmcPriceMap, err := CMCSimplePrice(cmcIds, currency)
-				if err != nil {
-					c.log.Error("get cmc price error:", err)
-				} else {
-					handlerPriceMap(cmcPriceMap, addressIdMap, newAddressMap, currency, result, false)
-				}
-			}
-
-		}
+	if len(createChains) > 0 {
+		go func() {
+			createPriceChannel <- createChains
+		}()
 	}
 	return result
 }
@@ -720,6 +727,108 @@ func AutoUpdateCGTokenList(ids []string) {
 		//upload token list json to cdn
 		if len(upLoadchains) > 0 {
 			UpLoadJsonToCDN(upLoadchains)
+		}
+	}
+}
+
+//AutoUpdatePrice 更新代币的价格
+func AutoUpdatePrice() {
+	c.log.Infof("AutoUpdatePrice start")
+	//获取chain
+	chains := make([]string, len(c.chains))
+	for index, chain := range c.chains {
+		chains[index] = utils.GetChainNameByChain(chain)
+	}
+
+	var tokenLists []models.TokenList
+	err := c.db.Where("chain in ? and (cg_id != ? or cmc_id > ?)", chains, "", 0).Find(&tokenLists).Error
+	if err != nil {
+		c.log.Error("AutoUpdatePrice get  tokenList error:", err)
+		return
+	}
+	chainPriceKey := utils.GetChainPriceKey()
+	cgIds := make([]string, 0, len(tokenLists)+len(chainPriceKey))
+	cmcIds := make([]string, 0, len(tokenLists))
+	addressIdMap := make(map[string]string, len(tokenLists))
+	cgIds = append(cgIds, chainPriceKey...)
+	for _, token := range tokenLists {
+		var id string
+		if token.CgId != "" {
+			id = token.CgId
+			cgIds = append(cgIds, id)
+		} else if token.CmcId > 0 {
+			id = fmt.Sprintf("%d", token.CmcId)
+			cmcIds = append(cmcIds, id)
+		}
+		if id != "" {
+			if handler := utils.GetHandlerByDBName(token.Chain); handler != "" {
+				addressIdMap[id] = fmt.Sprintf("%s_%s", handler, token.Address)
+			}
+		}
+	}
+
+	//get coin gecko price
+	if len(cgIds) > 0 {
+		handlerCgPrice(cgIds, addressIdMap)
+	}
+
+	//get coin market cap price
+	if len(cmcIds) > 0 {
+		handlerCMCPrice(cmcIds, addressIdMap)
+	}
+	c.log.Infof("AutoUpdatePrice end")
+}
+
+func handlerCMCPrice(cmcIds []string, addressIdMap map[string]string) {
+	currencys := []string{"USD", "CNY"}
+	for _, currency := range currencys {
+		cmcPriceMap, err := CMCSimplePrice(cmcIds, currency)
+		if err != nil {
+			continue
+		}
+		setAutoPrice(cmcPriceMap, addressIdMap, false)
+	}
+}
+
+func handlerCgPrice(cgIds []string, addressIdMap map[string]string) {
+	pageSize := 500
+	pageEndIndex := 0
+	for i := 0; i < len(cgIds); i += pageSize {
+		if i+pageSize > len(cgIds) {
+			pageEndIndex = len(cgIds)
+		} else {
+			pageEndIndex = i + pageSize
+		}
+		cgPricesMap, err := CGSimplePrice(cgIds[i:pageEndIndex], "USD,CNY")
+		for j := 0; err != nil && j < 3; j++ {
+			time.Sleep(1 * time.Minute)
+			cgPricesMap, err = CGSimplePrice(cgIds[i:pageEndIndex], "USD,CNY")
+		}
+		if err != nil {
+			c.log.Error("CGSimplePrice Error:", err)
+			continue
+		}
+		c.log.Infof("CGSimplePrice length:", len(cgPricesMap))
+		setAutoPrice(cgPricesMap, addressIdMap, true)
+	}
+
+}
+
+func setAutoPrice(priceMap map[string]map[string]float32, addressIdMap map[string]string, isCG bool) {
+	for id, prices := range priceMap {
+		var address string
+		if value, ok := addressIdMap[id]; ok {
+			address = value
+		} else {
+			address = id
+		}
+		for currency, price := range prices {
+			priceStr := decimal.NewFromFloat32(price).String()
+			key := REDIS_PRICE_KEY + fmt.Sprintf("%s:%s", address, strings.ToLower(currency))
+			err := utils.SetPriceRedisKey(c.redisClient, key, priceStr)
+			if err != nil {
+				c.log.Error("set redisClient error:", err, key)
+			}
 		}
 	}
 }

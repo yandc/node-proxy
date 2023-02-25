@@ -36,6 +36,7 @@ func (r *tokenListRepo) GetPrice(ctx context.Context, coinName, coinAddress, cur
 		chainName = strings.Split(coinName, ",")
 	}
 	price := tokenlist.GetTokenListPrice(chainName, address, currency)
+	r.log.WithContext(ctx).Infof("price===", price)
 	b, err := json.Marshal(price)
 	if err != nil {
 		r.log.WithContext(ctx).Error("marshal error", err)
@@ -52,6 +53,11 @@ func (r *tokenListRepo) AutoUpdateTokenList(ctx context.Context) {
 	r.log.WithContext(ctx).Infof("AutoUpdateTokenList")
 	tokenlist.AutoUpdateCGTokenList([]string{})
 	//tokenlist.AutoUpdateTokenList(true, true, true)
+}
+
+func (r *tokenListRepo) AutoUpdateTokenPrice(ctx context.Context) {
+	r.log.WithContext(ctx).Infof("AutoUpdateTokenPrice")
+	tokenlist.AutoUpdatePrice()
 }
 
 func (r *tokenListRepo) GetTokenInfo(ctx context.Context, addressInfo []*v1.GetTokenInfoReq_Data) (
