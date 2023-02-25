@@ -111,6 +111,35 @@ var CGCNameChainMap = map[string]string{
 	"defi-kingdoms-blockchain": "avalanche",
 }
 
+var dbName2HandlerMap = map[string]string{
+	"ethereum":            "ethereum",
+	"huobi-token":         "heco",
+	"okex-chain":          "okex",
+	"binance-smart-chain": "bsc",
+	"polygon-pos":         "polygon",
+	"fantom":              "fantom",
+	"avalanche":           "avalanche",
+	"cronos":              "cronos",
+	"arbitrum-one":        "arbitrum",
+	"klay-token":          "klaytn",
+	"aurora":              "aurora",
+	"optimistic-ethereum": "optimism",
+	"oasis":               "oasis",
+	"tron":                "tron",
+	"xdai":                "xDai",
+	"ethereum-classic":    "ETC",
+	"solana":              "solana",
+	"aptos":               "aptos",
+	"starcoin":            "starcoin",
+	"nervos":              "nervos",
+	"cosmos":              "cosmos",
+	"bitcoin-cash":        "smartbch",
+	"osmosis":             "osmosis",
+	"harmony-shard-0":     "harmony",
+	"ronin":               "ronin",
+	"arbitrum-nova":       "arbitrumnova",
+}
+
 var handlerNameMap = map[string]string{
 	"ethereum":     "ethereum",
 	"heco":         "huobi-token",
@@ -195,6 +224,11 @@ var chainNameMap = map[string]string{
 	"ArbitrumNovaTEST": "arbitrum-nova",
 }
 
+var priceKeys = []string{"ethereum", "polkadot", "ronin", "harmony", "osmosis", "bitcoin-cash", "casper-network",
+	"cosmos", "nervos-network", "solana", "ethereum-pow-iou", "aptos", "tron", "Oasis-Network", "avalanche-2",
+	"matic-network", "oec-token", "huobi-token", "binancecoin", "bitcoin", "starcoin", "xdai", "ethereum-classic",
+	"klay-token", "crypto-com-chain", "fantom", "dogecoin", "litecoin"}
+
 var db2Chain = map[string]string{
 	"ethereum":            "ETH",
 	"huobi-token":         "HECO",
@@ -262,6 +296,10 @@ var chainURLMap = map[string]string{
 
 var OtherTokenFileMap = map[string][]string{
 	"klay-token": {"https://s.klayswap.com/data/klayswap/tokens.json"},
+}
+
+func GetChainPriceKey() []string {
+	return priceKeys
 }
 
 func GetPlatform(chain string) string {
@@ -495,7 +533,7 @@ func HttpsGetForm(url string, params map[string]string, out interface{}) error {
 		q.Add(k, v)
 	}
 	req.URL.RawQuery = q.Encode()
-	client := &http.Client{}
+	client := utils.GetGlobalClient()
 	resp, err := client.Do(req)
 	if err != nil {
 		return err
@@ -528,6 +566,13 @@ func GetChainNameByPlatform(handler string) string {
 		return value
 	}
 	return handler
+}
+
+func GetHandlerByDBName(dbName string) string {
+	if value, ok := dbName2HandlerMap[dbName]; ok {
+		return value
+	}
+	return ""
 }
 
 func GetChainNameByChain(chain string) string {
@@ -578,8 +623,8 @@ func ParseCoinAddress(coinAddress []string) map[string][]string {
 			result[chainAddress] = append(result[chainAddress], chainAddress)
 			continue
 		}
-		addressInfo := strings.Split(chainAddress, "_")
-		chain := GetChainNameByPlatform(addressInfo[0])
+		addressInfo := strings.SplitN(chainAddress, "_", 2)
+		chain := addressInfo[0]
 		address := addressInfo[1]
 		if strings.HasPrefix(address, "0x") && chain != STARCOIN_CHAIN && chain != APTOS_CHAIN {
 			address = strings.ToLower(address)

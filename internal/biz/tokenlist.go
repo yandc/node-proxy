@@ -14,6 +14,7 @@ type TokenListRepo interface {
 	//CreateTokenList(ctx context.Context)
 	GetTokenList(ctx context.Context, chain string) ([]*v1.GetTokenListResp_Data, error)
 	AutoUpdateTokenList(ctx context.Context)
+	AutoUpdateTokenPrice(ctx context.Context)
 	GetTokenInfo(ctx context.Context, addressInfo []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoResp_Data, error)
 	GetDBTokenInfo(ctx context.Context, addressInfo []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoResp_Data, error)
 	GetTokenTop20(ctx context.Context, chain string) ([]*v1.TokenInfoData, error)
@@ -43,6 +44,7 @@ func (uc *TokenListUsecase) GetTokenList(ctx context.Context, chain string) ([]*
 
 func (uc *TokenListUsecase) AutoUpdateTokenList(ctx context.Context) {
 	transactionPlan := time.NewTicker(24 * time.Hour)
+	uc.repo.AutoUpdateTokenPrice(ctx)
 	for true {
 		select {
 		case <-transactionPlan.C:

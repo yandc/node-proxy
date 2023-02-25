@@ -30,7 +30,9 @@ func wireApp(confServer *conf.Server, confData *conf.Data, tokenList *conf.Token
 	nftRepo := data.NewNFTRepo(db, logger, nftList)
 	nftUsecase := biz.NewNFTUsecase(nftRepo, logger)
 	nftService := service.NewNFTService(nftUsecase)
-	commRPCService := service.NewCommRPCService()
+	commRPCRepo := data.NewCommRPCRepo(logger)
+	commRPCUsecase := biz.NewCommRPCUsecase(commRPCRepo, logger)
+	commRPCService := service.NewCommRPCService(commRPCUsecase)
 	grpcServer := server.NewGRPCServer(confServer, tokenlistService, platformService, nftService, commRPCService, logger)
 	app := newApp(logger, grpcServer)
 	return app, func() {
