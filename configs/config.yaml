@@ -66,6 +66,7 @@ tokenList:
     - Harmony
     - Ronin
     - ArbitrumNova
+    - Conflux
 
 nftList:
   ipfs: https://cloudflare-ipfs.com/ipfs/
@@ -246,6 +247,11 @@ platform:
     type: EVM
     rpcURL:
       - https://nova.arbitrum.io/rpc
+  - chain: Conflux
+    type: EVM
+    rpcURL:
+      - https://evm.confluxrpc.com
+      - https://evm.confluxrpc.org
 
   - chain: AvalancheTEST
     type: EVM

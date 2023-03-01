@@ -166,6 +166,7 @@ var handlerNameMap = map[string]string{
 	"harmony":      "harmony-shard-0",
 	"ronin":        "ronin",
 	"arbitrumnova": "arbitrum-nova",
+	"conflux":      "conflux",
 }
 
 var chainNameMap = map[string]string{
@@ -195,6 +196,7 @@ var chainNameMap = map[string]string{
 	"Harmony":      "harmony-shard-0",
 	"Ronin":        "ronin",
 	"ArbitrumNova": "arbitrum-nova",
+	"Conflux":      "conflux",
 
 	"ETHTEST":          "ethereum",
 	"HECOTEST":         "huobi-token",
@@ -222,6 +224,7 @@ var chainNameMap = map[string]string{
 	"HarmonyTEST":      "harmony-shard-0",
 	"RoninTEST":        "ronin",
 	"ArbitrumNovaTEST": "arbitrum-nova",
+	"ConfluxTEST":      "conflux",
 }
 
 var priceKeys = []string{"ethereum", "polkadot", "ronin", "harmony", "osmosis", "bitcoin-cash", "casper-network",
@@ -256,6 +259,7 @@ var db2Chain = map[string]string{
 	"harmony-shard-0": "Harmony",
 	"ronin":           "Ronin",
 	"arbitrum-nova":   "ArbitrumNova",
+	"conflux":         "Conflux",
 }
 
 var TokenFileMap = map[string][]string{
@@ -292,6 +296,7 @@ var chainURLMap = map[string]string{
 	"harmony-shard-0":     "https://harmony-0-rpc.gateway.pokt.network",
 	"ronin":               "https://api.roninchain.com/rpc",
 	"arbitrum-nova":       "https://nova.arbitrum.io/rpc",
+	"conflux":             "https://evm.confluxrpc.com",
 }
 
 var OtherTokenFileMap = map[string][]string{
