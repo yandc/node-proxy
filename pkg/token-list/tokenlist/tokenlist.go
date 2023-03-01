@@ -88,10 +88,9 @@ func HandlerPrice() {
 	for {
 		select {
 		case priceChains := <-updatePriceChannel:
-			updateCreatePrice(priceChains)
+			go updateCreatePrice(priceChains)
 		case priceChains := <-createPriceChannel:
-			updateCreatePrice(priceChains)
-
+			go updateCreatePrice(priceChains)
 		}
 	}
 }
@@ -791,6 +790,7 @@ func handlerCMCPrice(cmcIds []string, addressIdMap map[string]string) {
 }
 
 func handlerCgPrice(cgIds []string, addressIdMap map[string]string) {
+	c.log.Infof("CGSimplePrice cgIds:", cgIds)
 	pageSize := 500
 	pageEndIndex := 0
 	for i := 0; i < len(cgIds); i += pageSize {
@@ -1240,12 +1240,15 @@ func DownLoadImages(tokenLists []models.TokenList) {
 		var image string
 		if t.CgId != "" && t.CmcId == 0 {
 			var cgImage map[string]string
-			json.Unmarshal([]byte(t.Logo), &cgImage)
-			if value, ok := cgImage["large"]; ok {
-				image = value
+			if err := json.Unmarshal([]byte(t.Logo), &cgImage); err != nil {
+				image = t.Logo
 			} else {
-				if strings.Contains(t.Logo, "/thumb/") {
-					image = strings.Replace(t.Logo, "/thumb/", "/large/", 1)
+				if value, ok := cgImage["large"]; ok {
+					image = value
+				} else {
+					if strings.Contains(t.Logo, "/thumb/") {
+						image = strings.Replace(t.Logo, "/thumb/", "/large/", 1)
+					}
 				}
 			}
 		} else {
@@ -1546,6 +1549,8 @@ func UpdateChainToken(chain string) {
 		UpdateOsmosisToken()
 	case "arbitrum-nova":
 		UpdateArbitrumNovaToken()
+	case "conflux":
+		UpdateConfluxToken()
 
 		//default:
 		//	utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")

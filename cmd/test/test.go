@@ -40,6 +40,7 @@ var (
 	flagconf string
 	testFunc string
 	cgIds    string
+	chainIds []string
 	id, _    = os.Hostname()
 	db       *gorm.DB
 	client   *redis.Client
@@ -87,6 +88,7 @@ func main() {
 	flag.Parse()
 	fmt.Println("func name", testFunc)
 	Init()
+	chainIds = strings.Split(cgIds, ",")
 	switch testFunc {
 	case "price":
 		testGetPrice()
@@ -136,12 +138,12 @@ func main() {
 func testRefreshLogoURI() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
 	fmt.Println("cgIds=", cgIds)
-	ids := strings.Split(cgIds, ",")
-	if len(ids) == 0 {
+	//ids := strings.Split(cgIds, ",")
+	if len(chainIds) == 0 {
 		fmt.Println("ids length is nil.")
 		return
 	}
-	tokenlist.RefreshLogoURI(ids)
+	tokenlist.RefreshLogoURI(chainIds)
 	//tokenlist.RefreshLogoURI([]string{"ethereum", "huobi-token", "okex-chain", "binance-smart-chain", "polygon-pos", "fantom",
 	//	"avalanche", "cronos", "arbitrum-one", "klay-token", "aurora", "optimistic-ethereum",
 	//	"oasis", "tron", "xdai", "solana", "starcoin", "ethereum-classic", "aptos", "nervos", "osmosis",
@@ -355,8 +357,12 @@ func testGetPrice() {
 
 func testUpdateEVMDecimals() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	chains := []string{"arbitrum-nova"}
-	for _, chain := range chains {
+	if len(chainIds) == 0 {
+		fmt.Println("chain is nil.")
+		return
+	}
+	//chains := []string{"solana"}
+	for _, chain := range chainIds {
 		tokenlist.UpdateEVMDecimasl(chain)
 	}
 
@@ -364,8 +370,12 @@ func testUpdateEVMDecimals() {
 
 func testUpdateDecimalsByChain() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	chains := []string{"solana"}
-	for _, chain := range chains {
+	if len(chainIds) == 0 {
+		fmt.Println("chain is nil.")
+		return
+	}
+	//chains := []string{"solana"}
+	for _, chain := range chainIds {
 		tokenlist.UpdateDecimalsByChain(chain)
 	}
 
@@ -374,12 +384,12 @@ func testUpdateDecimalsByChain() {
 func testUpLoadTokenList() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
 	fmt.Println("cgIds=", cgIds)
-	ids := strings.Split(cgIds, ",")
-	if len(ids) == 0 {
+	//ids := strings.Split(cgIds, ",")
+	if len(chainIds) == 0 {
 		fmt.Println("ids length is nil.")
 		return
 	}
-	tokenlist.UpLoadJsonToCDN(ids)
+	tokenlist.UpLoadJsonToCDN(chainIds)
 	//tokenlist.UpLoadJsonToCDN([]string{"ethereum", "huobi-token", "okex-chain", "binance-smart-chain", "polygon-pos", "fantom",
 	//	"avalanche", "cronos", "arbitrum-one", "klay-token", "aurora", "optimistic-ethereum",
 	//	"oasis", "tron", "xdai", "solana", "starcoin", "ethereum-classic", "aptos", "nervos", "osmosis",
@@ -423,7 +433,13 @@ func testGetGasEstimate() {
 
 func testUpdateChainList() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.UpdateChainToken("arbitrum-nova")
+	if len(chainIds) == 0 {
+		fmt.Println("testUpdateChainList id is nil")
+	}
+	for _, chain := range chainIds {
+		tokenlist.UpdateChainToken(chain)
+	}
+
 }
 
 func testGetTop20TokenList() {

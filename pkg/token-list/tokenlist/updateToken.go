@@ -477,3 +477,46 @@ yer enabled wallet. Tether has no transaction fees, although external wallets an
 	}
 
 }
+
+func UpdateConfluxToken() {
+	var tokenLists = []models.TokenList{
+		{
+			Chain:       "conflux",
+			Address:     "0xfe197e7968807b311d476915db585831b43a7e3b",
+			Name:        "Nucleon Governance Token",
+			Symbol:      "NUT",
+			Logo:        `https://scan-icons.oss-cn-hongkong.aliyuncs.com/mainnet/net1030%3Aad9bw9x3rcah0pj7j7yvn042na25jsx8hpf19ma3zp.png`,
+			Decimals:    18,
+			CgId:        "",
+			WebSite:     "",
+			Description: "",
+		},
+		{
+			Chain:       "conflux",
+			Address:     "0x889138644274a7dc602f25a7e7d53ff40e6d0091",
+			Name:        "X nucleon CFX",
+			Symbol:      "xCFX",
+			Logo:        `https://scan-icons.oss-cn-hongkong.aliyuncs.com/mainnet/net1030%3Aacekcsdejk4mt1daf6w4t38zh94a65jaweg04t3z9h.png`,
+			Decimals:    18,
+			CgId:        "",
+			WebSite:     "https://www.nucleon.space/",
+			Description: "",
+		},
+		{
+			Chain:       "conflux",
+			Address:     "0xff33b107a0e2c0794ac43c3ffaf637fcea3697cf",
+			Name:        "AUSD Stablecoin",
+			Symbol:      "AUSD",
+			Logo:        `https://scan-icons.oss-cn-hongkong.aliyuncs.com/mainnet/net1030%3Aad9xhpjhydvpa8mm2u8d9810g98syry13689ujkg7r.png`,
+			Decimals:    18,
+			CgId:        "",
+			WebSite:     "https://www.triangledao.finance/",
+			Description: "",
+		},
+	}
+	for _, t := range tokenLists {
+		c.db.Clauses(clause.OnConflict{
+			UpdateAll: true,
+		}).Create(&t)
+	}
+}
