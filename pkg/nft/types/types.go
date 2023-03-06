@@ -133,29 +133,29 @@ type OpenSeaCollection struct {
 		DisplayData             struct {
 			CardDisplayStyle string `json:"card_display_style"`
 		} `json:"display_data"`
-		ExternalURL                 interface{} `json:"external_url"`
-		Featured                    bool        `json:"featured"`
-		FeaturedImageURL            interface{} `json:"featured_image_url"`
-		Hidden                      bool        `json:"hidden"`
-		SafelistRequestStatus       string      `json:"safelist_request_status"`
-		ImageURL                    string      `json:"image_url"`
-		IsSubjectToWhitelist        bool        `json:"is_subject_to_whitelist"`
-		LargeImageURL               interface{} `json:"large_image_url"`
-		MediumUsername              interface{} `json:"medium_username"`
-		Name                        string      `json:"name"`
-		OnlyProxiedTransfers        bool        `json:"only_proxied_transfers"`
-		OpenseaBuyerFeeBasisPoints  string      `json:"opensea_buyer_fee_basis_points"`
-		OpenseaSellerFeeBasisPoints string      `json:"opensea_seller_fee_basis_points"`
-		PayoutAddress               interface{} `json:"payout_address"`
-		RequireEmail                bool        `json:"require_email"`
-		ShortDescription            interface{} `json:"short_description"`
-		Slug                        string      `json:"slug"`
-		TelegramURL                 interface{} `json:"telegram_url"`
-		TwitterUsername             interface{} `json:"twitter_username"`
-		InstagramUsername           interface{} `json:"instagram_username"`
-		WikiURL                     interface{} `json:"wiki_url"`
-		IsNsfw                      bool        `json:"is_nsfw"`
-		Fees                        struct {
+		ExternalURL                interface{} `json:"external_url"`
+		Featured                   bool        `json:"featured"`
+		FeaturedImageURL           interface{} `json:"featured_image_url"`
+		Hidden                     bool        `json:"hidden"`
+		SafelistRequestStatus      string      `json:"safelist_request_status"`
+		ImageURL                   string      `json:"image_url"`
+		IsSubjectToWhitelist       bool        `json:"is_subject_to_whitelist"`
+		LargeImageURL              interface{} `json:"large_image_url"`
+		MediumUsername             interface{} `json:"medium_username"`
+		Name                       string      `json:"name"`
+		OnlyProxiedTransfers       bool        `json:"only_proxied_transfers"`
+		OpenseaBuyerFeeBasisPoints string      `json:"opensea_buyer_fee_basis_points"`
+		//OpenseaSellerFeeBasisPoints string      `json:"opensea_seller_fee_basis_points"`
+		PayoutAddress     interface{} `json:"payout_address"`
+		RequireEmail      bool        `json:"require_email"`
+		ShortDescription  interface{} `json:"short_description"`
+		Slug              string      `json:"slug"`
+		TelegramURL       interface{} `json:"telegram_url"`
+		TwitterUsername   interface{} `json:"twitter_username"`
+		InstagramUsername interface{} `json:"instagram_username"`
+		WikiURL           interface{} `json:"wiki_url"`
+		IsNsfw            bool        `json:"is_nsfw"`
+		Fees              struct {
 			SellerFees struct {
 			} `json:"seller_fees"`
 			OpenseaFees struct {
