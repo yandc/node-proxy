@@ -134,9 +134,12 @@ func GetNFTInfo(chain string, tokenInfos []*v1.GetNftInfoRequest_NftInfo) ([]*v1
 		address := nftList.TokenAddress
 		tempId := nftList.TokenId
 		if chain == "Aptos" {
-			tempId = nftList.NftName
+			if value, ok := addressMap[nftList.TokenAddress+"_"+nftList.NftName]; ok {
+				address = value
+				delete(addressMap, nftList.TokenAddress+"_"+nftList.NftName)
+			}
 		}
-		if value, ok := addressMap[nftList.TokenAddress+"_"+tempId]; ok {
+		if value, ok := addressMap[nftList.TokenAddress+"_"+nftList.TokenId]; ok {
 			address = value
 			delete(addressMap, nftList.TokenAddress+"_"+tempId)
 		}
@@ -246,7 +249,9 @@ func GetNFTInfo(chain string, tokenInfos []*v1.GetNftInfoRequest_NftInfo) ([]*v1
 			}(key, value)
 			wg.Wait()
 		}
-		return result, resultErr
+		if resultErr != nil {
+			return nil, resultErr
+		}
 	}
 	return result, nil
 }
