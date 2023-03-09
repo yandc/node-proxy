@@ -130,6 +130,8 @@ func main() {
 		testInsertTokenTop20()
 	case "tokenPrice":
 		testAutoUpdateTokenPrice()
+	case "deleteToken":
+		testDeleteTokenList()
 
 	}
 	fmt.Println("test main end")
@@ -540,4 +542,9 @@ func testInsertTokenTop20() {
 func testAutoUpdateTokenPrice() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
 	tokenlist.AutoUpdatePrice()
+}
+
+func testDeleteTokenList() {
+	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
+	tokenlist.DeleteJsonCDN()
 }
