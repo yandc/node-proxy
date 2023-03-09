@@ -1058,6 +1058,45 @@ func RefreshLogoURI(chains []string) {
 	}
 }
 
+func DeleteJsonCDN() {
+	chainVersionMap := utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")
+	newChainVersionMap := make(map[string]types.TokenInfoVersion, len(chainVersionMap))
+	// 验证已上线的链
+	for _, chain := range c.chains {
+		if value, ok := chainVersionMap[chain]; ok {
+			newChainVersionMap[chain] = value
+		}
+	}
+	if len(newChainVersionMap) == len(chainVersionMap) {
+		return
+	}
+	path := "tokenlist"
+	exist, _ := utils.PathExists(path)
+	if exist {
+		err := os.RemoveAll(path)
+		if err != nil {
+			c.log.Error("RemoveAll error:", err)
+			return
+		}
+	}
+	os.MkdirAll(path, 0777)
+	writeVersionInfo := make([]types.TokenInfoVersion, 0, len(chainVersionMap))
+	for _, value := range newChainVersionMap {
+		writeVersionInfo = append(writeVersionInfo, value)
+	}
+	c.log.Info("json info:", writeVersionInfo)
+	err := utils.WriteJsonToFile(path+"/tokenlist.json", writeVersionInfo)
+	if err != nil {
+		c.log.Error("write json to file error:", err)
+	}
+	UpLoadToken()
+	//删除目录
+	err = os.RemoveAll(path)
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+}
+
 func UpLoadJsonToCDN(chains []string) {
 	chainVersionMap := utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")
 	// 验证已上线的链
