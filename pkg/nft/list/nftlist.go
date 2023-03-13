@@ -446,7 +446,8 @@ func Assets2ModesList(chain string, asset types.Asset) models.NftList {
 func AutoUpdateNFTInfo() {
 	nft.GetNFTLog().Info("AutoUpdateNFTInfo start")
 	var nftListModes []models.NftList
-	err := nft.GetNFTDb().Where("image_url = ? AND animation_url= ? AND refresh_count < ?", "", "", nft.GetRefreshCount()).Find(&nftListModes).Error
+	err := nft.GetNFTDb().Where("image_url = ? AND animation_url= ? AND refresh_count < ?", "", "",
+		nft.GetRefreshCount()).Limit(int(nft.GetRefreshLimit())).Find(&nftListModes).Error
 	if err != nil {
 		nft.GetNFTLog().Error("get db nft list error:", err)
 		return

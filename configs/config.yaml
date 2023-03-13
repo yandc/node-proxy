@@ -70,6 +70,7 @@ tokenList:
 nftList:
   ipfs: https://cloudflare-ipfs.com/ipfs/
   refreshCount: 3
+  refreshLimit: 300
 
 platform:
   - chain: Cronos

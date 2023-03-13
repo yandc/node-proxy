@@ -13,6 +13,7 @@ type config struct {
 	log          *log.Helper
 	ipfs         string
 	refreshCount uint32
+	refreshLimit uint32
 }
 
 const (
@@ -31,6 +32,7 @@ func InitNFT(db *gorm.DB, logger log.Logger, nftList *conf.NFTList) {
 		log:          log,
 		ipfs:         nftList.Ipfs,
 		refreshCount: nftList.RefreshCount,
+		refreshLimit: nftList.RefreshLimit,
 	}
 }
 
@@ -68,6 +70,10 @@ func GetIPFS() string {
 
 func GetRefreshCount() uint32 {
 	return nftConfig.refreshCount
+}
+
+func GetRefreshLimit() uint32 {
+	return nftConfig.refreshLimit
 }
 
 func DoWebRequest(url string) (string, error) {
