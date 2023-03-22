@@ -32,12 +32,12 @@ func (uc *NFTUsecase) GetNftCollectionInfo(ctx context.Context, chain, address s
 }
 
 func (uc *NFTUsecase) AutoUpdateNFTInfo(ctx context.Context) {
-	uc.repo.AutoUpdateNFTInfo(ctx)
+	//uc.repo.AutoUpdateNFTInfo(ctx)
 	transactionPlan := time.NewTicker(24 * time.Hour)
 	for true {
 		select {
 		case <-transactionPlan.C:
-			uc.repo.AutoUpdateNFTInfo(ctx)
+			//uc.repo.AutoUpdateNFTInfo(ctx)
 		}
 	}
 }
