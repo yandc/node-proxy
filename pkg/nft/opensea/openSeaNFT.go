@@ -36,6 +36,9 @@ func getOpenSeaAsset(chain, tokenAddress, tokenId string) (types.OpenSeaAsset, e
 	if len(asset.Errors) > 0 {
 		return types.OpenSeaAsset{}, errors.New(asset.Errors[0].Message + "," + asset.Errors[0].Extensions.Code)
 	}
+	if asset.Data.Nft.ImageURL == "" && asset.Data.Nft.AnimationURL == "" {
+		return asset, errors.New("dont get image")
+	}
 	return asset, nil
 }
 
