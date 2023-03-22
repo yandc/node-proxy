@@ -124,7 +124,7 @@ func GetNFTInfo(chain string, tokenInfos []*v1.GetNftInfoRequest_NftInfo) ([]*v1
 		addressMap[address+"_"+tokenInfo.TokenId] = tokenInfo.TokenAddress
 	}
 	var nftListModes []models.NftList
-	err := nft.GetNFTDb().Where("(chain = ? and (token_address,token_id) IN ?) or (chain = 'Aptos' and (token_address,nft_name) IN ? )", chain, params, params).Find(&nftListModes).Error
+	err := nft.GetNFTDb().Where("(image_url != ? or animation_url != ?) and ((chain = ? and (token_address,token_id) IN ?) or (chain = 'Aptos' and (token_address,nft_name) IN ? ))", "", "", chain, params, params).Find(&nftListModes).Error
 	if err != nil {
 		nft.GetNFTLog().Error("get db nft list error:", err)
 		return nil, err
@@ -197,6 +197,7 @@ func GetNFTInfo(chain string, tokenInfos []*v1.GetNftInfoRequest_NftInfo) ([]*v1
 					}
 					if nftListModel.TokenId != "" {
 						dbresult := nft.GetNFTDb().Clauses(clause.OnConflict{
+							Columns:   []clause.Column{{Name: "token_id"}, {Name: "token_address"}, {Name: "chain"}},
 							UpdateAll: true,
 						}).Create(&nftListModel)
 						if dbresult.Error != nil {
