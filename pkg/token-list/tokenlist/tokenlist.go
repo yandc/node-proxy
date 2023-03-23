@@ -1590,6 +1590,8 @@ func UpdateChainToken(chain string) {
 		UpdateArbitrumNovaToken()
 	case "conflux":
 		UpdateConfluxToken()
+	case "binance-smart-chain":
+		UpdateBSCToken()
 
 		//default:
 		//	utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")
