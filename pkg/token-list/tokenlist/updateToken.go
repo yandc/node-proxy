@@ -520,3 +520,25 @@ func UpdateConfluxToken() {
 		}).Create(&t)
 	}
 }
+
+func UpdateBSCToken() {
+	var tokenLists = []models.TokenList{
+		{
+			Chain:       "binance-smart-chain",
+			Address:     "0x2dff88a56767223a5529ea5960da7a3f5f766406",
+			Name:        "Space ID",
+			Symbol:      "id",
+			Logo:        `{"thumb":"https://assets.coingecko.com/coins/images/29468/thumb/id.png?1679112555","small":"https://assets.coingecko.com/coins/images/29468/small/id.png?1679112555","large":"https://assets.coingecko.com/coins/images/29468/large/id.png?1679112555"}`,
+			Decimals:    18,
+			CgId:        "space-id",
+			WebSite:     "https://space.id/",
+			Description: `{"en":"SPACE ID is building a universal name service network with a one-stop identity platform to discover, register, trade, manage web3 domains. It also includes a Web3 Name SDK \u0026 API for developers across blockchains and provides a multi-chain name service for everyone to easily build and create a web3 identity."}`,
+			LogoURI:     "images/binance-smart-chain/binance-smart-chain_0x2dff88a56767223a5529ea5960da7a3f5f766406.png",
+		},
+	}
+	for _, t := range tokenLists {
+		c.db.Clauses(clause.OnConflict{
+			UpdateAll: true,
+		}).Create(&t)
+	}
+}
