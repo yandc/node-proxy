@@ -91,7 +91,7 @@ func HttpsGet(url string, params, headers map[string]string, out interface{}) er
 		q.Add(k, v)
 	}
 	req.URL.RawQuery = q.Encode()
-	client := &http.Client{}
+	//client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return err

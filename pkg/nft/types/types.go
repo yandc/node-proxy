@@ -1,6 +1,8 @@
 package types
 
-import "time"
+import (
+	"time"
+)
 
 type AssetList struct {
 	Next     string      `json:"next"`
@@ -392,4 +394,9 @@ type NFTPortAssetInfo struct {
 		Code       string `json:"code"`
 		Message    string `json:"message"`
 	} `json:"error"`
+}
+
+type NeedRetryRequest struct {
+	RefreshCount int `json:"refresh_count"`
+	Index        int `json:"index"`
 }

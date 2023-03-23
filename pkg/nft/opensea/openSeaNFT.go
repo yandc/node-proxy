@@ -14,7 +14,7 @@ import (
 
 func GetOpenSeaNFTAsset(chain, tokenAddress, tokenId string) (models.NftList, error) {
 	asset, err := getOpenSeaAsset(chain, tokenAddress, tokenId)
-	for i := 0; err != nil && i < 3; i++ {
+	for i := 0; err != nil && i < 3 && (asset.Data.Nft.ImageURL == "" && asset.Data.Nft.AnimationURL == ""); i++ {
 		time.Sleep(500 * time.Microsecond)
 		asset, err = getOpenSeaAsset(chain, tokenAddress, tokenId)
 	}
@@ -35,9 +35,6 @@ func getOpenSeaAsset(chain, tokenAddress, tokenId string) (types.OpenSeaAsset, e
 	}
 	if len(asset.Errors) > 0 {
 		return types.OpenSeaAsset{}, errors.New(asset.Errors[0].Message + "," + asset.Errors[0].Extensions.Code)
-	}
-	if asset.Data.Nft.ImageURL == "" && asset.Data.Nft.AnimationURL == "" {
-		return asset, errors.New("dont get image")
 	}
 	return asset, nil
 }
