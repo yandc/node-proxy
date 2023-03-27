@@ -542,3 +542,74 @@ func UpdateBSCToken() {
 		}).Create(&t)
 	}
 }
+
+func UpdateZkSyncToken() {
+	var tokenLists = []models.TokenList{
+		{
+			Chain:       "zkSync",
+			Address:     "0x3355df6d4c9c3035724fd0e3914de96a5a83aaf4",
+			Name:        "USD Coin",
+			Symbol:      "USDC",
+			Logo:        "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+			Decimals:    6,
+			CmcId:       3408,
+			CgId:        "usd-coin",
+			WebSite:     "https://www.centre.io/usdc",
+			Description: `{"en":"USDC is a fully collateralized US dollar stablecoin. USDC is the bridge between dollars and trading on cryptocurrency exchanges. The technology behind CENTRE makes it possible to exchange value between people, businesses and financial institutions just like email between mail services and texts between SMS providers. We believe by removing artificial economic borders, we can create a more inclusive global economy."}`,
+		},
+		{
+			Chain:    "zkSync",
+			Address:  "0x0e97c7a0f8b2c9885c8ac9fc6136e829cbc21d42",
+			Name:     "Mute.io",
+			Symbol:   "MUTE",
+			Logo:     "https://s2.coinmarketcap.com/static/img/coins/64x64/8795.png",
+			Decimals: 18,
+			CmcId:    8795,
+			CgId:     "mute",
+			WebSite:  "https://mute.io",
+			Description: `{"en":"MUTE is one half of the dual-token mechanics powering the Mute.io ZK-Rollup ecosystem.\r\n\r\nMUTE is the gas that facilitates growth of the ecosystem via the DAO, funding proposals and benefitting directly through a 'buyback and make' initiative. Liquidity providers are also rewarded thanks to a 1% transaction fee, guarding against impermeant loss and paid out incrementally via the MuteVault contract. \r\n\r\nMute Switch, an easy to use swap-style ZK-Rollup DEX, is the first Dapp in the ecosystem. This will be running on ZK-Rollup infrastructure meaning trading will be cheaper and more scalable, but not just that - transactions will be zero knowledge, ensuring nobody can see into your wallet history. Power users of the DEX will qualify for reduced fees by locking
+a specified amount of MUTE in their wallet.\r\n\r\nThe non-inflationary supply is complimented by an innovative economic model that includes the combination of buy backs, coin burns, a smart treasury and vaults."}`,
+		},
+		{
+			Chain:       "zkSync",
+			Address:     "0xc2b13bb90e33f1e191b8aa8f44ce11534d5698e3",
+			Name:        "Furucombo",
+			Symbol:      "COMBO",
+			Logo:        `{"thumb":"https://assets.coingecko.com/coins/images/13629/thumb/COMBO_token_ol.png?1610701537","small":"https://assets.coingecko.com/coins/images/13629/small/COMBO_token_ol.png?1610701537","large":"https://assets.coingecko.com/coins/images/13629/large/COMBO_token_ol.png?1610701537"}`,
+			Decimals:    18,
+			CgId:        "furucombo",
+			WebSite:     "https://furucombo.app/",
+			Description: ` {"en":"Furucombo is a drag-and-drop tool that allows users to build and customize different DeFi combinations (‘combos’ or ‘cubes’). These combos/cubes represent multiple protocol actions bundled into one transaction executed by Furucombo. \r\n\r\nAs one of the most comprehensive DeFi aggregators, Furucombo connects different DeFi protocols such as Uniswap, Compound, and Aave in one place. Its lego-like interface simplifies the complexity in DeFi, allowing many lay-man users to reap the benefits of DeFi using Furucombo without coding knowledge.\r\n \r\nInstead of clicking and confirming five Ethereum transactions, users of Furucombo will need to confirm only one - saving time and steps and simultaneously optimizing users’ actions to save on gas fees. "}`,
+		},
+		{
+			Chain:       "zkSync",
+			Address:     "0x42c1c56be243c250ab24d2ecdcc77f9ccaa59601",
+			Name:        "Perpetual",
+			Symbol:      "PERP",
+			Logo:        "https://s2.coinmarketcap.com/static/img/coins/64x64/6950.png",
+			Decimals:    18,
+			CmcId:       6950,
+			CgId:        "perpetual-protocol",
+			WebSite:     "https://perp.com",
+			Description: "",
+		},
+		{
+			Chain:       "zkSync",
+			Address:     "0x5aea5775959fbc2557cc8789bc1bf90a239d9a91",
+			Name:        "Wrapped Ether",
+			Symbol:      "WETH",
+			Logo:        "https://s2.coinmarketcap.com/static/img/coins/64x64/2396.png",
+			Decimals:    18,
+			CmcId:       2396,
+			CgId:        "weth",
+			WebSite:     "https://weth.io/",
+			Description: `{"en":"W-ETH is \"wrapped ETH\" but let's start by introducing the players. First, there's Ether token. Ether or ETH is the native currency built on the Ethereum blockchain.\r\nSecond, there are alt tokens. When a dApp (decentralized app) is built off of the Ethereum Blockchain it usually implements it’s own form of Token. Think Augur’s REP Token, or Bancor's BNT Token. Finally the ERC-20 standard. ERC20 is a standard developed after the release of ETH that defines how tokens are transferred and how to keep a consistent record of those transfers among tokens in the Ethereum Network."}`,
+		},
+	}
+	for _, t := range tokenLists {
+		c.db.Clauses(clause.OnConflict{
+			Columns:   []clause.Column{{Name: "address"}, {Name: "chain"}},
+			UpdateAll: true,
+		}).Create(&t)
+	}
+}
