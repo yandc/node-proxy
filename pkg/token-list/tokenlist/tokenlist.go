@@ -738,14 +738,18 @@ func AutoUpdatePrice() {
 	for index, chain := range c.chains {
 		chains[index] = utils.GetChainNameByChain(chain)
 	}
+	UpdatePriceByChains(chains, utils.GetChainPriceKey())
+	c.log.Infof("AutoUpdatePrice end")
+}
 
+func UpdatePriceByChains(chains, chainPriceKey []string) {
 	var tokenLists []models.TokenList
 	err := c.db.Where("chain in ? and (cg_id != ? or cmc_id > ?)", chains, "", 0).Find(&tokenLists).Error
 	if err != nil {
 		c.log.Error("AutoUpdatePrice get  tokenList error:", err)
 		return
 	}
-	chainPriceKey := utils.GetChainPriceKey()
+	//chainPriceKey := utils.GetChainPriceKey()
 	cgIds := make([]string, 0, len(tokenLists)+len(chainPriceKey))
 	cmcIds := make([]string, 0, len(tokenLists))
 	addressIdMap := make(map[string]string, len(tokenLists))
@@ -775,7 +779,6 @@ func AutoUpdatePrice() {
 	if len(cmcIds) > 0 {
 		handlerCMCPrice(cmcIds, addressIdMap)
 	}
-	c.log.Infof("AutoUpdatePrice end")
 }
 
 func handlerCMCPrice(cmcIds []string, addressIdMap map[string]string) {
@@ -808,7 +811,7 @@ func handlerCgPrice(cgIds []string, addressIdMap map[string]string) {
 			c.log.Error("CGSimplePrice Error:", err)
 			continue
 		}
-		c.log.Infof("CGSimplePrice length:", len(cgPricesMap))
+		c.log.Infof("CGSimplePrice length:", len(cgPricesMap), cgPricesMap, addressIdMap)
 		setAutoPrice(cgPricesMap, addressIdMap, true)
 	}
 
@@ -1592,6 +1595,8 @@ func UpdateChainToken(chain string) {
 		UpdateConfluxToken()
 	case "binance-smart-chain":
 		UpdateBSCToken()
+	case "zkSync":
+		UpdateZkSyncToken()
 
 		//default:
 		//	utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")

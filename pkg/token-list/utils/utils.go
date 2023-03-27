@@ -138,6 +138,7 @@ var dbName2HandlerMap = map[string]string{
 	"harmony-shard-0":     "harmony",
 	"ronin":               "ronin",
 	"arbitrum-nova":       "arbitrumnova",
+	"zkSync":              "zksync",
 }
 
 var handlerNameMap = map[string]string{
@@ -167,6 +168,7 @@ var handlerNameMap = map[string]string{
 	"ronin":        "ronin",
 	"arbitrumnova": "arbitrum-nova",
 	"conflux":      "conflux",
+	"zksync":       "zkSync",
 }
 
 var chainNameMap = map[string]string{
@@ -197,6 +199,7 @@ var chainNameMap = map[string]string{
 	"Ronin":        "ronin",
 	"ArbitrumNova": "arbitrum-nova",
 	"Conflux":      "conflux",
+	"zkSync":       "zkSync",
 
 	"ETHTEST":          "ethereum",
 	"HECOTEST":         "huobi-token",
@@ -225,6 +228,7 @@ var chainNameMap = map[string]string{
 	"RoninTEST":        "ronin",
 	"ArbitrumNovaTEST": "arbitrum-nova",
 	"ConfluxTEST":      "conflux",
+	"zkSyncTEST":       "zkSync",
 }
 
 var priceKeys = []string{"ethereum", "polkadot", "ronin", "harmony", "osmosis", "bitcoin-cash", "casper-network",
@@ -260,6 +264,7 @@ var db2Chain = map[string]string{
 	"ronin":           "Ronin",
 	"arbitrum-nova":   "ArbitrumNova",
 	"conflux":         "Conflux",
+	"zkSync":          "zkSync",
 }
 
 var TokenFileMap = map[string][]string{

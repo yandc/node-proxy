@@ -66,6 +66,7 @@ tokenList:
     - Ronin
     - ArbitrumNova
     - Conflux
+    - zkSync
 
 nftList:
   ipfs: https://cloudflare-ipfs.com/ipfs/
@@ -248,6 +249,10 @@ platform:
     rpcURL:
       - https://evm.confluxrpc.com
       - https://evm.confluxrpc.org
+  - chain: zkSync
+    type: EVM
+    rpcURL:
+      - https://mainnet.era.zksync.io
 
   - chain: AvalancheTEST
     type: EVM

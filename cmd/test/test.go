@@ -132,7 +132,8 @@ func main() {
 		testAutoUpdateTokenPrice()
 	case "deleteToken":
 		testDeleteTokenList()
-
+	case "updateTokenPrice":
+		TestUpdatePriceByChain()
 	}
 	fmt.Println("test main end")
 }
@@ -454,61 +455,12 @@ func testGetTop20TokenList() {
 }
 
 func testCreateNFTList() {
-	logger := log.With(log.NewStdLogger(os.Stdout),
-		"ts", log.DefaultTimestamp,
-		"caller", log.DefaultCaller,
-		"service.id", id,
-		"service.name", Name,
-		"service.version", Version,
-		"trace.id", tracing.TraceID(),
-		"span.id", tracing.SpanID(),
-	)
-	c := config.New(
-		config.WithSource(
-			file.NewSource(flagconf),
-		),
-	)
-	defer c.Close()
-
-	if err := c.Load(); err != nil {
-		panic(err)
-	}
-
-	var bc conf.Bootstrap
-	if err := c.Scan(&bc); err != nil {
-		panic(err)
-	}
 	db := data.NewDB(bc.Data, logger)
 	nft.InitNFT(db, logger, bc.NftList)
 	list.CreateNFTList("ETHGoerliTEST")
 }
 
 func testCreateNFTCollection() {
-	logger := log.With(log.NewStdLogger(os.Stdout),
-		"ts", log.DefaultTimestamp,
-		"caller", log.DefaultCaller,
-		"service.id", id,
-		"service.name", Name,
-		"service.version", Version,
-		"trace.id", tracing.TraceID(),
-		"span.id", tracing.SpanID(),
-	)
-	c := config.New(
-		config.WithSource(
-			file.NewSource(flagconf),
-		),
-	)
-	defer c.Close()
-
-	if err := c.Load(); err != nil {
-		panic(err)
-	}
-
-	var bc conf.Bootstrap
-	if err := c.Scan(&bc); err != nil {
-		panic(err)
-	}
-	db := data.NewDB(bc.Data, logger)
 	nft.InitNFT(db, logger, bc.NftList)
 	collection.CreateCollectionList()
 }
@@ -547,4 +499,13 @@ func testAutoUpdateTokenPrice() {
 func testDeleteTokenList() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
 	tokenlist.DeleteJsonCDN()
+}
+
+func TestUpdatePriceByChain() {
+	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
+	if len(chainIds) == 0 {
+		fmt.Println("testUpdateChainList id is nil")
+		return
+	}
+	tokenlist.UpdatePriceByChains(chainIds, []string{"ethereum"})
 }
