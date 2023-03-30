@@ -1661,78 +1661,80 @@ func GetTop20TokenList(chain string) ([]*v1.TokenInfoData, error) {
 			c.log.Error("unmarshal error:", err)
 		}
 	}
-	if !updateFlag {
-		return result, nil
-	}
-	var tokenLists []models.TokenList
-	err = c.db.Where("chain = ? AND name != ? AND cg_id != ?", chain, oldChain, "").Find(&tokenLists).Error
-	if err != nil {
-		c.log.Error("get token list error:", err)
-	}
-	c.log.Info("token list length=", len(tokenLists))
-	if len(tokenLists) >= 20 {
-		tokenInfos := make(map[string]*v1.TokenInfoData, len(tokenLists))
-		ids := make([]string, len(tokenLists))
-		for i, t := range tokenLists {
-			ids[i] = t.CgId
-			tokenInfos[t.CgId] = &v1.TokenInfoData{
-				Chain:    oldChain,
-				Address:  t.Address,
-				Symbol:   t.Symbol,
-				Decimals: uint32(t.Decimals),
-				Name:     t.Name,
-				LogoURI:  c.logoPrefix + t.LogoURI,
-			}
-		}
-		markets := make([]types.CGMarket, 0, len(tokenLists)+2)
-		pageSize := 500
-		endIndex := 0
-		for i := 0; i < len(ids); i += pageSize {
-			if i+pageSize > len(ids) {
-				endIndex = len(ids)
-			} else {
-				endIndex = i + pageSize
-			}
-			cgMarkets, err := GetCGMarkets(ids[i:endIndex], "CNY", 20)
+	if updateFlag && !strings.Contains(chain, "TEST") {
+		go func() {
+			var tokenLists []models.TokenList
+			err = c.db.Where("chain = ? AND name != ? AND cg_id != ?", chain, oldChain, "").Find(&tokenLists).Error
 			if err != nil {
-				c.log.Error("get cg markets error:", err)
+				c.log.Error("get token list error:", err)
 			}
-			for j := 0; err != nil && j < 3; j++ {
-				time.Sleep(time.Duration(j) * time.Second)
-				cgMarkets, err = GetCGMarkets(ids[i:endIndex], "CNY", 20)
-			}
-			if err != nil {
-				continue
-			}
-			markets = append(markets, cgMarkets...)
-		}
-		//sort markets
-		sort.Slice(markets, func(i, j int) bool {
-			return markets[i].MarketCapRank <= markets[j].MarketCapRank
-		})
-		index := 0
-		for ; index < len(markets) && markets[index].MarketCapRank == 0; index++ {
-		}
+			c.log.Info("token list length=", len(tokenLists))
+			if len(tokenLists) >= 20 {
+				tokenInfos := make(map[string]*v1.TokenInfoData, len(tokenLists))
+				ids := make([]string, len(tokenLists))
+				for i, t := range tokenLists {
+					ids[i] = t.CgId
+					tokenInfos[t.CgId] = &v1.TokenInfoData{
+						Chain:    oldChain,
+						Address:  t.Address,
+						Symbol:   t.Symbol,
+						Decimals: uint32(t.Decimals),
+						Name:     t.Name,
+						LogoURI:  c.logoPrefix + t.LogoURI,
+					}
+				}
+				markets := make([]types.CGMarket, 0, len(tokenLists)+2)
+				pageSize := 500
+				endIndex := 0
+				for i := 0; i < len(ids); i += pageSize {
+					if i+pageSize > len(ids) {
+						endIndex = len(ids)
+					} else {
+						endIndex = i + pageSize
+					}
+					cgMarkets, err := GetCGMarkets(ids[i:endIndex], "CNY", 20)
+					if err != nil {
+						c.log.Error("get cg markets error:", err)
+					}
+					for j := 0; err != nil && j < 3; j++ {
+						time.Sleep(time.Duration(j) * time.Second)
+						cgMarkets, err = GetCGMarkets(ids[i:endIndex], "CNY", 20)
+					}
+					if err != nil {
+						continue
+					}
+					markets = append(markets, cgMarkets...)
+				}
+				//sort markets
+				sort.Slice(markets, func(i, j int) bool {
+					return markets[i].MarketCapRank <= markets[j].MarketCapRank
+				})
+				index := 0
+				for ; index < len(markets) && markets[index].MarketCapRank == 0; index++ {
+				}
 
-		markets = append(markets[index:], markets[:index]...)
-		if len(markets) > 20 {
-			markets = markets[:20]
-		}
-		c.log.Info("cgMarkets=", markets)
-		result = make([]*v1.TokenInfoData, 0, len(markets))
-		for _, market := range markets {
-			if value, ok := tokenInfos[market.ID]; ok {
-				result = append(result, value)
+				markets = append(markets[index:], markets[:index]...)
+				if len(markets) > 20 {
+					markets = markets[:20]
+				}
+				c.log.Info("cgMarkets=", markets)
+				result = make([]*v1.TokenInfoData, 0, len(markets))
+				for _, market := range markets {
+					if value, ok := tokenInfos[market.ID]; ok {
+						result = append(result, value)
+					}
+				}
+				if len(result) > 0 {
+					b, _ := json.Marshal(result)
+					if err := utils.SetTokenTop20RedisKey(c.redisClient, key, string(b)); err != nil {
+						c.log.Error("set redis client cache error:", err)
+					}
+				}
+				//return result, nil
 			}
-		}
-		if len(result) > 0 {
-			b, _ := json.Marshal(result)
-			if err := utils.SetTokenTop20RedisKey(c.redisClient, key, string(b)); err != nil {
-				c.log.Error("set redis client cache error:", err)
-			}
-		}
-		return result, nil
+		}()
 	}
+
 	return result, nil
 }
 func UpdateNervosToken() {
