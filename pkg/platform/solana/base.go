@@ -228,9 +228,11 @@ func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error
 	method := "getTokenSupply"
 	params := []interface{}{token}
 	out := &types.SolanaTokenInfo{}
+	var resultErr error
 	for _, url := range p.rpcURL {
 		err := utils.JsonHttpsPost(url, ID, method, JSONRPC, out, params)
 		if err != nil {
+			resultErr = err
 			continue
 		}
 		return &v12.GetTokenInfoResp_Data{
@@ -239,7 +241,7 @@ func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error
 			Decimals: uint32(out.Value.Decimals),
 		}, nil
 	}
-	return nil, nil
+	return nil, resultErr
 }
 
 func (p *platform) GetBalance(ctx context.Context, address, tokenAddress, decimals string) (string, error) {

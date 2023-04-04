@@ -6,6 +6,7 @@ import (
 	"github.com/google/wire"
 	"gitlab.bixin.com/mili/node-proxy/internal/conf"
 	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
+	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -36,10 +37,12 @@ func NewDB(conf *conf.Data, logger log.Logger) *gorm.DB {
 }
 
 func NewRedis(conf *conf.Data) *redis.Client {
-	return redis.NewClient(&redis.Options{
+	clint := redis.NewClient(&redis.Options{
 		Addr: conf.Redis.Addr,
 		DB:   int(conf.Redis.Db),
 	})
+	utils.SetRedisClient(clint)
+	return clint
 }
 
 // NewData .

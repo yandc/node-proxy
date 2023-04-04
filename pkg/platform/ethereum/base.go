@@ -35,16 +35,23 @@ func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error
 		token = strings.Replace(token, "ronin:", "0x", -1)
 	}
 	tokenAddress := common.HexToAddress(token)
+	var resultErr error
 	for i := 0; i < len(p.rpcURL); i++ {
 		client, err := ethclient.Dial(p.rpcURL[i])
 		erc20Token, err := erc20.NewErc20(tokenAddress, client)
 		if err != nil {
+			resultErr = err
 			continue
 		}
 		decimals, err := erc20Token.Decimals(nil)
+		if err != nil {
+			resultErr = err
+			continue
+		}
 		if decimals > 0 && err == nil {
 			symbol, err := erc20Token.Symbol(nil)
 			if err != nil {
+				resultErr = err
 				continue
 			}
 			return &v12.GetTokenInfoResp_Data{
@@ -55,7 +62,7 @@ func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error
 			}, nil
 		}
 	}
-	return nil, nil
+	return nil, resultErr
 }
 
 func (p *platform) GetBalance(ctx context.Context, address, tokenAddress, decimals string) (string, error) {

@@ -13,6 +13,7 @@ require (
 	github.com/google/wire v0.5.0
 	github.com/metachris/eth-go-bindings v0.5.0
 	github.com/shopspring/decimal v1.2.0
+	github.com/spaolacci/murmur3 v1.1.0
 	github.com/stretchr/testify v1.7.1
 	go.uber.org/zap v1.13.0
 	google.golang.org/grpc v1.48.0
@@ -25,7 +26,6 @@ require (
 	github.com/Danny-Dasilva/fhttp v0.0.0-20220524230104-f801520157d6 // indirect
 	github.com/Danny-Dasilva/utls v0.0.0-20220604023528-30cb107b834e // indirect
 	github.com/andybalholm/brotli v1.0.4 // indirect
-	github.com/btcsuite/btcd/chaincfg/chainhash v1.0.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect

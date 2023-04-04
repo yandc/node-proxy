@@ -73,6 +73,14 @@ nftList:
   refreshCount: 3
   refreshLimit: 300
 
+lark:
+  larkAlarmTitle: "node-proxy 测试环境"
+  larkHost: "https://open.larksuite.com/open-apis/bot/v2/hook/1de00c8b-8b00-42e8-a4a0-111a465303d9"
+  #  larkHost: "https://open.larksuite.com/open-apis/bot/v2/hook/1de00c8b-8b00-42e8-a4a0-111a465303d9_"
+  larkSecret: "ZaIgbNX9rwSyOGhq4URhMb"
+  larkAtList: "bfe7128f"
+  lockNum: 64
+
 platform:
   - chain: Cronos
     type: EVM
