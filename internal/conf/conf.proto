@@ -12,6 +12,7 @@ message Bootstrap {
   TokenList tokenList = 3;
   repeated Platform platform = 4;
   NFTList nftList = 5;
+  Lark lark = 6;
 }
 
 message Server {
@@ -80,3 +81,12 @@ message NFTList {
   uint32 refreshCount = 2;
   uint32 refreshLimit = 3;
 }
+
+message Lark {
+  string larkAlarmTitle = 1;
+  string larkHost = 2;
+  string larkSecret = 3;
+  uint64 lockNum = 4;
+  string larkAtList = 5;
+}
+

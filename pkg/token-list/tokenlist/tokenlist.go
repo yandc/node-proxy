@@ -19,6 +19,7 @@ import (
 	v1 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/conf"
 	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
+	"gitlab.bixin.com/mili/node-proxy/pkg/lark"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform"
 	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/types"
 	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/utils"
@@ -590,6 +591,10 @@ func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoRe
 					Symbol:   "Unknown Token",
 					Decimals: 0,
 				})
+
+				alarmMsg := fmt.Sprintf("请注意：%s链查询代币信息失败，tokenAddress:%s\n错误消息：%s", chain, address, err)
+				alarmOpts := lark.WithMsgLevel("FATAL")
+				lark.LarkClient.NotifyLark(alarmMsg, alarmOpts)
 				continue
 			}
 			if tokenInfo != nil {

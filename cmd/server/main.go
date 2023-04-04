@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"gitlab.bixin.com/mili/node-proxy/pkg/lark"
 	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/tokenlist"
 	"os"
 
@@ -76,6 +77,8 @@ func main() {
 		panic(err)
 	}
 	defer cleanup()
+	//init lark
+	lark.NewLark(bc.Lark)
 	go func() {
 		tokenlist.HandlerPrice()
 	}()
