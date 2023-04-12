@@ -246,7 +246,7 @@ func GetNFTInfo(chain string, tokenInfos []*v1.GetNftInfoRequest_NftInfo) ([]*v1
 			}(key, value)
 			wg.Wait()
 		}
-		if resultErr != nil {
+		if resultErr != nil && len(result) == 0 {
 			return nil, resultErr
 		}
 	}
