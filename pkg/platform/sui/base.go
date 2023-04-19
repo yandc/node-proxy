@@ -10,6 +10,7 @@ import (
 	v1 "gitlab.bixin.com/mili/node-proxy/api/platform/v1"
 	v12 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/types"
+	"gitlab.bixin.com/mili/node-proxy/pkg/platform/utils"
 	"sort"
 	"strconv"
 	"strings"
@@ -28,6 +29,14 @@ type platform struct {
 	rpcURL []string
 	log    *log.Helper
 	chain  string
+}
+
+func Platform2SUIPlatform(p types.Platform) *platform {
+	suiPlatform, ok := p.(*platform)
+	if ok {
+		return suiPlatform
+	}
+	return nil
 }
 
 func NewSuiPlatform(chain string, rpcURL []string, logger log.Logger) types.Platform {
@@ -64,38 +73,46 @@ func (p *platform) BuildWasmRequest(ctx context.Context, nodeRpc, functionName, 
 }
 
 var responseFunc = map[string]types.AnalysisResponseType{
-	types.RESPONSE_BALANCE:    analysisBalance,
-	types.RESPONSE_OBJECTID:   analysisObjectIds,
-	types.RESPONSE_TXHASH:     analysisTxHash,
-	types.RESPONSE_TXPARAMS:   analysisTxParams,
-	types.RESPONSE_OBJECTREAD: analysisObjectRead,
-	types.RESPONSE_TXSTATUS:   analysisTxStatus,
-	types.RESPONSE_HEIGHT:     analysisTxHeight,
+	types.RESPONSE_BALANCE:       analysisBalance,
+	types.RESPONSE_OBJECTID:      analysisObjectIds,
+	types.RESPONSE_TXHASH:        analysisTxHash,
+	types.RESPONSE_TXPARAMS:      analysisTxParams,
+	types.RESPONSE_OBJECTREAD:    analysisObjectRead,
+	types.RESPONSE_TXSTATUS:      analysisTxStatus,
+	types.RESPONSE_HEIGHT:        analysisTxHeight,
+	types.RESPONSE_TOKEN_BALANCE: analysisTokenBalance,
+	types.RESPONSE_TOKEN_INFO:    analysisTokenInfo,
+	types.RESPONSE_GAS_PRICE:     analysisGasPrice,
+	types.RESPONSE_TXDATA:        analysisTxData,
 }
 
 func (p *platform) AnalysisWasmResponse(ctx context.Context, functionName, params, response string) (string, error) {
-	var resp types.Response
-	json.Unmarshal([]byte(response), &resp)
-
-	if resp.Error != nil {
-		return "", resp.Error
-	}
-	if doFunc, ok := responseFunc[functionName]; ok {
-		result, err := doFunc(params, resp.Result)
-		if err != nil {
-			return "", err
+	var result interface{}
+	var err error
+	if functionName == types.RESPONSE_SUI_BALANCE {
+		result, err = analysisBalanceV2(response)
+	} else if doFunc, ok := responseFunc[functionName]; ok {
+		var resp types.Response
+		json.Unmarshal([]byte(response), &resp)
+		if resp.Error != nil {
+			return "", resp.Error
 		}
-		if value, strOk := result.(string); strOk {
-			return value, nil
-		}
-		b, _ := json.Marshal(result)
-		return string(b), nil
+		result, err = doFunc(params, resp.Result)
+	} else {
+		return "", errors.New("no func to  analysis response")
 	}
-	return "", errors.New("no func to  analysis response")
+	if err != nil {
+		return "", err
+	}
+	if value, strOk := result.(string); strOk {
+		return value, nil
+	}
+	b, _ := json.Marshal(result)
+	return string(b), nil
 }
 
 func analysisTxHeight(params string, result json.RawMessage) (interface{}, error) {
-	var height int
+	var height string
 	if err := json.Unmarshal(result, &height); err != nil {
 		return height, err
 	}
@@ -107,37 +124,91 @@ func analysisTxHash(params string, result json.RawMessage) (interface{}, error) 
 	if err := json.Unmarshal(result, &txInfo); err != nil {
 		return "", err
 	}
-	return txInfo.EffectsCert.Certificate.TransactionDigest, nil
+	return txInfo.Effects.TransactionDigest, nil
+}
+
+func analysisTxData(params string, result json.RawMessage) (interface{}, error) {
+	var txInfo types.SuiTransactionResponse
+	if err := json.Unmarshal(result, &txInfo); err != nil {
+		return "", err
+	}
+	resp, _ := json.Marshal(txInfo)
+	return string(resp), nil
 }
 
 func analysisObjectIds(params string, result json.RawMessage) (interface{}, error) {
-	var objectInfo []types.SuiObjectInfo
+	var objectInfo types.SuiObjectInfo
 	if err := json.Unmarshal(result, &objectInfo); err != nil {
 		return nil, err
 	}
-	var paramsMap map[string]string
-	if err := json.Unmarshal([]byte(params), &paramsMap); err != nil {
-		return nil, err
-	}
-	coinType := NATIVE_TYPE
-	if value, ok := paramsMap["coinType"]; ok {
-		coinType = value
-	}
-	objectIds := make([]string, 0, len(objectInfo))
-	for _, object := range objectInfo {
-		if object.Type == coinType {
-			objectIds = append(objectIds, object.ObjectID)
-		}
+	//var paramsMap map[string]string
+	//if err := json.Unmarshal([]byte(params), &paramsMap); err != nil {
+	//	return nil, err
+	//}
+	//coinType := NATIVE_TYPE
+	//if value, ok := paramsMap["coinType"]; ok {
+	//	coinType = value
+	//}
+	objectIds := make([]string, 0, len(objectInfo.Data))
+	for _, info := range objectInfo.Data {
+		//if info.Type == coinType {
+		objectIds = append(objectIds, info.Data.ObjectID)
+		//}
 	}
 	return objectIds, nil
 }
 
 func analysisBalance(params string, result json.RawMessage) (interface{}, error) {
-	var objectRead types.SuiObjectRead
-	if err := json.Unmarshal(result, &objectRead); err != nil {
+	var out types.SUIBalance
+	if err := json.Unmarshal(result, &out); err != nil {
 		return nil, err
 	}
-	return strconv.Atoi(objectRead.Details.Data.Fields.Balance)
+	return out.TotalBalance, nil
+}
+
+func analysisTokenBalance(params string, result json.RawMessage) (interface{}, error) {
+	var out []types.SUIBalance
+	if err := json.Unmarshal(result, &out); err != nil {
+		return nil, err
+	}
+	tokenBalances := make(map[string]string)
+	for _, info := range out {
+		tokenBalances[info.CoinType] = info.TotalBalance
+	}
+	return tokenBalances, nil
+}
+
+func analysisTokenInfo(params string, result json.RawMessage) (interface{}, error) {
+	var out types.SUICoinMetadata
+	if err := json.Unmarshal(result, &out); err != nil {
+		return nil, err
+	}
+	return map[string]interface{}{
+		"decimals": fmt.Sprintf("%v", out.Decimals),
+		"symbol":   strings.ToUpper(out.Symbol),
+		"name":     out.Name,
+	}, nil
+}
+
+func analysisBalanceV2(response string) (interface{}, error) {
+	balance := 0
+	var resps []types.Response
+	if err := json.Unmarshal([]byte(response), &resps); err != nil {
+		return 0, err
+	}
+	for _, resp := range resps {
+		if resp.Error != nil {
+			return 0, errors.New(resp.Error.Message)
+		}
+		var objectRead types.SuiObjectRead
+		if err := json.Unmarshal(resp.Result, &objectRead); err != nil {
+			return 0, err
+		}
+		filedBalance, _ := strconv.Atoi(objectRead.Details.Data.Fields.Balance)
+		balance += filedBalance
+
+	}
+	return balance, nil
 }
 
 func analysisObjectRead(params string, result json.RawMessage) (interface{}, error) {
@@ -164,57 +235,78 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 	if err := json.Unmarshal([]byte(params), &paramsMap); err != nil {
 		return nil, err
 	}
-	var amount = 0
-	if value, ok := paramsMap["amount"]; ok {
-		amount, _ = strconv.Atoi(value)
+	//var amount = 0
+	//if value, ok := paramsMap["amount"]; ok {
+	//	amount, _ = strconv.Atoi(value)
+	//}
+	var gasPrice = "1000"
+	if value, ok := paramsMap["gasPrice"]; ok {
+		gasPrice = value
 	}
-	var tempResult []string
-	if err := json.Unmarshal(result, &tempResult); err != nil {
+	coinType := ""
+	if value, ok := paramsMap["coinType"]; ok {
+		coinType = value
+	}
+	coinKey := ""
+	if value, ok := paramsMap["coinKey"]; ok {
+		coinKey = value
+	}
+	tokenId := ""
+	if value, ok := paramsMap["tokenId"]; ok {
+		tokenId = value
+	}
+	var objectReads []types.SuiObjectResponse
+	if err := json.Unmarshal(result, &objectReads); err != nil {
 		return nil, err
 	}
-	objectReads := make([]types.SuiObjectRead, 0, len(tempResult))
-	for _, r := range tempResult {
-		var tempRead types.SuiObjectRead
-		if err := json.Unmarshal([]byte(r), &tempRead); err != nil {
-			return nil, err
-		}
-		objectReads = append(objectReads, tempRead)
-	}
-	gasLimit := 60
-	balance := 0
+	gasLimit := 2000
 	sort.Slice(objectReads, func(i, j int) bool {
-		balanceI, _ := strconv.Atoi(objectReads[i].Details.Data.Fields.Balance)
-		balanceJ, _ := strconv.Atoi(objectReads[j].Details.Data.Fields.Balance)
+		balanceI, _ := strconv.Atoi(objectReads[i].Data.Content.Fields.Balance)
+		balanceJ, _ := strconv.Atoi(objectReads[j].Data.Content.Fields.Balance)
 		return balanceI > balanceJ
 	})
 	suiObjects := make([]interface{}, 0, len(objectReads))
 	for _, objectRead := range objectReads {
-		filedBalance, err := strconv.Atoi(objectRead.Details.Data.Fields.Balance)
-		if err != nil {
-			return nil, err
+		if objectRead.Data.Type == NATIVE_TYPE {
+			if objectRead.Data.Content.Fields.Balance != "" && objectRead.Data.Content.Fields.Balance != "0" {
+				filedBalance, _ := strconv.Atoi(objectRead.Data.Content.Fields.Balance)
+				suiObjects = append(suiObjects, map[string]interface{}{
+					"objectId": objectRead.Data.ObjectID,
+					"seqNo":    fmt.Sprintf("%v", objectRead.Data.Version),
+					"digest":   objectRead.Data.Digest,
+					"balance":  fmt.Sprintf("%v", filedBalance),
+				})
+			}
+		} else if (coinKey == "nft" && objectRead.Data.ObjectID == tokenId) ||
+			(coinKey != "nft" && (objectRead.Data.Type == coinType ||
+				objectRead.Data.Type == fmt.Sprintf("0x2::coin::Coin<%v>", coinType))) {
+			filedBalance, _ := strconv.Atoi(objectRead.Data.Content.Fields.Balance)
+			suiObjects = append(suiObjects, map[string]interface{}{
+				"objectId": objectRead.Data.ObjectID,
+				"seqNo":    fmt.Sprintf("%v", objectRead.Data.Version),
+				"digest":   objectRead.Data.Digest,
+				"balance":  fmt.Sprintf("%v", filedBalance),
+				coinKey:    coinType,
+			})
 		}
-		suiObjects = append(suiObjects, map[string]interface{}{
-			"objectId": objectRead.Details.Reference.ObjectID,
-			"seqNo":    fmt.Sprintf("%v", objectRead.Details.Reference.Version),
-			"digest":   objectRead.Details.Reference.Digest,
-			"balance":  fmt.Sprintf("%v", filedBalance),
-		})
-		balance += filedBalance
-		if amount > balance+gasLimit {
-			gasLimit += 60
-		}
+
 	}
-	if amount == 0 {
-		gasLimit += 60 * len(objectReads)
-	}
-	if len(objectReads) == 0 || amount > balance+gasLimit {
+	if len(objectReads) == 0 {
 		return nil, errors.New("insufficiency of balance")
 	}
 	return map[string]interface{}{
-		"gasPrice":   "1",
+		"gasPrice":   gasPrice,
 		"suiObjects": suiObjects,
 		"gasLimit":   strconv.Itoa(int(float32(gasLimit) * 1.2)),
 	}, nil
+}
+
+func analysisGasPrice(params string, result json.RawMessage) (interface{}, error) {
+	var gasPrice string
+	if err := json.Unmarshal(result, &gasPrice); err != nil {
+		return nil, err
+	}
+	return gasPrice, nil
 }
 
 func (p *platform) GetRpcURL() []string {
@@ -222,5 +314,80 @@ func (p *platform) GetRpcURL() []string {
 }
 
 func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error) {
-	return nil, nil
+	var resultErr error
+	for i := 0; i < len(p.rpcURL); i++ {
+		ret, err := getWASMCoinMetadata(p.chain, p.rpcURL[i], token)
+		if err != nil {
+			resultErr = err
+			continue
+		}
+		return ret, nil
+	}
+	if resultErr != nil && strings.Contains(token, "::") {
+		tokenInfo := strings.Split(token, "::")
+		if len(tokenInfo) >= 3 {
+			return &v12.GetTokenInfoResp_Data{
+				Chain:    p.chain,
+				Address:  token,
+				Decimals: uint32(0),
+				Symbol:   tokenInfo[2],
+				Name:     tokenInfo[2],
+			}, nil
+		}
+
+	}
+	return nil, resultErr
+}
+
+func (p *platform) GetNFTObject(objectId string) (*types.SuiNFTObjectResponse, error) {
+	var resultErr error
+	for i := 0; i < len(p.rpcURL); i++ {
+		method := "sui_getObject"
+		params := []interface{}{objectId, map[string]bool{"showType": true,
+			"showOwner":               true,
+			"showPreviousTransaction": true,
+			"showDisplay":             true,
+			"showContent":             true,
+			"showBcs":                 true,
+			"showStorageRebate":       true}}
+		out := &types.SuiNFTObjectResponse{}
+		err := call(p.rpcURL[i], JSONID, method, out, params)
+		if err != nil {
+			resultErr = err
+			continue
+		}
+		return out, nil
+	}
+
+	return nil, resultErr
+}
+
+func getWASMCoinMetadata(chain, url, coinType string) (*v12.GetTokenInfoResp_Data, error) {
+	method := "suix_getCoinMetadata"
+	out := &types.SUICoinMetadata{}
+	params := []interface{}{coinType}
+	err := call(url, JSONID, method, &out, params)
+	if err != nil {
+		return nil, err
+	}
+	return &v12.GetTokenInfoResp_Data{
+		Chain:    chain,
+		Address:  coinType,
+		Decimals: uint32(out.Decimals),
+		Symbol:   out.Symbol,
+		Name:     out.Name,
+		LogoURI:  out.IconUrl,
+	}, nil
+}
+
+func call(url string, id int, method string, out interface{}, params []interface{}) error {
+	var resp types.Response
+	err := utils.HttpsPost(url, id, method, JSONRPC, &resp, params)
+	if err != nil {
+		return err
+	}
+	if resp.Error != nil {
+		return errors.New(resp.Error.Message)
+	}
+	return json.Unmarshal(resp.Result, &out)
 }

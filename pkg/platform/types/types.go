@@ -11,8 +11,10 @@ import (
 
 const (
 	RESPONSE_BALANCE           = "balance"
+	RESPONSE_SUI_BALANCE       = "suiBalance"
 	RESPONSE_TOKEN_BALANCE     = "tokenBalance"
 	RESPONSE_TXHASH            = "txHash"
+	RESPONSE_TXDATA            = "txData"
 	RESPONSE_OBJECTID          = "objectId"
 	RESPONSE_TXPARAMS          = "txParams"
 	RESPONSE_OBJECTREAD        = "objectRead"
@@ -27,6 +29,7 @@ const (
 	NFTINFO                    = "nftInfo"
 	RESPONSE_STATEROOTHASH     = "stateRootHash"
 	RESPONSE_MAINPURSE         = "mainPurse"
+	RESPONSE_GAS_PRICE         = "gasPrice"
 
 	BUILD_HEIGHT   = "height"
 	BUILD_ACCOUNTS = "accounts"
