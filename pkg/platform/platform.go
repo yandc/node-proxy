@@ -132,6 +132,20 @@ func newPlatform(chain string) types.Platform {
 	return nil
 }
 
+func GetSUINFTInfo(chain, objectId string) (*types.SuiNFTObjectResponse, error) {
+	platform := newPlatform(chain)
+	if platform == nil {
+		c.log.Error("get platform is nil")
+		return nil, errors.New("platform is nil")
+	}
+	suiPlatform := sui.Platform2SUIPlatform(platform)
+	if platform == nil {
+		c.log.Error("sui platform is nil")
+		return nil, errors.New("sui platform is nil")
+	}
+	return suiPlatform.GetNFTObject(objectId)
+}
+
 // GetGasEstimateTime returns the estimated time, in seconds, for a transaction to be confirmed on the blockchain.
 func GetGasEstimateTime(chain string, gasInfo string) (string, error) {
 	switch chain {

@@ -613,3 +613,28 @@ a specified amount of MUTE in their wallet.\r\n\r\nThe non-inflationary supply i
 		}).Create(&t)
 	}
 }
+
+func UpdateSUITESTToken() {
+	var tokenLists = []models.TokenList{
+		{
+			Chain:    "SUITEST",
+			Address:  "0xe158e6df182971bb6c85eb9de9fbfb460b68163d19afc45873c8672b5cc521b2::TOKEN::TestUSDT",
+			Name:     "TestUSDT",
+			Symbol:   "TestUSDT",
+			Decimals: 6,
+		},
+		{
+			Chain:    "SUITEST",
+			Address:  "0xe158e6df182971bb6c85eb9de9fbfb460b68163d19afc45873c8672b5cc521b2::TOKEN::TestDAI",
+			Name:     "TestDAI",
+			Symbol:   "TestDAI",
+			Decimals: 6,
+		},
+	}
+	for _, t := range tokenLists {
+		c.db.Clauses(clause.OnConflict{
+			Columns:   []clause.Column{{Name: "address"}, {Name: "chain"}},
+			UpdateAll: true,
+		}).Create(&t)
+	}
+}

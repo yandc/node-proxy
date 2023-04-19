@@ -13,6 +13,7 @@ import (
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/aptosNFT"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/ethNFT"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/opensea"
+	"gitlab.bixin.com/mili/node-proxy/pkg/nft/sui"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/types"
 	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
 	"gorm.io/gorm/clause"
@@ -157,7 +158,8 @@ func GetNFTInfo(chain string, tokenInfos []*v1.GetNftInfoRequest_NftInfo) ([]*v1
 	needRetryMap := make(map[string]types.NeedRetryRequest)
 	for _, tokenInfo := range tokenInfos {
 		address := tokenInfo.TokenAddress
-		if strings.HasPrefix(tokenInfo.TokenAddress, "0x") && !strings.Contains(chain, "Aptos") {
+		if strings.HasPrefix(tokenInfo.TokenAddress, "0x") && !strings.Contains(chain, "Aptos") &&
+			!strings.Contains(chain, "SUI") {
 			address = strings.ToLower(tokenInfo.TokenAddress)
 		}
 		params = append(params, []interface{}{address, tokenInfo.TokenId})
@@ -262,6 +264,8 @@ func GetNFTListModel(chain, tokenAddress, tokenId string) (models.NftList, error
 		return aptosNFT.GetAptosNFTAsset(chain, tokenAddress, tokenId)
 	case "Arbitrum", "BSC", "Polygon":
 		return opensea.GetOpenSeaNFTAsset(chain, tokenAddress, tokenId)
+	case "SUI":
+		return sui.GetSUINFTAsset(chain, tokenAddress, tokenId)
 	}
 	return models.NftList{}, nil
 }

@@ -47,6 +47,8 @@ var chainFullName = map[string]string{
 	"BSCTEST":       "BSC",
 	"Polygon":       "Polygon",
 	"PolygonTEST":   "Polygon",
+	"SUI":           "SUI",
+	"SUITEST":       "SUI",
 }
 
 func GetFullName(chain string) string {
