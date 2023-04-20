@@ -262,7 +262,7 @@ func GetNFTListModel(chain, tokenAddress, tokenId string) (models.NftList, error
 		return ethNFT.GetETHNFTAsset(chain, tokenAddress, tokenId)
 	case "Aptos":
 		return aptosNFT.GetAptosNFTAsset(chain, tokenAddress, tokenId)
-	case "Arbitrum", "BSC", "Polygon":
+	case "Arbitrum", "BSC", "Polygon", "Klaytn", "Optimism", "Avalanche":
 		return opensea.GetOpenSeaNFTAsset(chain, tokenAddress, tokenId)
 	case "SUI":
 		return sui.GetSUINFTAsset(chain, tokenAddress, tokenId)
