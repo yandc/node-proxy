@@ -265,6 +265,7 @@ var db2Chain = map[string]string{
 	"arbitrum-nova":   "ArbitrumNova",
 	"conflux":         "Conflux",
 	"zkSync":          "zkSync",
+	"SUI":             "SUI",
 }
 
 var TokenFileMap = map[string][]string{

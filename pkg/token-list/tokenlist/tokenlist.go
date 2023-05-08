@@ -499,7 +499,7 @@ func GetDBTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfo
 		chain := utils.GetChainNameByChain(addressInfo.Chain)
 		address := addressInfo.Address
 		if strings.HasPrefix(addressInfo.Address, "0x") && chain != utils.STARCOIN_CHAIN &&
-			chain != utils.APTOS_CHAIN {
+			chain != utils.APTOS_CHAIN && !strings.Contains(chain, "SUI") {
 			address = strings.ToLower(addressInfo.Address)
 		}
 		params = append(params, []interface{}{chain, address})
@@ -547,7 +547,7 @@ func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoRe
 		address := addressInfo.Address
 
 		if (strings.HasPrefix(addressInfo.Address, "0x") && chain != utils.STARCOIN_CHAIN &&
-			chain != utils.APTOS_CHAIN && chain != "SUITEST") || (strings.Contains(chain, utils.COSMOS_CHAIN)) {
+			chain != utils.APTOS_CHAIN && !strings.Contains(chain, "SUI")) || (strings.Contains(chain, utils.COSMOS_CHAIN)) {
 			address = strings.ToLower(addressInfo.Address)
 		}
 		params = append(params, []interface{}{chain, address})
@@ -1604,6 +1604,8 @@ func UpdateChainToken(chain string) {
 		UpdateZkSyncToken()
 	case "SUITEST":
 		UpdateSUITESTToken()
+	case "SUI":
+		UpdateSUIToken()
 
 		//default:
 		//	utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")

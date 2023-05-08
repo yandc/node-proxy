@@ -86,13 +86,13 @@ type SuiTransactionResponse struct {
 			Transaction    struct {
 				Kind   string `json:"kind"`
 				Inputs []struct {
-					Type       string `json:"type"`
-					ValueType  string `json:"valueType,omitempty"`
-					Value      string `json:"value,omitempty"`
-					ObjectType string `json:"objectType,omitempty"`
-					ObjectID   string `json:"objectId,omitempty"`
-					Version    string `json:"version,omitempty"`
-					Digest     string `json:"digest,omitempty"`
+					Type       string      `json:"type"`
+					ValueType  string      `json:"valueType,omitempty"`
+					Value      interface{} `json:"value,omitempty"`
+					ObjectType string      `json:"objectType,omitempty"`
+					ObjectID   string      `json:"objectId,omitempty"`
+					Version    string      `json:"version,omitempty"`
+					Digest     string      `json:"digest,omitempty"`
 				} `json:"inputs"`
 				Transactions []struct {
 					TransferObjects []interface{} `json:"TransferObjects"`
