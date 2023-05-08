@@ -201,7 +201,7 @@ func init() {
 	//uu, _ := url.Parse("http://127.0.0.1:1087")
 	GlobalTransport = &http.Transport{
 		//TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-		//Proxy: http.ProxyURL(uu),
+		//Proxy:           http.ProxyURL(uu),
 		MaxConnsPerHost: 50,
 	}
 	client = &http.Client{

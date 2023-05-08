@@ -139,6 +139,7 @@ var dbName2HandlerMap = map[string]string{
 	"ronin":               "ronin",
 	"arbitrum-nova":       "arbitrumnova",
 	"zkSync":              "zksync",
+	"SUI":                 "sui",
 }
 
 var handlerNameMap = map[string]string{
@@ -169,6 +170,7 @@ var handlerNameMap = map[string]string{
 	"arbitrumnova": "arbitrum-nova",
 	"conflux":      "conflux",
 	"zksync":       "zkSync",
+	"sui":          "SUI",
 }
 
 var chainNameMap = map[string]string{
@@ -637,7 +639,7 @@ func ParseCoinAddress(coinAddress []string) map[string][]string {
 		addressInfo := strings.SplitN(chainAddress, "_", 2)
 		chain := addressInfo[0]
 		address := addressInfo[1]
-		if strings.HasPrefix(address, "0x") && chain != STARCOIN_CHAIN && chain != APTOS_CHAIN {
+		if strings.HasPrefix(address, "0x") && chain != STARCOIN_CHAIN && chain != APTOS_CHAIN && !strings.Contains(chain, "sui") {
 			address = strings.ToLower(address)
 		}
 		key := fmt.Sprintf("%s_%s", chain, address)

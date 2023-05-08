@@ -109,7 +109,7 @@ func updateCreatePrice(priceChains []string) {
 		addressInfo := strings.Split(priceChain, "_")
 		chain := utils.GetChainNameByPlatform(addressInfo[0])
 		address := addressInfo[1]
-		if strings.HasPrefix(address, "0x") && chain != utils.STARCOIN_CHAIN && chain != utils.APTOS_CHAIN {
+		if strings.HasPrefix(address, "0x") && chain != utils.STARCOIN_CHAIN && chain != utils.APTOS_CHAIN && !strings.Contains(chain, "SUI") {
 			address = strings.ToLower(address)
 		}
 		var tempTokenList models.TokenList
