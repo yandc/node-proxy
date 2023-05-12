@@ -186,10 +186,12 @@ type OsmosisTokenInfo struct {
 		Denom        string `json:"denom"`
 		Type         string `json:"type"`
 		BaseDenom    string `json:"base_denom"`
+		OriginDenom  string `json:"origin_denom"`
 		BaseType     string `json:"base_type"`
 		DpDenom      string `json:"dp_denom"`
+		Symbol       string `json:"symbol"`
 		OriginChain  string `json:"origin_chain"`
-		Decimal      int    `json:"decimal"`
+		Decimal      int    `json:"decimals"`
 		Description  string `json:"description,omitempty"`
 		Image        string `json:"image"`
 		CoinGeckoID  string `json:"coinGeckoId,omitempty"`

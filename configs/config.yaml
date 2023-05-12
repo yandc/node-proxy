@@ -68,6 +68,7 @@ tokenList:
     - Conflux
     - zkSync
     - SUI
+    - Cosmos
 
 nftList:
   ipfs: https://cloudflare-ipfs.com/ipfs/

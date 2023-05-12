@@ -1041,7 +1041,7 @@ func RefreshLogoURI(chains []string) {
 	var tokenLists []models.TokenList
 	var err error
 	if len(chains) > 0 {
-		err = c.db.Where("chain in ?", chains).Find(&tokenLists).Error
+		err = c.db.Where("chain in ? AND logo_uri = ?", chains, "").Find(&tokenLists).Error
 	} else {
 		tokenLists, err = GetAllTokenList()
 	}
@@ -1050,6 +1050,7 @@ func RefreshLogoURI(chains []string) {
 		c.log.Error("get token list error:", err)
 		return
 	}
+	fmt.Println("tokenList length=", len(tokenLists))
 	//download images
 	DownLoadImages(tokenLists)
 
@@ -1317,7 +1318,7 @@ func DownLoadImages(tokenLists []models.TokenList) {
 				fileSuffix = ".svg"
 			}
 			address := t.Address
-			if t.Chain == "osmosis" && strings.Contains(t.Address, "/") {
+			if (t.Chain == "osmosis" || t.Chain == "cosmos") && strings.Contains(t.Address, "/") {
 				address = strings.Split(t.Address, "/")[1]
 			}
 			fileName := path + "/" + t.Chain + "_" + address + fileSuffix
@@ -1444,7 +1445,7 @@ func InsertLogoURI() {
 			if len(chainAddress) == 2 {
 				chain := chainAddress[0]
 				address := chainAddress[1]
-				if chain == "osmosis" && len(address) == 64 {
+				if (chain == "osmosis" || chain == "cosmos") && len(address) == 64 {
 					address = fmt.Sprintf("ibc/%s", address)
 				}
 				err := c.db.Model(&models.TokenList{}).Where("chain = ? AND address = ?", chain, address).Update("logo_uri", logoURI).Error

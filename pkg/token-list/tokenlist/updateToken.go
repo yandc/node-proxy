@@ -12,7 +12,7 @@ import (
 
 func UpdateOsmosisToken() {
 	out := &types.OsmosisTokenInfo{}
-	url := "https://api.mintscan.io/v2/assets/osmosis"
+	url := "https://api.mintscan.io/v3/assets/osmosis"
 	body, err := nft.DoWebRequest(url)
 	if err != nil {
 		fmt.Println("error==", err)
@@ -31,7 +31,7 @@ func UpdateOsmosisToken() {
 	if out != nil && len(out.Assets) > 0 {
 		tokenLists := make([]models.TokenList, 0, len(out.Assets))
 		for _, asset := range out.Assets {
-			if asset.DpDenom == "OSMO" {
+			if asset.Symbol == "OSMO" {
 				continue
 			}
 			address := asset.Denom
@@ -42,19 +42,20 @@ func UpdateOsmosisToken() {
 			tokenLists = append(tokenLists, models.TokenList{
 				Chain:    asset.Chain,
 				Address:  address,
-				Name:     asset.BaseDenom,
-				Symbol:   asset.DpDenom,
-				Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/" + asset.Image,
+				Name:     asset.OriginDenom,
+				Symbol:   asset.Symbol,
+				Logo:     "https://raw.githubusercontent.com/cosmostation/chainlist/master/chain/" + asset.Image,
 				Decimals: asset.Decimal,
 				CgId:     asset.CoinGeckoID,
 			})
 		}
-		result := c.db.Clauses(clause.OnConflict{
-			UpdateAll: true,
-		}).Create(&tokenLists)
-		if result.Error != nil {
-			c.log.Error("create db aptos error:", result.Error)
+		for _, token := range tokenLists {
+			c.db.Clauses(clause.OnConflict{
+				UpdateAll: true,
+			}).Create(&token)
+
 		}
+
 	}
 
 }
@@ -63,19 +64,19 @@ func UpdateCosmosToken() {
 	//https://api.mintscan.io/v2/assets/cosmos
 
 	var tokenLists = []models.TokenList{
+		//{
+		//	Chain:    "cosmos",
+		//	Address:  "uatom",
+		//	Name:     "Cosmos Hub",
+		//	Symbol:   "ATOM",
+		//	Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/atom.png",
+		//	Decimals: 6,
+		//	CgId:     "cosmos",
+		//	WebSite:  "https://cosmos.network/",
+		//},
 		{
 			Chain:    "cosmos",
-			Address:  "uatom",
-			Name:     "Cosmos Hub",
-			Symbol:   "ATOM",
-			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/atom.png",
-			Decimals: 6,
-			CgId:     "cosmos",
-			WebSite:  "https://cosmos.network/",
-		},
-		{
-			Chain:    "cosmos",
-			Address:  "uosmo",
+			Address:  "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
 			Name:     "Osmosis",
 			Symbol:   "OSMO",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/osmo.png",
@@ -85,7 +86,7 @@ func UpdateCosmosToken() {
 		},
 		{
 			Chain:    "cosmos",
-			Address:  "uakt",
+			Address:  "ibc/2181AAB0218EAC24BC9F86BD1364FBBFA3E6E3FCC25E88E3E68C15DC6E752D86",
 			Name:     "Akash Network",
 			Symbol:   "AKT",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/akt.png",
@@ -93,19 +94,19 @@ func UpdateCosmosToken() {
 			CgId:     "akash-network",
 			WebSite:  "https://akash.network/",
 		},
+		//{
+		//	Chain:    "cosmos",
+		//	Address:  "uixo",
+		//	Name:     "IXO",
+		//	Symbol:   "IXO",
+		//	Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/ixo.png",
+		//	Decimals: 6,
+		//	CgId:     "ixo",
+		//	WebSite:  "https://www.ixo.world/",
+		//},
 		{
 			Chain:    "cosmos",
-			Address:  "uixo",
-			Name:     "IXO",
-			Symbol:   "IXO",
-			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/ixo.png",
-			Decimals: 6,
-			CgId:     "ixo",
-			WebSite:  "https://www.ixo.world/",
-		},
-		{
-			Chain:    "cosmos",
-			Address:  "ubtsg",
+			Address:  "ibc/E7D5E9D0E9BF8B7354929A817DD28D4D017E745F638954764AA88522A7A409EC",
 			Name:     "BitSong",
 			Symbol:   "BTSG",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/btsg.png",
@@ -115,7 +116,7 @@ func UpdateCosmosToken() {
 		},
 		{
 			Chain:    "cosmos",
-			Address:  "ubcna",
+			Address:  "ibc/ADBEC1A7AC2FEF73E06B066A1C94DAB6C27924EF7EA3F5A43378150009620284",
 			Name:     "BitCanna",
 			Symbol:   "BCNA",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/bcna.png",
@@ -125,7 +126,7 @@ func UpdateCosmosToken() {
 		},
 		{
 			Chain:    "cosmos",
-			Address:  "uregen",
+			Address:  "ibc/1FBDD58D438B4D04D26CBFB2E722C18984A0F1A52468C4F42F37D102F3D3F399",
 			Name:     "Regen Network",
 			Symbol:   "REGEN",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/regen.png",
@@ -135,7 +136,7 @@ func UpdateCosmosToken() {
 		},
 		{
 			Chain:    "cosmos",
-			Address:  "uxprt",
+			Address:  "ibc/81D08BC39FB520EBD948CF017910DD69702D34BF5AC160F76D3B5CFC444EBCE0",
 			Name:     "Persistence",
 			Symbol:   "XPRT",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/xprt.png",
@@ -145,7 +146,7 @@ func UpdateCosmosToken() {
 		},
 		{
 			Chain:    "cosmos",
-			Address:  "uxki",
+			Address:  "ibc/533E5FFC606FD11B8DCA309C66AFD6A1F046EF784A73F323A332CF6823F0EA87",
 			Name:     "Ki",
 			Symbol:   "XKI",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/xki.png",
@@ -155,7 +156,7 @@ func UpdateCosmosToken() {
 		},
 		{
 			Chain:    "cosmos",
-			Address:  "uiris",
+			Address:  "ibc/12DA42304EE1CE96071F712AA4D58186AD11C3165C0DCDA71E017A54F3935E66",
 			Name:     "IRISnet",
 			Symbol:   "IRIS",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/iris.png",
@@ -165,7 +166,7 @@ func UpdateCosmosToken() {
 		},
 		{
 			Chain:    "cosmos",
-			Address:  "uion",
+			Address:  "ibc/5BB694D466CCF099EF73F165F88472AF51D9C4991EAA42BD1168C5304712CC0D",
 			Name:     "Ion",
 			Symbol:   "ION",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/osmosis/ion.png",
@@ -175,7 +176,7 @@ func UpdateCosmosToken() {
 		},
 		{
 			Chain:    "cosmos",
-			Address:  "basecro",
+			Address:  "ibc/C932ADFE2B4216397A4F17458B6E4468499B86C3BC8116180F85D799D6F5CC1B",
 			Name:     "Cronos",
 			Symbol:   "CRO",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/cro.png",
@@ -185,7 +186,7 @@ func UpdateCosmosToken() {
 		},
 		{
 			Chain:    "cosmos",
-			Address:  "uiov",
+			Address:  "ibc/68A333688E5B07451F95555F8FE510E43EF9D3D44DF0909964F92081EF9BE5A7",
 			Name:     "Starname",
 			Symbol:   "IOV",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/iov.png",
@@ -195,7 +196,7 @@ func UpdateCosmosToken() {
 		},
 		{
 			Chain:    "cosmos",
-			Address:  "aevmos",
+			Address:  "ibc/19DD710119533524061885A6F190B18AF28D9537E2BAE37F32A62C1A25979287",
 			Name:     "Evmos",
 			Symbol:   "EVMOS",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/evmos.png",
@@ -205,7 +206,7 @@ func UpdateCosmosToken() {
 		},
 		{
 			Chain:    "cosmos",
-			Address:  "udvpn",
+			Address:  "ibc/42E47A5BA708EBE6E0C227006254F2784E209F4DBD3C6BB77EDC4B29EF875E8E",
 			Name:     "Sentinel",
 			Symbol:   "DVPN",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/dvpn.png",
@@ -215,7 +216,7 @@ func UpdateCosmosToken() {
 		},
 		{
 			Chain:    "cosmos",
-			Address:  "uscrt",
+			Address:  "ibc/1542F8DC70E7999691E991E1EDEB1B47E65E3A217B1649D347098EE48ACB580F",
 			Name:     "Secret",
 			Symbol:   "SCRT",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/scrt.png",
@@ -225,7 +226,7 @@ func UpdateCosmosToken() {
 		},
 		{
 			Chain:    "cosmos",
-			Address:  "nanolike",
+			Address:  "ibc/1D5826F7EDE6E3B13009FEF994DC9CAAF15CC24CA7A9FF436FFB2E56FD72F54F",
 			Name:     "LikeCoin",
 			Symbol:   "LIKE",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/like.png",
@@ -235,7 +236,7 @@ func UpdateCosmosToken() {
 		},
 		{
 			Chain:    "cosmos",
-			Address:  "ujuno",
+			Address:  "ibc/CDAB23DA5495290063363BD1C3499E26189036302DC689985A7E23F8DF8D8DB0",
 			Name:     "JUNO",
 			Symbol:   "JUNO",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/juno.png",
@@ -245,7 +246,7 @@ func UpdateCosmosToken() {
 		},
 		{
 			Chain:    "cosmos",
-			Address:  "ungm",
+			Address:  "ibc/E070CE91CC4BD15AEC9B5788C0826755AAD35052A3037E9AC62BE70B4C9A7DBB",
 			Name:     "e-Money",
 			Symbol:   "NGM",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/ngm.png",
@@ -255,7 +256,7 @@ func UpdateCosmosToken() {
 		},
 		{
 			Chain:    "cosmos",
-			Address:  "eeur",
+			Address:  "ibc/B93F321238F7BB15AB5B882660AAE72286C8E9035DE34E2B30F60E54C623C63C",
 			Name:     "e-Money EUR",
 			Symbol:   "EEUR",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/emoney/eeur.png",
@@ -265,7 +266,7 @@ func UpdateCosmosToken() {
 		},
 		{
 			Chain:    "cosmos",
-			Address:  "ucre",
+			Address:  "ibc/3F18D520CE791A40357D061FAD657CED6B21D023F229EAF131D7FE7CE6F488BD",
 			Name:     "Crescent Network",
 			Symbol:   "CRE",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/cre.png",
@@ -275,7 +276,7 @@ func UpdateCosmosToken() {
 		},
 		{
 			Chain:    "cosmos",
-			Address:  "rowan",
+			Address:  "ibc/F5ED5F3DC6F0EF73FA455337C027FE91ABCB375116BF51A228E44C493E020A09",
 			Name:     "Sifchain",
 			Symbol:   "ROWAN",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/rowan.png",
@@ -285,7 +286,7 @@ func UpdateCosmosToken() {
 		},
 		{
 			Chain:    "cosmos",
-			Address:  "ukava",
+			Address:  "ibc/8870C4203CEBF2279BA065E3DE95FC3F8E05A4A93424E7DC707A21514BE353A0",
 			Name:     "Kava",
 			Symbol:   "KAVA",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/kava.png",
@@ -295,7 +296,7 @@ func UpdateCosmosToken() {
 		},
 		{
 			Chain:    "cosmos",
-			Address:  "uumee",
+			Address:  "ibc/DEC41A02E47658D40FC71E5A35A9C807111F5A6662A3FB5DA84C4E6F53E616B3",
 			Name:     "Umee",
 			Symbol:   "UMEE",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/umee.png",
@@ -305,7 +306,7 @@ func UpdateCosmosToken() {
 		},
 		{
 			Chain:    "cosmos",
-			Address:  "inj",
+			Address:  "ibc/6469BDA6F62C4F4B8F76629FA1E72A02A3D1DD9E2B22DDB3C3B2296DEAD29AB8",
 			Name:     "Injective",
 			Symbol:   "INJ",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/inj.png",
@@ -315,7 +316,7 @@ func UpdateCosmosToken() {
 		},
 		{
 			Chain:    "cosmos",
-			Address:  "ubcre",
+			Address:  "ibc/835EE9D00C35D72128F195B50F8A89EB83E5011C43EA0AA00D16348E2208FEBB",
 			Name:     "Liquid Staking Crescent",
 			Symbol:   "bCRE",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/crescent/bcre.png",
@@ -325,7 +326,7 @@ func UpdateCosmosToken() {
 		},
 		{
 			Chain:    "cosmos",
-			Address:  "uatolo",
+			Address:  "ibc/20A7DC8E24709E6F1EE0F4E832C2ED345ADD77425890482A349AE3C43CAC6B2C",
 			Name:     "RIZON",
 			Symbol:   "ATOLO",
 			Logo:     "https://raw.githubusercontent.com/cosmostation/cosmostation_token_resource/master/assets/images/common/atolo.png",

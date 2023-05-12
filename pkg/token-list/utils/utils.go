@@ -202,6 +202,7 @@ var chainNameMap = map[string]string{
 	"ArbitrumNova": "arbitrum-nova",
 	"Conflux":      "conflux",
 	"zkSync":       "zkSync",
+	"SUI":          "SUI",
 
 	"ETHTEST":          "ethereum",
 	"HECOTEST":         "huobi-token",
@@ -231,6 +232,7 @@ var chainNameMap = map[string]string{
 	"ArbitrumNovaTEST": "arbitrum-nova",
 	"ConfluxTEST":      "conflux",
 	"zkSyncTEST":       "zkSync",
+	"SUITEST":          "SUI",
 }
 
 var priceKeys = []string{"ethereum", "polkadot", "ronin", "harmony", "osmosis", "bitcoin-cash", "casper-network",
@@ -260,14 +262,14 @@ var db2Chain = map[string]string{
 	"aptos":               "Aptos",
 	"nervos":              "Nervos",
 	"osmosis":             "Osmosis",
-	//"cosmos":              "Cosmos",
-	"bitcoin-cash":    "SmartBCH",
-	"harmony-shard-0": "Harmony",
-	"ronin":           "Ronin",
-	"arbitrum-nova":   "ArbitrumNova",
-	"conflux":         "Conflux",
-	"zkSync":          "zkSync",
-	"SUI":             "SUI",
+	"cosmos":              "Cosmos",
+	"bitcoin-cash":        "SmartBCH",
+	"harmony-shard-0":     "Harmony",
+	"ronin":               "Ronin",
+	"arbitrum-nova":       "ArbitrumNova",
+	"conflux":             "Conflux",
+	"zkSync":              "zkSync",
+	"SUI":                 "SUI",
 }
 
 var TokenFileMap = map[string][]string{
