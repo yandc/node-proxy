@@ -30,7 +30,8 @@ const (
 	REDIS_TOKENLIST_INTERVAL  = 86400 //24H
 	STARCOIN_CHAIN            = "starcoin"
 	APTOS_CHAIN               = "aptos"
-	COSMOS_CHAIN              = "Cosmos"
+	COSMOS_CHAIN              = "cosmos"
+	OSMOSIS_CHAIN             = "osmosis"
 	REDIS_TOKENLIST_TOP20     = "tokenTop20"
 )
 

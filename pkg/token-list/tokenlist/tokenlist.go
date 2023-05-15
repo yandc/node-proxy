@@ -501,6 +501,9 @@ func GetDBTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfo
 		if strings.HasPrefix(addressInfo.Address, "0x") && chain != utils.STARCOIN_CHAIN &&
 			chain != utils.APTOS_CHAIN && !strings.Contains(chain, "SUI") {
 			address = strings.ToLower(addressInfo.Address)
+		} else if (strings.Contains(chain, utils.COSMOS_CHAIN) || strings.Contains(chain, utils.OSMOSIS_CHAIN)) &&
+			strings.Contains(address, "/") {
+			address = "ibc/" + strings.ToUpper(strings.Split(address, "/")[1])
 		}
 		params = append(params, []interface{}{chain, address})
 		addressMap[chain+":"+address] = key
@@ -546,14 +549,16 @@ func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoRe
 		chain := utils.GetChainNameByChain(addressInfo.Chain)
 		address := addressInfo.Address
 
-		if (strings.HasPrefix(addressInfo.Address, "0x") && chain != utils.STARCOIN_CHAIN &&
-			chain != utils.APTOS_CHAIN && !strings.Contains(chain, "SUI")) || (strings.Contains(chain, utils.COSMOS_CHAIN)) {
+		if strings.HasPrefix(addressInfo.Address, "0x") && chain != utils.STARCOIN_CHAIN &&
+			chain != utils.APTOS_CHAIN && !strings.Contains(chain, "SUI") {
 			address = strings.ToLower(addressInfo.Address)
+		} else if (strings.Contains(chain, utils.COSMOS_CHAIN) || strings.Contains(chain, utils.OSMOSIS_CHAIN)) &&
+			strings.Contains(address, "/") {
+			address = "ibc/" + strings.ToUpper(strings.Split(address, "/")[1])
 		}
 		params = append(params, []interface{}{chain, address})
 		addressMap[chain+":"+address] = key
 	}
-
 	// get token list
 	var tokenLists []models.TokenList
 	err := c.db.Where("(chain, address) IN ?", params).Find(&tokenLists).Error
