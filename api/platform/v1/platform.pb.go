@@ -280,7 +280,7 @@ func (x *BuildWasmRequestReply) GetBody() string {
 	return ""
 }
 
-//function, params, response
+// function, params, response
 type AnalysisWasmResponseRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
