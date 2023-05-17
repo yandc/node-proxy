@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+package api.chainlist.v1;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "gitlab.bixin.com/mili/node-proxy/api/chainlist/v1;v1";
+
+service ChainList {
+
+  //获取所有链列表
+  rpc GetAllChainList (google.protobuf.Empty) returns (GetAllChainListResp);
+  //批量获取链列表
+  rpc GetChainList (GetChainListReq) returns (GetChainListResp);
+  //获取对应链节点列表
+  rpc GetChainNodeList (GetChainNodeListReq) returns (GetChainNodeListResp);
+  //获取使用中的节点列表
+  rpc GetChainNodeInUsedList (google.protobuf.Empty) returns (GetChainNodeInUsedListResp);
+  //标记节点为使用状态
+  rpc UseChainNode (UseChainNodeReq) returns (google.protobuf.Empty);
+}
+
+message GetAllChainListResp {
+  repeated Data data = 1;
+
+  message Data {
+    string chainId = 1;
+    string name = 2;
+    string title = 3;
+    string chain = 4;
+    string currencyName = 5;
+    string currencySymbol = 6;
+    uint32 decimals = 7;
+    string explorer = 8;
+    string chainSlug = 9;
+    string logo = 10;
+    string type = 11;
+    bool isTest = 12;
+  }
+}
+
+message GetChainListReq{
+  repeated string chainIds = 1;
+}
+
+message GetChainListResp{
+  repeated Data data = 1;
+
+  message Data {
+    string chainId = 1;
+    string name = 2;
+    string title = 3;
+    string chain = 4;
+    string currencyName = 5;
+    string currencySymbol = 6;
+    uint32 decimals = 7;
+    string explorer = 8;
+    string chainSlug = 9;
+    string logo = 10;
+    string type = 11;
+    bool isTest = 12;
+  }
+}
+
+message GetChainNodeListReq {
+  //chainId
+  string chainId = 1;
+}
+
+message GetChainNodeListResp {
+
+  repeated Data data = 1;
+
+  message Data {
+    //节点链接
+    string url = 1;
+    //隐私: 参考 https://github.com/DefiLlama/chainlist/blob/main/components/RPCList/index.js#L167
+    string privacy = 2;
+  }
+}
+
+message GetChainNodeInUsedListResp{
+  repeated Data data = 1;
+
+  message Data {
+    string chainId = 1;
+    string name = 2;
+    string title = 3;
+    string chain = 4;
+    repeated string urls = 5;
+    string currencyName = 6;
+    string currencySymbol = 7;
+    uint32 decimals = 8;
+    string explorer = 9;
+    string chainSlug = 10;
+    string logo = 11;
+    string type = 12;
+  }
+}
+
+message UseChainNodeReq{
+  string chainId = 1;
+  string url = 2;
+  //1-推荐节点 2-用户自定义节点
+  uint32 source = 3;
+}

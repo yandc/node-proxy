@@ -10,6 +10,7 @@ import (
 	v1 "gitlab.bixin.com/mili/node-proxy/api/platform/v1"
 	v12 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/conf"
+	"gitlab.bixin.com/mili/node-proxy/pkg/chainlist"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/aptos"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/bitcoin"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/casper"
@@ -22,6 +23,7 @@ import (
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/utils"
 	"math"
 	"math/big"
+	"strings"
 )
 
 const (
@@ -128,8 +130,32 @@ func newPlatform(chain string) types.Platform {
 		case CSPR:
 			return casper.NewCasperPlatform(chain, value.RpcURL, c.logger)
 		}
+	} else if strings.HasPrefix(strings.ToLower(chain), "evm") { //支持自定义EVM
+		url := getRpcUrl(chain)
+		return ethereum.NewEVMPlatform(chain, url, c.logger)
 	}
+
 	return nil
+}
+
+func getRpcUrl(chain string) []string {
+	_, chainId, found := strings.Cut(strings.ToLower(chain), "evm")
+	if !found {
+		c.log.Error("unsupported evm chain")
+		return nil
+	}
+	nodeUrls, err := chainlist.FindChainNodeUrlList(chainId)
+	if err != nil {
+		c.log.Error("get chain node url list error", "err", err)
+		return nil
+	}
+
+	rpcUrls := make([]string, len(nodeUrls))
+	for i, nodeUrl := range nodeUrls {
+		rpcUrls[i] = nodeUrl.Url
+	}
+
+	return rpcUrls
 }
 
 func GetSUINFTInfo(chain, objectId string) (*types.SuiNFTObjectResponse, error) {
