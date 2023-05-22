@@ -108,10 +108,10 @@ func updateCreatePrice(priceChains []string) {
 		}
 		addressInfo := strings.Split(priceChain, "_")
 		chain := utils.GetChainNameByPlatform(addressInfo[0])
-		address := addressInfo[1]
-		if strings.HasPrefix(address, "0x") && chain != utils.STARCOIN_CHAIN && chain != utils.APTOS_CHAIN && !strings.Contains(chain, "SUI") {
-			address = strings.ToLower(address)
-		}
+		address := utils.GetUnificationAddress(chain, addressInfo[1])
+		//if strings.HasPrefix(address, "0x") && chain != utils.STARCOIN_CHAIN && chain != utils.APTOS_CHAIN && !strings.Contains(chain, "SUI") {
+		//	address = strings.ToLower(address)
+		//}
 		var tempTokenList models.TokenList
 		err := c.db.Where("chain = ? AND address = ?", chain, address).First(&tempTokenList).Error
 		if err != nil {
@@ -121,7 +121,8 @@ func updateCreatePrice(priceChains []string) {
 		if tempTokenList.CgId != "" {
 			id = tempTokenList.CgId
 			cgIds = append(cgIds, tempTokenList.CgId)
-		} else if tempTokenList.CmcId > 0 {
+		}
+		if tempTokenList.CmcId > 0 {
 			id = fmt.Sprintf("%d", tempTokenList.CmcId)
 			cmcIds = append(cmcIds, fmt.Sprintf("%v", id))
 		}
@@ -497,14 +498,14 @@ func GetDBTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfo
 	for _, addressInfo := range addressInfos {
 		key := addressInfo.Chain + ":" + addressInfo.Address
 		chain := utils.GetChainNameByChain(addressInfo.Chain)
-		address := addressInfo.Address
-		if strings.HasPrefix(addressInfo.Address, "0x") && chain != utils.STARCOIN_CHAIN &&
-			chain != utils.APTOS_CHAIN && !strings.Contains(chain, "SUI") {
-			address = strings.ToLower(addressInfo.Address)
-		} else if (strings.Contains(chain, utils.COSMOS_CHAIN) || strings.Contains(chain, utils.OSMOSIS_CHAIN)) &&
-			strings.Contains(address, "/") {
-			address = "ibc/" + strings.ToUpper(strings.Split(address, "/")[1])
-		}
+		address := utils.GetUnificationAddress(chain, addressInfo.Address)
+		//if strings.HasPrefix(addressInfo.Address, "0x") && chain != utils.STARCOIN_CHAIN &&
+		//	chain != utils.APTOS_CHAIN && !strings.Contains(chain, "SUI") {
+		//	address = strings.ToLower(addressInfo.Address)
+		//} else if (strings.Contains(chain, utils.COSMOS_CHAIN) || strings.Contains(chain, utils.OSMOSIS_CHAIN)) &&
+		//	strings.Contains(address, "/") {
+		//	address = "ibc/" + strings.ToUpper(strings.Split(address, "/")[1])
+		//}
 		params = append(params, []interface{}{chain, address})
 		addressMap[chain+":"+address] = key
 	}
@@ -547,15 +548,15 @@ func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoRe
 			continue
 		}
 		chain := utils.GetChainNameByChain(addressInfo.Chain)
-		address := addressInfo.Address
+		address := utils.GetUnificationAddress(chain, addressInfo.Address)
 
-		if strings.HasPrefix(addressInfo.Address, "0x") && chain != utils.STARCOIN_CHAIN &&
-			chain != utils.APTOS_CHAIN && !strings.Contains(chain, "SUI") {
-			address = strings.ToLower(addressInfo.Address)
-		} else if (strings.Contains(chain, utils.COSMOS_CHAIN) || strings.Contains(chain, utils.OSMOSIS_CHAIN)) &&
-			strings.Contains(address, "/") {
-			address = "ibc/" + strings.ToUpper(strings.Split(address, "/")[1])
-		}
+		//if strings.HasPrefix(addressInfo.Address, "0x") && chain != utils.STARCOIN_CHAIN &&
+		//	chain != utils.APTOS_CHAIN && !strings.Contains(chain, "SUI") {
+		//	address = strings.ToLower(addressInfo.Address)
+		//} else if (strings.Contains(chain, utils.COSMOS_CHAIN) || strings.Contains(chain, utils.OSMOSIS_CHAIN)) &&
+		//	strings.Contains(address, "/") {
+		//	address = "ibc/" + strings.ToUpper(strings.Split(address, "/")[1])
+		//}
 		params = append(params, []interface{}{chain, address})
 		addressMap[chain+":"+address] = key
 	}

@@ -641,14 +641,28 @@ func ParseCoinAddress(coinAddress []string) map[string][]string {
 		}
 		addressInfo := strings.SplitN(chainAddress, "_", 2)
 		chain := addressInfo[0]
-		address := addressInfo[1]
-		if strings.HasPrefix(address, "0x") && chain != STARCOIN_CHAIN && chain != APTOS_CHAIN && !strings.Contains(chain, "sui") {
-			address = strings.ToLower(address)
-		}
+		address := GetUnificationAddress(chain, addressInfo[1])
+		//if strings.HasPrefix(address, "0x") && chain != STARCOIN_CHAIN && chain != APTOS_CHAIN && !strings.Contains(chain, "sui") {
+		//	address = strings.ToLower(address)
+		//}else if (strings.Contains(chain, COSMOS_CHAIN) || strings.Contains(chain, OSMOSIS_CHAIN)) &&
+		//	strings.Contains(address, "/") {
+		//	address = "ibc/" + strings.ToUpper(strings.Split(address, "/")[1])
+		//}
 		key := fmt.Sprintf("%s_%s", chain, address)
 		result[key] = append(result[key], chainAddress)
 	}
 	return result
+}
+
+func GetUnificationAddress(chain, address string) string {
+	if strings.HasPrefix(address, "0x") && chain != STARCOIN_CHAIN && chain != APTOS_CHAIN &&
+		!strings.Contains(chain, "sui") && !strings.Contains(chain, "SUI") {
+		return strings.ToLower(address)
+	} else if (strings.Contains(chain, COSMOS_CHAIN) || strings.Contains(chain, OSMOSIS_CHAIN)) &&
+		strings.Contains(address, "/") {
+		return "ibc/" + strings.ToUpper(strings.Split(address, "/")[1])
+	}
+	return address
 }
 
 // GetPriceRedisValueByKey get price,whether update
