@@ -8,6 +8,7 @@ require (
 	github.com/RomainMichau/cloudscraper_go v0.4.0
 	github.com/aws/aws-sdk-go v1.44.114
 	github.com/btcsuite/btcutil v1.0.3-0.20201208143702-a53e38424cce
+	github.com/envoyproxy/protoc-gen-validate v0.1.0
 	github.com/ethereum/go-ethereum v1.10.13
 	github.com/go-kratos/kratos/v2 v2.4.0
 	github.com/go-redis/redis v6.15.9+incompatible

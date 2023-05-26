@@ -12,6 +12,8 @@ service Tokenlist {
   rpc GetTokenInfo (GetTokenInfoReq) returns (GetTokenInfoResp);
   rpc GetTokenTop20 (GetTokenTop20Req) returns (GetTokenTop20Resp);
   rpc GetDBTokenInfo (GetTokenInfoReq) returns (GetTokenInfoResp);
+  //是否是假币
+  rpc IsFake (IsFakeReq) returns (IsFakeResp);
 }
 
 message GetTokenListReq {
@@ -75,4 +77,19 @@ message GetTokenTop20Req {
 
 message GetTokenTop20Resp {
   repeated TokenInfoData data = 1;
+}
+
+message IsFakeReq{
+  string chain = 1;
+  string address = 2;
+  string symbol = 3;
+}
+
+message IsFakeResp{
+  message Data{
+    //如果为假币，则返回true，否则返回false
+    bool isFake = 1;
+  }
+
+  Data data = 1;
 }

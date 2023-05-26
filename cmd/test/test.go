@@ -447,7 +447,7 @@ func testUpdateChainList() {
 
 func testGetTop20TokenList() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	result, err := tokenlist.GetTop20TokenList("ETH")
+	result, err := tokenlist.GetTopNTokenList("Solana", 50)
 	if err != nil {
 		fmt.Println("error=", err)
 	}

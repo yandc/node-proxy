@@ -68,6 +68,7 @@ message TokenList {
   string awsLogoPrefix = 5;
   repeated AWS aws = 6;
   repeated string chains = 7;
+  string dataCenterAddr = 8;
 }
 
 message Platform  {
