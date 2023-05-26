@@ -2,6 +2,9 @@ package biz
 
 import (
 	"context"
+	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
+	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/utils"
+	"strings"
 	"time"
 
 	v1 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
@@ -18,6 +21,7 @@ type TokenListRepo interface {
 	GetTokenInfo(ctx context.Context, addressInfo []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoResp_Data, error)
 	GetDBTokenInfo(ctx context.Context, addressInfo []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoResp_Data, error)
 	GetTokenTop20(ctx context.Context, chain string) ([]*v1.TokenInfoData, error)
+	GetFakeCoinWhiteListBySymbol(ctx context.Context, chain, symbol string) (*models.FakeCoinWhiteList, error)
 }
 
 type TokenListUsecase struct {
@@ -65,4 +69,16 @@ func (uc *TokenListUsecase) GetDBTokenInfo(ctx context.Context, addressInfo []*v
 
 func (uc *TokenListUsecase) GetTokenTop20(ctx context.Context, chain string) ([]*v1.TokenInfoData, error) {
 	return uc.repo.GetTokenTop20(ctx, chain)
+}
+
+func (uc *TokenListUsecase) IsFakeResp(ctx context.Context, chain, symbol, address string) *v1.IsFakeResp_Data {
+	chain = utils.ChainNameMap[chain] //convert to db chain name
+	fakeCoinWhiteList, err := uc.repo.GetFakeCoinWhiteListBySymbol(ctx, chain, symbol)
+	if err != nil || fakeCoinWhiteList == nil {
+		return &v1.IsFakeResp_Data{IsFake: false}
+	} else if strings.ToLower(fakeCoinWhiteList.Address) != strings.ToLower(address) {
+		return &v1.IsFakeResp_Data{IsFake: true}
+	}
+
+	return &v1.IsFakeResp_Data{IsFake: false}
 }

@@ -50,10 +50,12 @@ type config struct {
 }
 
 const (
-	REDIS_PRICE_KEY = "tokenlist:price:"
-	REDIS_LIST_KEY  = "tokenlist:list:"
-	REDIS_TOKEN_KEY = "tokenlist:tokeninfo:"
-	REDIS_TOP20_KEY = "tokenlist:top20:"
+	REDIS_PRICE_KEY    = "tokenlist:price:"
+	REDIS_LIST_KEY     = "tokenlist:list:"
+	REDIS_TOKEN_KEY    = "tokenlist:tokeninfo:"
+	REDIS_TOP20_KEY    = "tokenlist:top20:"
+	REDIS_TOP50_KEY    = "tokenlist:top50:"
+	REDIS_FAKECOIN_KEY = "tokenlist:fakecoin:"
 )
 
 var c config
@@ -741,7 +743,7 @@ func AutoUpdateCGTokenList(ids []string) {
 	}
 }
 
-//AutoUpdatePrice 更新代币的价格
+// AutoUpdatePrice 更新代币的价格
 func AutoUpdatePrice() {
 	c.log.Infof("AutoUpdatePrice start")
 	//获取chain
@@ -1661,6 +1663,115 @@ func UpdateAptosToken() {
 
 }
 
+func GetTopNTokenList(chain string, topN int) ([]*v1.TokenInfoData, error) {
+	//oldChain := chain
+	key := REDIS_TOP20_KEY + chain
+	if topN == 50 {
+		key = REDIS_TOP50_KEY + chain
+	}
+	result, err := getTopTokenByKey(chain, key, topN)
+	if err != nil || len(result) == 0 {
+		if topN == 50 {
+			key = REDIS_TOP20_KEY + chain
+			result, err = getTopTokenByKey(chain, key, topN)
+		}
+	}
+	return result, err
+}
+
+func getTopTokenByKey(chain, key string, topN int) ([]*v1.TokenInfoData, error) {
+	oldChain := chain
+	//key := REDIS_TOP20_KEY + chain
+	//get chain
+	chain = utils.GetChainNameByChain(chain)
+	//get redis cache
+	var result []*v1.TokenInfoData
+	str, updateFlag, err := utils.GetTokenTop20RedisValueByKey(c.redisClient, key)
+	if err != nil {
+		c.log.Error("get token top29 key error:", err, key)
+	}
+	if str != "" {
+		if err := json.Unmarshal([]byte(str), &result); err != nil {
+			c.log.Error("unmarshal error:", err)
+		}
+	}
+	if updateFlag && !strings.Contains(chain, "TEST") {
+		go func() {
+			var tokenLists []models.TokenList
+			err = c.db.Where("chain = ? AND name != ? AND cg_id != ?", chain, oldChain, "").Find(&tokenLists).Error
+			if err != nil {
+				c.log.Error("get token list error:", err)
+			}
+			c.log.Info("token list length=", len(tokenLists))
+			if len(tokenLists) >= topN {
+				tokenInfos := make(map[string]*v1.TokenInfoData, len(tokenLists))
+				ids := make([]string, len(tokenLists))
+				for i, t := range tokenLists {
+					ids[i] = t.CgId
+					tokenInfos[t.CgId] = &v1.TokenInfoData{
+						Chain:    oldChain,
+						Address:  t.Address,
+						Symbol:   t.Symbol,
+						Decimals: uint32(t.Decimals),
+						Name:     t.Name,
+						LogoURI:  c.logoPrefix + t.LogoURI,
+					}
+				}
+				markets := make([]types.CGMarket, 0, len(tokenLists)+2)
+				pageSize := 500
+				endIndex := 0
+				for i := 0; i < len(ids); i += pageSize {
+					if i+pageSize > len(ids) {
+						endIndex = len(ids)
+					} else {
+						endIndex = i + pageSize
+					}
+					cgMarkets, err := GetCGMarkets(ids[i:endIndex], "CNY", topN)
+					if err != nil {
+						c.log.Error("get cg markets error:", err)
+					}
+					for j := 0; err != nil && j < 3; j++ {
+						time.Sleep(time.Duration(j) * time.Second)
+						cgMarkets, err = GetCGMarkets(ids[i:endIndex], "CNY", topN)
+					}
+					if err != nil {
+						continue
+					}
+					markets = append(markets, cgMarkets...)
+				}
+				//sort markets
+				sort.Slice(markets, func(i, j int) bool {
+					return markets[i].MarketCapRank <= markets[j].MarketCapRank
+				})
+				index := 0
+				for ; index < len(markets) && markets[index].MarketCapRank == 0; index++ {
+				}
+
+				markets = append(markets[index:], markets[:index]...)
+
+				if len(markets) > topN {
+					markets = markets[:topN]
+				}
+				c.log.Info("cgMarkets=", markets)
+				result = make([]*v1.TokenInfoData, 0, len(markets))
+				for _, market := range markets {
+					if value, ok := tokenInfos[market.ID]; ok {
+						result = append(result, value)
+					}
+				}
+				if len(result) > 0 {
+					b, _ := json.Marshal(result)
+					if err := utils.SetTokenTop20RedisKey(c.redisClient, key, string(b)); err != nil {
+						c.log.Error("set redis client cache error:", err)
+					}
+				}
+			}
+		}()
+	}
+
+	return result, nil
+}
+
 func GetTop20TokenList(chain string) ([]*v1.TokenInfoData, error) {
 	oldChain := chain
 	key := REDIS_TOP20_KEY + chain
@@ -1746,13 +1857,45 @@ func GetTop20TokenList(chain string) ([]*v1.TokenInfoData, error) {
 						c.log.Error("set redis client cache error:", err)
 					}
 				}
-				//return result, nil
 			}
 		}()
 	}
 
 	return result, nil
 }
+
+func GetFakeCoinWhiteList(chain, address string) (*models.FakeCoinWhiteList, error) {
+
+	var fakeCoinWhiteList *models.FakeCoinWhiteList
+	err := c.db.Where("chain = ? AND address = ?", chain, address).
+		First(&fakeCoinWhiteList).Error
+	if err != nil {
+		c.log.Error("get fake coin white list error:", err)
+		return nil, err
+	}
+	return fakeCoinWhiteList, nil
+}
+
+func GetFakeCoinWhiteListBySymbol(chain, symbol string) (*models.FakeCoinWhiteList, error) {
+
+	//get redis cache
+	key := fmt.Sprintf("%s%s:%s", REDIS_FAKECOIN_KEY, chain, symbol)
+	fakeCoinWhiteList, err := utils.GetFakeCoinWhiteList(c.redisClient, key)
+	if err == nil {
+		return fakeCoinWhiteList, nil
+	}
+
+	err = c.db.Where("chain = ? AND symbol = ?", chain, symbol).First(&fakeCoinWhiteList).Error
+	if err != nil {
+		c.log.Error("get fake coin white list error:", err)
+		return nil, err
+	}
+
+	//set redis cache
+	_ = utils.SetFakeCoinWhiteList(c.redisClient, key, fakeCoinWhiteList)
+	return fakeCoinWhiteList, nil
+}
+
 func UpdateNervosToken() {
 	count := 0
 	page := 1

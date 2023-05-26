@@ -71,3 +71,13 @@ func (s *TokenlistService) GetTokenTop20(ctx context.Context, req *pb.GetTokenTo
 		Data: data,
 	}, err
 }
+
+func (s *TokenlistService) IsFake(ctx context.Context, req *pb.IsFakeReq) (*pb.IsFakeResp, error) {
+	// 设置接口 3s 超时
+	subctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+	data := s.uc.IsFakeResp(subctx, req.Chain, req.Symbol, req.Address)
+	return &pb.IsFakeResp{
+		Data: data,
+	}, nil
+}

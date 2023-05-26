@@ -1,0 +1,543 @@
+syntax = "proto3";
+
+package api.market.v1;
+
+import "validate/validate.proto";
+
+option go_package = "gitlab.bixin.com/mili/node-proxy/api/market/v1;v1";
+
+service Market {
+  rpc DescribeCoinSwaps (DescribeCoinSwapsRequest) returns (DescribeCoinSwapsReply);
+  rpc DescribeCoinLiquidity (DescribeCoinLiquidityRequest) returns (DescribeCoinLiquidityReply);
+  rpc DescribeCoinSwapStats (DescribeCoinSwapStatsRequest) returns (DescribeCoinSwapStatsReply);
+  rpc DescribeCoinPriceChart (DescribeCoinPriceChartRequest) returns (DescribeCoinPriceChartReply);
+  rpc DescribeCexCoins(DescribeCexCoinsRequest) returns (DescribeCexCoinsReply);
+  rpc DescribeAllExtraDetail (DescribeAllExtraDetailRequest) returns (DescribeAllExtraDetailReply);
+  rpc DescribeMarketExtraDetail (DescribeMarketExtraDetailRequest) returns (DescribeMarketExtraDetailReply);
+  rpc DescribeMenuCategory (DescribeMenuCategoryRequest) returns (DescribeMenuCategoryReply);
+  rpc ModifyMenuCategory (ModifyMenuCategoryRequest) returns (ModifyMenuCategoryReply);
+  rpc DescribeCategoryList (DescribeCategoryListRequest) returns (DescribeCategoryListReply);
+  rpc ModifyCoinDescription (ModifyCoinDescriptionRequest) returns (ModifyCoinDescriptionReply);
+  rpc ModifyCoinCategory (ModifyCoinCategoryRequest) returns (ModifyCoinCategoryReply);
+  rpc DescribeColumnList (DescribeColumnListRequest) returns (DescribeColumnListReply);
+  rpc CreateColumn (CreateColumnRequest) returns (CreateColumnReply);
+  rpc RemoveColumn (RemoveColumnRequest) returns (RemoveColumnReply);
+  rpc ModifyColumn (ModifyColumnRequest) returns (ModifyColumnReply);
+  rpc CreateCoinCategory(CreateCoinCategoryRequest) returns (CreateCoinCategoryReply);
+  rpc DescribeCoinUserChart (DescribeCoinUserChartRequest) returns (DescribeCoinUserChartReply);
+  rpc DescribeCoinOrderChart (DescribeCoinOrderChartRequest) returns (DescribeCoinOrderChartReply);
+  rpc DescribeCoinVolumeChart (DescribeCoinVolumeChartRequest) returns (DescribeCoinVolumeChartReply);
+  rpc DescribeCoinLiquidityChart (DescribeCoinLiquidityChartRequest) returns (DescribeCoinLiquidityChartReply);
+  rpc DescribeDeFiCoins (DescribeDeFiCoinsRequest) returns (DescribeDeFiCoinsReply);
+  rpc DescribeCoinSimples (DescribeCoinSimplesRequest) returns (DescribeCoinSimplesReply);
+  rpc SearchCoins (SearchCoinsRequest) returns (SearchCoinsReply);
+  rpc DescribeTokens (DescribeTokensRequest) returns (DescribeTokensReply);
+  rpc DescribeGuruChains (DescribeGuruChainsRequest) returns (DescribeGuruChainsReply);
+  rpc DescribeSwapConfig (DescribeSwapConfigRequest) returns (DescribeSwapConfigReply);
+}
+
+message ModifyColumnRequest {
+  string eventId = 1;
+  int32 columnID = 2;
+  map<string, string> name = 3;
+  repeated string category = 4;
+  int32 type = 5 [(validate.rules).int32 = { in:[1, 2] }];
+  int32 weight = 6;
+  optional bool valid = 7;
+}
+message ModifyColumnReply {
+  string code = 1;
+  string message = 2;
+  string eventId = 3;
+}
+message RemoveColumnRequest {
+  string eventId = 1;
+  repeated int32 columnIDs = 2;
+}
+
+message RemoveColumnReply {
+  string code = 1;
+  string message = 2;
+  string eventId = 3;
+}
+
+message CreateColumnRequest {
+  string eventId = 1;
+  map<string, string> name = 2;
+  repeated string category = 3;
+  int32 type = 4 [(validate.rules).int32 = { in:[1, 2] }];
+  int32 weight = 5;
+  optional bool valid = 6;
+}
+
+message CreateColumnReply {
+  string code = 1;
+  string message = 2;
+  string eventId = 3;
+}
+
+message DescribeColumnListRequest {
+  string eventId = 1;
+  string name = 2;
+  int32 type = 3;
+  string category = 4;
+  optional bool valid = 5;
+  int32 page = 6 [(validate.rules).int32 = {gt: 0}];
+  int32 pageSize = 7 [(validate.rules).int32 = {gt: 0, lte:100}];
+}
+message DescribeColumnListReply {
+  int32 total = 1;
+  repeated Column columns = 2;
+  message Column {
+    int32 columnID = 1;
+    map<string,string> name = 2;
+    int32 type = 4;
+    repeated string category = 7;
+    int32 weight = 8;
+    bool valid = 9;
+  }
+}
+
+message DescribeAllExtraDetailRequest {
+  string eventId = 1;
+  string coinID = 2 [(validate.rules).string.min_len = 1];
+}
+
+message DescribeAllExtraDetailReply {
+  string coinID = 1;
+  repeated string homePage = 2;
+  repeated string blockChainSite = 3;
+  string genesisDate = 4;
+  repeated string dexCategory = 5;
+  map<string, string> desc = 6;
+}
+
+message DescribeCategoryListRequest {
+  string eventId = 1;
+}
+message DescribeCategoryListReply {
+  repeated string category = 1;
+}
+
+message ModifyMenuCategoryRequest {
+  string eventId = 1;
+  int32 type = 2 [(validate.rules).int32 = { in:[1, 2] }];
+  repeated string category = 3;
+}
+message ModifyMenuCategoryReply {
+  string code = 1;
+  string message = 2;
+  string eventId = 3;
+}
+
+message CreateCoinCategoryRequest {
+  string eventId = 1;
+  string category = 2 [(validate.rules).string.min_len = 1];
+}
+message CreateCoinCategoryReply {
+  string code = 1;
+  string message = 2;
+  string eventId = 3;
+}
+
+message ModifyCoinDescriptionRequest {
+  string eventId = 1;
+  string coinID = 2 [(validate.rules).string.min_len = 1];
+  map<string, string> desc = 3;
+}
+
+message ModifyCoinDescriptionReply {
+  string code = 1;
+  string message = 2;
+  string eventId = 3;
+  string coinID = 4;
+}
+
+message DescribeCexCoinsRequest{
+  enum SortFieldEnum {
+    Price = 0;
+    PriceDelta24h = 1;
+    Volume24h = 2;
+    MarketCap = 3;
+    PriceDelta7d = 4;
+  }
+  string eventId = 1;
+  repeated string coinIDs = 2;
+  string currency = 3 [(validate.rules).string.min_len = 1];
+  optional string category = 4 [(validate.rules).string.min_len = 1];
+  int32 page = 5 [(validate.rules).int32 = {gt: 0}];
+  int32 pageSize = 6 [(validate.rules).int32 = {gt: 0, lte:100}];
+  SortFieldEnum sortField = 7 [(validate.rules).enum = {defined_only: true}];
+  string sortType = 8;
+  int32 columnID = 9;
+}
+message DescribeCexCoinsReply{
+  repeated Coin coins = 1;
+  int32 total = 2;
+  message Coin {
+    int32 rank = 1;
+    string coinID = 2;
+    double price = 6;
+    double delta1h = 7;
+    double delta24h = 8;
+    double delta7d = 9;
+    double delta30d = 10;
+    double delta1y = 11;
+    double volume24h = 12;
+    double marketCap = 13;
+    double fullyDilutedValuation = 14;
+    double totalSupply = 15;
+    double maxSupply = 16;
+    double circulatingSupply = 17;
+    double high24 = 18;
+    double low24 = 19;
+    string sparkline7d = 20;
+    repeated string category = 21;
+    string updatedAt = 22;
+  }
+}
+
+
+message ModifyCoinCategoryRequest {
+  string eventId = 1;
+  string coinID = 2 [(validate.rules).string.min_len = 1];
+  int32 type = 3 [(validate.rules).int32 = { in:[1, 2] }];
+  repeated string category = 4;
+}
+message ModifyCoinCategoryReply {
+  string code = 1;
+  string message = 2;
+  string eventId = 3;
+  string coinID = 4;
+}
+
+message DescribeMenuCategoryRequest {
+  string eventId = 1;
+  int32 type = 2 [(validate.rules).int32 = { in:[1, 2] }];
+}
+message DescribeMenuCategoryReply {
+  repeated string category = 1;
+}
+
+message DescribeMarketExtraDetailRequest {
+  string eventId = 1;
+  string currency = 2 [(validate.rules).string.min_len = 1];
+  string coinID = 3 [(validate.rules).string.min_len = 1];
+  string lang = 4 [(validate.rules).string.min_len = 1];
+}
+
+message DescribeMarketExtraDetailReply {
+  string coinID = 1;
+  string genesisDate = 2;
+  string description = 3;
+  repeated string homePage = 4;
+  repeated string blockChainSite = 5;
+  repeated ChainAddress chainAddress = 6;
+  message ChainAddress {
+    string chain = 1;
+    string address = 2;
+  }
+  SocialLink socialLink = 7;
+  message SocialLink {
+    string twitter = 1;
+    string facebook = 2;
+    string reddit = 3;
+    string telegram = 4;
+  }
+}
+
+message DescribeCoinPriceChartRequest {
+  string eventId = 1;
+  string coinID = 2 [(validate.rules).string.min_len = 1];
+  string vsCurrency = 3 [(validate.rules).string.min_len = 1];
+  int32 days = 4 [(validate.rules).int32 = {gt: 0, lte:11430}];
+}
+message DescribeCoinPriceChartReply {
+  repeated PriceChart prices = 1;
+  message PriceChart {
+    uint32 timestamp = 1;
+    double price = 2;
+  }
+  repeated CapChart market_caps = 2;
+  message CapChart {
+    uint32 timestamp = 1;
+    double cap = 2;
+  }
+  repeated VolumeChart total_volumes = 3;
+  message VolumeChart {
+    uint32 timestamp = 1;
+    double volume = 2;
+  }
+}
+
+message DescribeCoinSwapsRequest {
+  string eventId = 1;
+  string coinID = 2 [(validate.rules).string.min_len = 1];
+  string currency = 3 [(validate.rules).string.min_len = 1];
+  uint32 beginTimestamp = 4;
+  uint32 endTimestamp = 5;
+  int32 page = 6 [(validate.rules).int32 = {gt: 0}];
+  int32 pageSize = 7 [(validate.rules).int32 = {gt: 0, lte:500}];
+}
+
+message DescribeCoinSwapsReply {
+  repeated CoinSwapsDetail swaps = 1;
+  message CoinSwapsDetail {
+    string UUID = 1;
+    uint32 timestamp = 2;
+    string amm = 3;
+    string chain = 4;
+    double price = 5;
+    string senderCoinID = 6;
+    string receiverCoinID = 7;
+    string senderAddress = 8;
+    string receiverAddress = 9;
+    string tokenIn = 10;
+    string tokenOut = 11;
+    string pairAddress = 12;
+    string walletAddress = 13;
+    uint32 blockNumber = 14;
+    string walletCategory = 15;
+    string transType = 16;
+    string transAddress = 17;
+  }
+  uint64 total = 2;
+}
+
+message DescribeCoinLiquidityRequest {
+  string eventId = 1;
+  string coinID = 2 [(validate.rules).string.min_len = 1];
+  string currency = 3 [(validate.rules).string.min_len = 1];
+  uint32 beginTimestamp = 4;
+  uint32 endTimestamp = 5;
+  int32 page = 6 [(validate.rules).int32 = {gt: 0}];
+  int32 pageSize = 7 [(validate.rules).int32 = {gt: 0, lte:500}];
+}
+
+message DescribeCoinLiquidityReply {
+  repeated CoinLiquidityDetail liquidity = 1;
+  message CoinLiquidityDetail {
+    string UUID = 1;
+    uint32 timestamp = 2;
+    string amm = 3;
+    string chain = 4;
+    double price = 5;
+    string token1CoinID = 6;
+    string token2CoinID = 7;
+    string token1Address = 8;
+    string token2Address = 9;
+    string token1 = 10;
+    string token2 = 11;
+    string pairAddress = 12;
+    string walletAddress = 13;
+    uint32 blockNumber = 14;
+    string transType = 15;
+    string transAddress = 16;
+  }
+  uint64 total = 2;
+}
+
+message DescribeCoinLiquidityChartRequest {
+  string eventId = 1;
+  string coinID = 2 [(validate.rules).string.min_len = 1];
+  string currency = 3 [(validate.rules).string.min_len = 1];
+  int32 days = 4 [(validate.rules).int32 = {gt: 0, lte:11430}];
+}
+
+message DescribeCoinLiquidityChartReply {
+  repeated LiquidityChart liquidity = 1;
+  message LiquidityChart {
+    uint32 timestamp = 1;
+    double price = 2;
+  }
+}
+
+message DescribeCoinUserChartRequest {
+  string eventId = 1;
+  string coinID = 2 [(validate.rules).string.min_len = 1];
+  int32 days = 3 [(validate.rules).int32 = {gt: 0, lte:11430}];
+}
+
+message DescribeCoinUserChartReply {
+  repeated UserChart users = 1;
+  message UserChart {
+    uint32 timestamp = 1;
+    int32 buy = 2;
+    int32 sell = 3;
+    int32 total = 4;
+  }
+}
+
+message DescribeCoinOrderChartRequest {
+  string eventId = 1;
+  string coinID = 2 [(validate.rules).string.min_len = 1];
+  int32 days = 3 [(validate.rules).int32 = {gt: 0, lte:11430}];
+}
+
+message DescribeCoinOrderChartReply {
+  repeated OrderChart orders = 1;
+  message OrderChart {
+    uint32 timestamp = 1;
+    int32 buy = 2;
+    int32 sell = 3;
+    int32 total = 4;
+  }
+}
+
+message DescribeCoinVolumeChartRequest {
+  string eventId = 1;
+  string coinID = 2 [(validate.rules).string.min_len = 1];
+  string currency = 3 [(validate.rules).string.min_len = 1];
+  int32 days = 4 [(validate.rules).int32 = {gt: 0, lte:11430}];
+}
+
+message DescribeCoinVolumeChartReply {
+  repeated VolumeChart volumes = 1;
+  message VolumeChart {
+    uint32 timestamp = 1;
+    double buy = 2;
+    double sell = 3;
+    double total = 4;
+  }
+}
+
+message DescribeCoinSwapStatsRequest {
+  string eventId = 1;
+  string coinID = 2 [(validate.rules).string.min_len = 1];
+  string currency = 3 [(validate.rules).string.min_len = 1];
+}
+
+message DescribeCoinSwapStatsReply {
+  message SwapStatInt {
+    int32 total = 1;
+    int32 buy = 2;
+    int32 sell = 3;
+  }
+  message SwapStatDouble {
+    double total = 1;
+    double buy = 2;
+    double sell = 3;
+  }
+  double liquidity = 1;
+  SwapStatDouble volume24h = 2;
+  SwapStatInt orders24h = 3;
+  SwapStatInt users24h = 4;
+}
+
+message DescribeDeFiCoinsRequest {
+  enum SortFieldDefine {
+    Liquidity = 0;
+    Volume24h = 1;
+    Orders24h = 2;
+    Users24h = 3;
+    Price = 4;
+    PriceDelta24h = 5;
+    Name = 6;
+  }
+  string eventId = 1;
+  string currency = 2 [(validate.rules).string.min_len = 1];
+  int32 page = 3 [(validate.rules).int32 = {gt: 0}];
+  int32 pageSize = 4 [(validate.rules).int32 = {gt: 0, lte:100}];
+  SortFieldDefine sortField = 5 [(validate.rules).enum = {defined_only: true}];
+  string sortType = 6;
+  string category = 7;
+  string coinID = 8;
+  repeated string coinIDs = 9;
+  int32 columnID = 10;
+}
+
+message DescribeDeFiCoinsReply {
+  repeated DeFiCoin coins = 1;
+  int32 total = 2;
+
+  message DeFiCoin {
+    string coinID = 1;
+    double price = 2;
+    double priceDelta24h = 3;
+    double liquidity = 4;
+    double volume24h = 5;
+    int32 orders24h = 6;
+    int32 users24h = 7;
+    repeated string category = 8;
+    int32 rank = 9;
+  }
+}
+
+message DescribeCoinSimplesRequest {
+  string eventId = 1;
+  repeated string coinIDs = 2 [(validate.rules).repeated = {min_items: 1}];
+}
+
+message DescribeCoinSimplesReply {
+  repeated CoinSimple coins = 1;
+  message CoinSimple {
+    string coinID = 1;
+    string name = 2;
+    string symbol = 3;
+    string image = 4;
+  }
+}
+
+message SearchCoinsRequest {
+  string eventId = 1;
+  string keyword = 2 [(validate.rules).string.min_len = 1];
+  int32 pageSize = 3 [(validate.rules).int32 = {gt: 0, lte:100}];
+}
+
+message SearchCoinsReply {
+  repeated CoinSimple coins = 1;
+  message CoinSimple {
+    string coinID = 1;
+    string name = 2;
+    string symbol = 3;
+    string image = 4;
+  }
+}
+
+message DescribeTokensRequest {
+  string eventId = 1;
+  string coinID = 2;
+  string symbol = 3;
+  string address = 4;
+  string chain = 5;
+  int32 page = 6 [(validate.rules).int32 = {gt: 0}];
+  int32 pageSize = 7 [(validate.rules).int32 = {gt: 0, lte:100}];
+}
+
+message DescribeTokensReply {
+  int32 total = 1;
+  repeated Token tokens = 2;
+  message Token {
+    uint32 timestamp = 1;
+    string name = 2;
+    string symbol = 3;
+    string coinID = 4;
+    string address = 5;
+    double liquidity = 6;
+    string chain = 7;
+  }
+}
+
+message DescribeGuruChainsRequest {
+  string eventId = 1;
+}
+
+message DescribeGuruChainsReply {
+  repeated Chain chains = 1;
+  message Chain {
+    string chain = 1;
+    string name = 2;
+    string description = 3;
+  }
+}
+
+message DescribeSwapConfigRequest {
+  string eventId = 1;
+  string coinID = 2 [(validate.rules).string.min_len = 1];
+  int32 client = 3 [(validate.rules).int32 = { in:[1, 2] }];
+}
+
+message DescribeSwapConfigReply {
+  int32 category = 1;
+  string config = 2;
+}

@@ -60,6 +60,7 @@ func GetCGMarkets(ids []string, currency string, perPage int) ([]types.CGMarket,
 		"ids":         id,
 		"vs_currency": currency,
 		"per_page":    fmt.Sprintf("%d", perPage),
+		"order":       "market_cap_desc",
 	}
 	var result []types.CGMarket
 	err := utils.HttpsGetForm(url, params, &result)

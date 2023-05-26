@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"encoding/json"
+	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
 	"strings"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -51,7 +52,7 @@ func (r *tokenListRepo) GetTokenList(ctx context.Context, chain string) ([]*v1.G
 
 func (r *tokenListRepo) AutoUpdateTokenList(ctx context.Context) {
 	r.log.WithContext(ctx).Infof("AutoUpdateTokenList")
-	tokenlist.AutoUpdateCGTokenList([]string{})
+	//tokenlist.AutoUpdateCGTokenList([]string{})
 	//tokenlist.AutoUpdateTokenList(true, true, true)
 }
 
@@ -74,5 +75,10 @@ func (r *tokenListRepo) GetDBTokenInfo(ctx context.Context, addressInfo []*v1.Ge
 
 func (r *tokenListRepo) GetTokenTop20(ctx context.Context, chain string) ([]*v1.TokenInfoData, error) {
 	r.log.WithContext(ctx).Infof("GetTokenTop20", chain)
-	return tokenlist.GetTop20TokenList(chain)
+	return tokenlist.GetTopNTokenList(chain, 20)
+}
+
+func (r *tokenListRepo) GetFakeCoinWhiteListBySymbol(ctx context.Context, chain, symbol string) (*models.FakeCoinWhiteList, error) {
+	r.log.WithContext(ctx).Infof("GetFakeCoinWhiteListBySymbol", chain)
+	return tokenlist.GetFakeCoinWhiteListBySymbol(chain, symbol)
 }

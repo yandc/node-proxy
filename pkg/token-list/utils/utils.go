@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis"
 	v12 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
+	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
 	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
 	"io/ioutil"
 	"math/big"
@@ -174,7 +175,7 @@ var handlerNameMap = map[string]string{
 	"sui":          "SUI",
 }
 
-var chainNameMap = map[string]string{
+var ChainNameMap = map[string]string{
 	"ETH":          "ethereum",
 	"HECO":         "huobi-token",
 	"OEC":          "okex-chain",
@@ -592,7 +593,7 @@ func GetHandlerByDBName(dbName string) string {
 }
 
 func GetChainNameByChain(chain string) string {
-	if value, ok := chainNameMap[chain]; ok {
+	if value, ok := ChainNameMap[chain]; ok {
 		return value
 	}
 	return chain
@@ -821,4 +822,22 @@ func SetTokenTop20RedisKey(redisClient *redis.Client, key, tokenTop20 string) er
 		REDIS_TOKENLIST_TIMESTAMP: time.Now().Unix(),
 	}
 	return redisClient.HMSet(key, fields).Err()
+}
+
+func SetFakeCoinWhiteList(redisClient *redis.Client, key string, value *models.FakeCoinWhiteList) error {
+	bytes, _ := json.Marshal(value)
+	return redisClient.Set(key, string(bytes), -1).Err()
+}
+
+func GetFakeCoinWhiteList(redisClient *redis.Client, key string) (*models.FakeCoinWhiteList, error) {
+	result, err := redisClient.Get(key).Result()
+	if err != nil {
+		return nil, err
+	}
+	var fakeCoinWhiteList *models.FakeCoinWhiteList
+	err = json.Unmarshal([]byte(result), &fakeCoinWhiteList)
+	if err != nil {
+		return nil, err
+	}
+	return fakeCoinWhiteList, nil
 }

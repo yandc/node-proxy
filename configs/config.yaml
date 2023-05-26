@@ -26,6 +26,7 @@ tokenList:
       - 9f36b36d-97aa-48f5-9a20-a41bf6888396
       - dd8eb4f4-922b-43a1-bd2c-671925ca3ed3
       - 03eca6eb-77f9-4ce7-b265-ee408b424d45
+  dataCenterAddr: 10.228.125.212:9011
   qiniu:
     accessKey: EaebIDbEDcyKefx72vRpG3-JDa5Hd9YInXYRiTst
     secretKey: OYNl6ub3YfNI2hVOJ-h6KqRFuwPpUeL4MmVDU9Ia

@@ -27,6 +27,8 @@ type TokenlistClient interface {
 	GetTokenInfo(ctx context.Context, in *GetTokenInfoReq, opts ...grpc.CallOption) (*GetTokenInfoResp, error)
 	GetTokenTop20(ctx context.Context, in *GetTokenTop20Req, opts ...grpc.CallOption) (*GetTokenTop20Resp, error)
 	GetDBTokenInfo(ctx context.Context, in *GetTokenInfoReq, opts ...grpc.CallOption) (*GetTokenInfoResp, error)
+	// 是否是假币
+	IsFake(ctx context.Context, in *IsFakeReq, opts ...grpc.CallOption) (*IsFakeResp, error)
 }
 
 type tokenlistClient struct {
@@ -82,6 +84,15 @@ func (c *tokenlistClient) GetDBTokenInfo(ctx context.Context, in *GetTokenInfoRe
 	return out, nil
 }
 
+func (c *tokenlistClient) IsFake(ctx context.Context, in *IsFakeReq, opts ...grpc.CallOption) (*IsFakeResp, error) {
+	out := new(IsFakeResp)
+	err := c.cc.Invoke(ctx, "/api.tokenlist.v1.Tokenlist/IsFake", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TokenlistServer is the server API for Tokenlist service.
 // All implementations must embed UnimplementedTokenlistServer
 // for forward compatibility
@@ -91,6 +102,8 @@ type TokenlistServer interface {
 	GetTokenInfo(context.Context, *GetTokenInfoReq) (*GetTokenInfoResp, error)
 	GetTokenTop20(context.Context, *GetTokenTop20Req) (*GetTokenTop20Resp, error)
 	GetDBTokenInfo(context.Context, *GetTokenInfoReq) (*GetTokenInfoResp, error)
+	// 是否是假币
+	IsFake(context.Context, *IsFakeReq) (*IsFakeResp, error)
 	mustEmbedUnimplementedTokenlistServer()
 }
 
@@ -112,6 +125,9 @@ func (UnimplementedTokenlistServer) GetTokenTop20(context.Context, *GetTokenTop2
 }
 func (UnimplementedTokenlistServer) GetDBTokenInfo(context.Context, *GetTokenInfoReq) (*GetTokenInfoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDBTokenInfo not implemented")
+}
+func (UnimplementedTokenlistServer) IsFake(context.Context, *IsFakeReq) (*IsFakeResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsFake not implemented")
 }
 func (UnimplementedTokenlistServer) mustEmbedUnimplementedTokenlistServer() {}
 
@@ -216,6 +232,24 @@ func _Tokenlist_GetDBTokenInfo_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Tokenlist_IsFake_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsFakeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TokenlistServer).IsFake(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.tokenlist.v1.Tokenlist/IsFake",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TokenlistServer).IsFake(ctx, req.(*IsFakeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Tokenlist_ServiceDesc is the grpc.ServiceDesc for Tokenlist service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -242,6 +276,10 @@ var Tokenlist_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDBTokenInfo",
 			Handler:    _Tokenlist_GetDBTokenInfo_Handler,
+		},
+		{
+			MethodName: "IsFake",
+			Handler:    _Tokenlist_IsFake_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
