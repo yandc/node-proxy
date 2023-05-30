@@ -89,7 +89,7 @@ type CMCPriceResp struct {
 }
 
 type CMCPriceQuote struct {
-	Price       float32 `json:"price"`
+	Price       float64 `json:"price"`
 	LastUpdated string  `json:"last_updated"`
 }
 

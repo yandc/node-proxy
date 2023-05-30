@@ -41,14 +41,14 @@ func CGCoinsList() ([]types.CoinsListItem, error) {
 	return out, err
 }
 
-func CGSimplePrice(ids []string, currency string) (map[string]map[string]float32, error) {
+func CGSimplePrice(ids []string, currency string) (map[string]map[string]float64, error) {
 	url := fmt.Sprintf("%s/simple/price", cg.baseURL)
 	id := strings.Join(ids, ",")
 	params := map[string]string{
 		"ids":           id,
 		"vs_currencies": currency,
 	}
-	result := make(map[string]map[string]float32)
+	result := make(map[string]map[string]float64)
 	err := utils.HttpsGetForm(url, params, &result)
 	return result, err
 }

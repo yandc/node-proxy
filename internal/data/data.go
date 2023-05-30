@@ -70,5 +70,7 @@ func NewMarketClient(tokenList *conf.TokenList) v1.MarketClient {
 	if err != nil {
 		panic(err)
 	}
-	return v1.NewMarketClient(conn)
+	cli := v1.NewMarketClient(conn)
+	utils.SetMarketClient(cli)
+	return cli
 }
