@@ -2,12 +2,11 @@ package biz
 
 import (
 	"context"
+	v1 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
 	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/utils"
 	"strings"
 	"time"
-
-	v1 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -48,11 +47,11 @@ func (uc *TokenListUsecase) GetTokenList(ctx context.Context, chain string) ([]*
 
 func (uc *TokenListUsecase) AutoUpdateTokenList(ctx context.Context) {
 	transactionPlan := time.NewTicker(24 * time.Hour)
-	uc.repo.AutoUpdateTokenPrice(ctx)
+	//uc.repo.AutoUpdateTokenList(ctx)
 	for true {
 		select {
 		case <-transactionPlan.C:
-			uc.repo.AutoUpdateTokenList(ctx)
+			//uc.repo.AutoUpdateTokenList(ctx)
 		}
 	}
 }
