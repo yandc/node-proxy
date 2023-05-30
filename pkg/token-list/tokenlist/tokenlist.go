@@ -123,8 +123,7 @@ func updateCreatePrice(priceChains []string) {
 		if tempTokenList.CgId != "" {
 			id = tempTokenList.CgId
 			cgIds = append(cgIds, tempTokenList.CgId)
-		}
-		if tempTokenList.CmcId > 0 {
+		} else if tempTokenList.CmcId > 0 {
 			id = fmt.Sprintf("%d", tempTokenList.CmcId)
 			cmcIds = append(cmcIds, fmt.Sprintf("%v", id))
 		}
@@ -133,10 +132,10 @@ func updateCreatePrice(priceChains []string) {
 		}
 	}
 	if len(cgIds) > 0 {
-		handlerCgPrice(cgIds, addressIdMap)
+		go handlerCgPrice(cgIds, addressIdMap)
 	}
 	if len(cmcIds) > 0 {
-		handlerCMCPrice(cmcIds, addressIdMap)
+		go handlerCMCPrice(cmcIds, addressIdMap)
 	}
 
 }
@@ -788,7 +787,6 @@ func UpdatePriceByChains(chains, chainPriceKey []string) {
 		handlerCgPrice(cgIds, addressIdMap)
 	}
 
-	//get coin market cap price
 	if len(cmcIds) > 0 {
 		handlerCMCPrice(cmcIds, addressIdMap)
 	}
@@ -807,30 +805,41 @@ func handlerCMCPrice(cmcIds []string, addressIdMap map[string]string) {
 
 func handlerCgPrice(cgIds []string, addressIdMap map[string]string) {
 	c.log.Infof("CGSimplePrice cgIds:", cgIds)
-	pageSize := 500
-	pageEndIndex := 0
-	for i := 0; i < len(cgIds); i += pageSize {
-		if i+pageSize > len(cgIds) {
-			pageEndIndex = len(cgIds)
-		} else {
-			pageEndIndex = i + pageSize
+	// get price by market
+	marketPricesMap, err := utils3.GetPriceByMarket(cgIds)
+	if err != nil {
+		c.log.Error("get price by market Error:", err)
+		//lark
+		alarmMsg := fmt.Sprintf("请注意：行情中心获取价格失败：%s", err)
+		alarmOpts := lark.WithMsgLevel("FATAL")
+		lark.LarkClient.NotifyLark(alarmMsg, alarmOpts)
+		// get price by coin gecko
+		pageSize := 500
+		pageEndIndex := 0
+		for i := 0; i < len(cgIds); i += pageSize {
+			if i+pageSize > len(cgIds) {
+				pageEndIndex = len(cgIds)
+			} else {
+				pageEndIndex = i + pageSize
+			}
+			cgPricesMap, err := CGSimplePrice(cgIds[i:pageEndIndex], "USD,CNY")
+			for j := 0; err != nil && j < 3; j++ {
+				time.Sleep(1 * time.Minute)
+				cgPricesMap, err = CGSimplePrice(cgIds[i:pageEndIndex], "USD,CNY")
+			}
+			if err != nil {
+				c.log.Error("CGSimplePrice Error:", err)
+				continue
+			}
+			setAutoPrice(cgPricesMap, addressIdMap, true)
 		}
-		cgPricesMap, err := CGSimplePrice(cgIds[i:pageEndIndex], "USD,CNY")
-		for j := 0; err != nil && j < 3; j++ {
-			time.Sleep(1 * time.Minute)
-			cgPricesMap, err = CGSimplePrice(cgIds[i:pageEndIndex], "USD,CNY")
-		}
-		if err != nil {
-			c.log.Error("CGSimplePrice Error:", err)
-			continue
-		}
-		c.log.Infof("CGSimplePrice length:", len(cgPricesMap), cgPricesMap, addressIdMap)
-		setAutoPrice(cgPricesMap, addressIdMap, true)
+		return
 	}
-
+	c.log.Infof("marketPricesMap length:", len(marketPricesMap), marketPricesMap, addressIdMap)
+	setAutoPrice(marketPricesMap, addressIdMap, true)
 }
 
-func setAutoPrice(priceMap map[string]map[string]float32, addressIdMap map[string]string, isCG bool) {
+func setAutoPrice(priceMap map[string]map[string]float64, addressIdMap map[string]string, isCG bool) {
 	for id, prices := range priceMap {
 		var address string
 		if value, ok := addressIdMap[id]; ok {
@@ -839,7 +848,7 @@ func setAutoPrice(priceMap map[string]map[string]float32, addressIdMap map[strin
 			address = id
 		}
 		for currency, price := range prices {
-			priceStr := decimal.NewFromFloat32(price).String()
+			priceStr := decimal.NewFromFloat(price).String()
 			key := REDIS_PRICE_KEY + fmt.Sprintf("%s:%s", address, strings.ToLower(currency))
 			err := utils.SetPriceRedisKey(c.redisClient, key, priceStr)
 			if err != nil {
@@ -1865,7 +1874,6 @@ func GetTop20TokenList(chain string) ([]*v1.TokenInfoData, error) {
 }
 
 func GetFakeCoinWhiteList(chain, address string) (*models.FakeCoinWhiteList, error) {
-
 	var fakeCoinWhiteList *models.FakeCoinWhiteList
 	err := c.db.Where("chain = ? AND address = ?", chain, address).
 		First(&fakeCoinWhiteList).Error

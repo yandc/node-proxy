@@ -228,21 +228,21 @@ func GetAllCoinMarketCap() ([]models.CoinMarketCap, error) {
 	return coinMarketCaps, err
 }
 
-func CMCSimplePrice(ids []string, currency string) (map[string]map[string]float32, error) {
-	result := make(map[string]map[string]float32, len(ids))
+func CMCSimplePrice(ids []string, currency string) (map[string]map[string]float64, error) {
+	result := make(map[string]map[string]float64, len(ids))
 	for _, id := range ids {
 		price, err := getCmcPrice(id, currency)
 		if err != nil {
 			return result, err
 		}
-		result[id] = map[string]float32{
+		result[id] = map[string]float64{
 			currency: price,
 		}
 	}
 	return result, nil
 }
 
-func getCmcPrice(id string, currency string) (float32, error) {
+func getCmcPrice(id string, currency string) (float64, error) {
 	url := fmt.Sprintf("%s/tools/price-conversion", cmc.baseUrl)
 	index := rand.Intn(len(cmc.key))
 	params := map[string]string{
