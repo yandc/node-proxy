@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"gitlab.bixin.com/mili/node-proxy/internal/biz"
 	"time"
 
@@ -30,7 +31,21 @@ func (s *PlatformService) BuildWasmRequest(ctx context.Context, req *pb.BuildWas
 	// 设置接口 3s 超时
 	subctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
-	return s.pc.BuildWasmRequest(subctx, req.Chain, req.NodeRpc, req.FunctionName, req.Params)
+	data := make(chan *pb.BuildWasmRequestReply, 1)
+	var resultErr error
+	go func() {
+		//time.Sleep(5 * time.Second)
+		result, err := s.pc.BuildWasmRequest(subctx, req.Chain, req.NodeRpc, req.FunctionName, req.Params)
+		data <- result
+		resultErr = err
+	}()
+	select {
+	case ret := <-data:
+		return ret, resultErr
+	case <-subctx.Done():
+		return nil, errors.New("timeOut")
+	}
+	//return s.pc.BuildWasmRequest(subctx, req.Chain, req.NodeRpc, req.FunctionName, req.Params)
 }
 
 func (s *PlatformService) AnalysisWasmResponse(ctx context.Context, req *pb.AnalysisWasmResponseRequest) (

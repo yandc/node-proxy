@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"time"
 )
 
 //jsonRequest is a jsonrpc request
@@ -177,7 +178,7 @@ func HttpsParamsPost(url string, params interface{}) (string, error) {
 		return "", err
 	}
 	req.Header.Set("Content-Type", "application/json")
-	client := http.Client{}
+	client := http.Client{Timeout: 10 * time.Second}
 	resp, err := client.Do(req)
 	if err != nil {
 		return "", err
