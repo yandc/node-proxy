@@ -8,7 +8,6 @@ import (
 	v1 "gitlab.bixin.com/mili/node-proxy/api/nft/v1"
 	v12 "gitlab.bixin.com/mili/node-proxy/api/platform/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
-	"gitlab.bixin.com/mili/node-proxy/pkg/lark"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/aptosNFT"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/ethNFT"
@@ -211,9 +210,9 @@ func GetNFTInfo(chain string, tokenInfos []*v1.GetNftInfoRequest_NftInfo) ([]*v1
 						if _, ok := needRetryMap[key]; !ok {
 							resultErr = err
 						}
-						alarmMsg := fmt.Sprintf("请注意：%s链查询NFT信息失败，tokenAddress:%s,tokenID:%s\n错误消息：%s", chain, address, tokenId, err)
-						alarmOpts := lark.WithMsgLevel("FATAL")
-						lark.LarkClient.NotifyLark(alarmMsg, alarmOpts)
+						//alarmMsg := fmt.Sprintf("请注意：%s链查询NFT信息失败，tokenAddress:%s,tokenID:%s\n错误消息：%s", chain, address, tokenId, err)
+						//alarmOpts := lark.WithMsgLevel("FATAL")
+						//lark.LarkClient.NotifyLark(alarmMsg, alarmOpts)
 						return
 					}
 					if nftListModel.TokenId != "" {
