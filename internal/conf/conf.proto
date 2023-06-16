@@ -81,6 +81,7 @@ message NFTList {
   string ipfs = 1;
   uint32 refreshCount = 2;
   uint32 refreshLimit = 3;
+  string nftMarketplaceAddr = 4;
 }
 
 message Lark {

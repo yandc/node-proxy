@@ -75,6 +75,7 @@ nftList:
   ipfs: https://cloudflare-ipfs.com/ipfs/
   refreshCount: 3
   refreshLimit: 300
+  nftMarketplaceAddr: 127.0.0.1:9000
 
 lark:
   larkAlarmTitle: "node-proxy 测试环境"

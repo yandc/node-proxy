@@ -4,7 +4,8 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-redis/redis"
 	"github.com/google/wire"
-	v1 "gitlab.bixin.com/mili/node-proxy/api/market/v1"
+	marketv1 "gitlab.bixin.com/mili/node-proxy/api/market/v1"
+	nftmarketplacev1 "gitlab.bixin.com/mili/node-proxy/api/nft-marketplace/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/conf"
 	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
 	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
@@ -14,7 +15,7 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewDB, NewRedis, NewTokenListRepo, NewChainListRepo, NewPlatformRepo, NewNFTRepo, NewCommRPCRepo, NewMarketClient)
+var ProviderSet = wire.NewSet(NewData, NewDB, NewRedis, NewTokenListRepo, NewChainListRepo, NewPlatformRepo, NewNFTRepo, NewCommRPCRepo, NewMarketClient, NewNFTApiClient)
 
 // Data .
 type Data struct {
@@ -65,12 +66,22 @@ func NewData(db *gorm.DB, rdb *redis.Client, logger log.Logger) (*Data, func(), 
 
 }
 
-func NewMarketClient(tokenList *conf.TokenList) v1.MarketClient {
+func NewMarketClient(tokenList *conf.TokenList) marketv1.MarketClient {
 	conn, err := grpc.Dial(tokenList.DataCenterAddr, grpc.WithInsecure())
 	if err != nil {
 		panic(err)
 	}
-	cli := v1.NewMarketClient(conn)
+	cli := marketv1.NewMarketClient(conn)
 	utils.SetMarketClient(cli)
+	return cli
+}
+
+func NewNFTApiClient(nftList *conf.NFTList) nftmarketplacev1.NFTApiClient {
+	conn, err := grpc.Dial(nftList.NftMarketplaceAddr, grpc.WithInsecure())
+	if err != nil {
+		panic(err)
+	}
+	cli := nftmarketplacev1.NewNFTApiClient(conn)
+	utils.SetNFTApiClient(cli)
 	return cli
 }

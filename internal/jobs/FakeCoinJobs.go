@@ -31,7 +31,6 @@ func NewTopCoinJob(db *gorm.DB, rdb *redis.Client, client v1.MarketClient, logge
 		log:      log.NewHelper(logger),
 		client:   client,
 	}
-	go t.Run()
 	return t
 }
 

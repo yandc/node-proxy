@@ -14,6 +14,6 @@ import (
 )
 
 // initNFTcase init kratos application tokenlistcase.
-func initNFTcase(confData *conf.Data, tokenList *conf.NFTList, logger log.Logger) (*biz.NFTUsecase, func(), error) {
+func initNFTcase(confData *conf.Data, nftList *conf.NFTList, logger log.Logger) (*biz.NFTUsecase, func(), error) {
 	panic(wire.Build(data.ProviderSet, biz.ProviderSet))
 }

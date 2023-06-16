@@ -12,6 +12,7 @@ import (
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/aptosNFT"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/ethNFT"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/opensea"
+	"gitlab.bixin.com/mili/node-proxy/pkg/nft/solana"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/sui"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/types"
 	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
@@ -254,19 +255,38 @@ func GetNFTInfo(chain string, tokenInfos []*v1.GetNftInfoRequest_NftInfo) ([]*v1
 	return result, nil
 }
 
+func GetChainNFTInfo(chain, tokenAddress, tokenId string) (models.NftList, error) {
+	fullName := nft.GetFullName(chain)
+	switch fullName {
+	case "Solana":
+		return solana.GetSolanaNFTAsset(chain, tokenAddress, tokenId)
+	}
+	return models.NftList{}, nil
+}
+
 func GetNFTListModel(chain, tokenAddress, tokenId string) (models.NftList, error) {
+	var result models.NftList
+	var err error = errors.New(chain + " dont find")
 	fullName := nft.GetFullName(chain)
 	switch fullName {
 	case "Ethereum":
-		return ethNFT.GetETHNFTAsset(chain, tokenAddress, tokenId)
+		result, err = ethNFT.GetETHNFTAsset(chain, tokenAddress, tokenId)
 	case "Aptos":
-		return aptosNFT.GetAptosNFTAsset(chain, tokenAddress, tokenId)
-	case "Arbitrum", "BSC", "Polygon", "Klaytn", "Optimism", "Avalanche":
-		return opensea.GetOpenSeaNFTAsset(chain, tokenAddress, tokenId)
+		result, err = aptosNFT.GetAptosNFTAsset(chain, tokenAddress, tokenId)
+	case "Arbitrum", "BSC", "Polygon", "Solana", "Klaytn", "Optimism", "Avalanche":
+		result, err = opensea.GetOpenSeaNFTAsset(chain, tokenAddress, tokenId)
 	case "SUI":
-		return sui.GetSUINFTAsset(chain, tokenAddress, tokenId)
+		result, err = sui.GetSUINFTAsset(chain, tokenAddress, tokenId)
 	}
-	return models.NftList{}, nil
+	if err != nil {
+		tempResult, tempErr := GetChainNFTInfo(chain, tokenAddress, tokenId)
+		if tempErr == nil && tempResult.TokenId == "" {
+			return result, err
+		} else if tempErr != nil || (tempErr == nil && tempResult.TokenId != "") {
+			return tempResult, tempErr
+		}
+	}
+	return result, err
 }
 
 func GetSingeNFTByNFTPort(tokenAddress, tokenId string) (*types.NFTPortAssetInfo, error) {
