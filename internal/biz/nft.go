@@ -3,6 +3,7 @@ package biz
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
+	v12 "gitlab.bixin.com/mili/node-proxy/api/nft-marketplace/v1"
 	v1 "gitlab.bixin.com/mili/node-proxy/api/nft/v1"
 	"time"
 )
@@ -14,13 +15,14 @@ type NFTRepo interface {
 }
 
 type NFTUsecase struct {
-	repo NFTRepo
-	log  *log.Helper
+	repo         NFTRepo
+	nftApiClient v12.NFTApiClient
+	log          *log.Helper
 }
 
 // NewNFTUsecase new a TokenList usecase.
-func NewNFTUsecase(repo NFTRepo, logger log.Logger) *NFTUsecase {
-	return &NFTUsecase{repo: repo, log: log.NewHelper(logger)}
+func NewNFTUsecase(repo NFTRepo, nftApiClient v12.NFTApiClient, logger log.Logger) *NFTUsecase {
+	return &NFTUsecase{repo: repo, nftApiClient: nftApiClient, log: log.NewHelper(logger)}
 }
 
 func (uc *NFTUsecase) GetNFTInfo(ctx context.Context, chain string, tokenInfos []*v1.GetNftInfoRequest_NftInfo) (*v1.GetNftReply, error) {

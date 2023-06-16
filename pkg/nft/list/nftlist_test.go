@@ -8,7 +8,7 @@ import (
 )
 
 func TestGetNFTListModel(t *testing.T) {
-	re, err := GetNFTListModel("Ethereum", "0x8cc6517e45db7a0803fef220d9b577326a12033f", "22609")
+	re, err := GetNFTListModel("Solana", "2FMDW8tDSLtCgwfpvhoxSY2TbaAfAcZd1v9hny6JJu2Z", "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
 	assert.NoError(t, err)
 	b, _ := json.Marshal(re)
 	fmt.Println("result=", string(b))

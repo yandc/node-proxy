@@ -16,10 +16,11 @@ import (
 // Injectors from wire.go:
 
 // initNFTcase init kratos application tokenlistcase.
-func initNFTcase(confData *conf.Data, tokenList *conf.NFTList, logger log.Logger) (*biz.NFTUsecase, func(), error) {
+func initNFTcase(confData *conf.Data, nftList *conf.NFTList, logger log.Logger) (*biz.NFTUsecase, func(), error) {
 	db := data.NewDB(confData, logger)
-	nftRepo := data.NewNFTRepo(db, logger, tokenList)
-	nftUsecase := biz.NewNFTUsecase(nftRepo, logger)
+	nftRepo := data.NewNFTRepo(db, logger, nftList)
+	nftApiClient := data.NewNFTApiClient(nftList)
+	nftUsecase := biz.NewNFTUsecase(nftRepo, nftApiClient, logger)
 	return nftUsecase, func() {
 	}, nil
 }

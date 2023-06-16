@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package nft.v1;
+
+option go_package = "nft-marketplace/api/nft/v1;v1";
+option java_multiple_files = true;
+option java_package = "dev.kratos.api.nft.v1";
+option java_outer_classname = "NFTProtoV1";
+
+// 对外提供的接口
+service NFTApi{
+
+  rpc Info (InfoApiReq) returns (InfoApiResp) {}
+
+}
+
+message InfoApiReq{
+  //合约地址
+  string address = 1;
+  //tokenId
+  string tokenId = 2;
+  //链
+  string chain = 3;
+}
+
+message InfoApiResp{
+  bool ok = 1;
+  string errMsg = 2;
+  Data data = 3;
+
+  message Data{
+    //合约地址
+    string address= 1;
+    //tokenId
+    string tokenId= 2;
+    //NFT名称
+    string name= 3;
+    //简介
+    string description= 4;
+    //NFT图片
+    string image= 5;
+    //NFT视频
+    string animation= 6;
+    //链
+    string chain= 7;
+    //类型 ERC721 or ERC1155 or nft
+    string type= 8;
+    //属性
+    string traits = 9;
+    //集合名称
+    string collectionName = 10;
+    //集合图片
+    string collectionImage = 11;
+    //合集简介
+    string collectionDescription= 12;
+  }
+}

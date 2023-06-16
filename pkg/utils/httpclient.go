@@ -124,14 +124,14 @@ func CommHttpsForm(url, method string, params, headers map[string]string, reqBod
 			bodyReader = bytes.NewReader(byts)
 		}
 	}
-	req, err := http.NewRequest(method, url, bodyReader)
 
+	req, err := http.NewRequest(method, url, bodyReader)
 	if err != nil {
 		return err
 	}
 	req.Header.Set("Content-Type", "application/json")
 	for key, value := range headers {
-		req.Header.Set(key, value)
+		req.Header.Add(key, value)
 	}
 	if params != nil {
 		q := req.URL.Query()
@@ -140,8 +140,7 @@ func CommHttpsForm(url, method string, params, headers map[string]string, reqBod
 		}
 		req.URL.RawQuery = q.Encode()
 	}
-
-	client := &http.Client{}
+	//client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return err

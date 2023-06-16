@@ -107,7 +107,14 @@ func GetPlatformTokenInfo(chain, token string) (*v12.GetTokenInfoResp_Data, erro
 		c.log.Error("get platform is nil")
 		return nil, errors.New("platform is nil")
 	}
-	return platform.GetTokenType(token)
+	result, err := platform.GetTokenType(token)
+	if err != nil {
+		return result, err
+	}
+	if result == nil {
+		return nil, errors.New("dont get token:" + token + " info")
+	}
+	return result, nil
 }
 
 func newPlatform(chain string) types.Platform {
