@@ -30,7 +30,14 @@ func NewNFTRepo(db *gorm.DB, logger log.Logger, nftList *conf.NFTList) biz.NFTRe
 func (r *nftListRepo) GetNFTInfo(ctx context.Context, chain string, tokenInfos []*v1.GetNftInfoRequest_NftInfo) (*v1.GetNftReply, error) {
 	r.log.WithContext(ctx).Infof("GetNFTInfo", chain, tokenInfos)
 
-	if strings.ToLower(chain) == "solana" {
+	if strings.ToLower(chain) == "solana" ||
+		strings.ToLower(chain) == "eth" ||
+		strings.ToLower(chain) == "avalanche" ||
+		strings.ToLower(chain) == "bsc" ||
+		strings.ToLower(chain) == "polygon" ||
+		strings.ToLower(chain) == "optimism" ||
+		strings.ToLower(chain) == "klaytn" ||
+		strings.ToLower(chain) == "arbitrum" {
 		var nftInfos []*v1.GetNftReply_NftInfoResp
 
 		for _, tokenInfo := range tokenInfos {
