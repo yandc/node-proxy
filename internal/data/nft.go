@@ -66,6 +66,7 @@ func (r *nftListRepo) GetNFTInfo(ctx context.Context, chain string, tokenInfos [
 				CollectionDescription: info.Data.CollectionDescription,
 				NftName:               info.Data.Name,
 				CollectionImageURL:    info.Data.CollectionImage,
+				AnimationURL:          info.Data.Animation,
 			})
 		}
 
