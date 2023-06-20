@@ -99,7 +99,7 @@ func HandlerPrice() {
 }
 
 func updateCreatePrice(priceChains []string) {
-	var cgIds, cmcIds []string
+	var cgIds, cmcIds, tokenAddress []string
 	addressIdMap := make(map[string]string, len(priceChains))
 
 	//处理地址
@@ -115,17 +115,17 @@ func updateCreatePrice(priceChains []string) {
 		//	address = strings.ToLower(address)
 		//}
 		var tempTokenList models.TokenList
-		err := c.db.Where("chain = ? AND address = ?", chain, address).First(&tempTokenList).Error
-		if err != nil {
-			continue
-		}
-		var id string
+		c.db.Where("chain = ? AND address = ?", chain, address).First(&tempTokenList)
+
+		id := address
 		if tempTokenList.CgId != "" {
 			id = tempTokenList.CgId
 			cgIds = append(cgIds, tempTokenList.CgId)
 		} else if tempTokenList.CmcId > 0 {
 			id = fmt.Sprintf("%d", tempTokenList.CmcId)
 			cmcIds = append(cmcIds, fmt.Sprintf("%v", id))
+		} else {
+			tokenAddress = append(tokenAddress, address)
 		}
 		if id != "" {
 			addressIdMap[id] = fmt.Sprintf("%s_%s", addressInfo[0], address)
@@ -136,6 +136,9 @@ func updateCreatePrice(priceChains []string) {
 	}
 	if len(cmcIds) > 0 {
 		go handlerCMCPrice(cmcIds, addressIdMap)
+	}
+	if len(tokenAddress) > 0 {
+		go handlerPriceByToken(tokenAddress, addressIdMap)
 	}
 
 }
@@ -801,6 +804,19 @@ func handlerCMCPrice(cmcIds []string, addressIdMap map[string]string) {
 		}
 		setAutoPrice(cmcPriceMap, addressIdMap, false)
 	}
+}
+
+func handlerPriceByToken(tokenAddress []string, addressIdMap map[string]string) {
+	c.log.Infof("handlerPriceByToken tokenAddress:", tokenAddress)
+	marketPricesMap, err := utils3.GetPriceByMarketToken(tokenAddress)
+	if err != nil {
+		c.log.Error("get price by market token Error:", err)
+		//lark
+		alarmMsg := fmt.Sprintf("请注意：行情中心通过地址获取价格失败：%s\n tokens:%v", err, tokenAddress)
+		alarmOpts := lark.WithMsgLevel("FATAL")
+		lark.LarkClient.NotifyLark(alarmMsg, alarmOpts)
+	}
+	setAutoPrice(marketPricesMap, addressIdMap, false)
 }
 
 func handlerCgPrice(cgIds []string, addressIdMap map[string]string) {

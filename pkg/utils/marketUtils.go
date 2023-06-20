@@ -30,35 +30,58 @@ func GetPriceByMarket(coinIds []string) (map[string]map[string]float64, error) {
 	result := make(map[string]map[string]float64, len(coinIds))
 	pageSize := 100
 	endIndex := 0
-	currencys := []string{"cny", "usd"}
 	for i := 0; i < len(coinIds); i += pageSize {
 		if i+pageSize > len(coinIds) {
 			endIndex = len(coinIds)
 		} else {
 			endIndex = i + pageSize
 		}
-		for _, currency := range currencys {
-			reply, err := marketClient.DescribeCexCoins(
-				context.Background(), &v1.DescribeCexCoinsRequest{
-					EventId:  fmt.Sprintf("%d", time.Now().Unix()),
-					CoinIDs:  coinIds[i:endIndex],
-					Currency: currency,
-					PageSize: 100,
-					Page:     1,
-				})
-			if err != nil {
-				return result, err
-			}
-			for _, coin := range reply.Coins {
-				if value, ok := result[coin.CoinID]; ok {
-					value[currency] = coin.Price
-					result[coin.CoinID] = value
-				} else {
-					result[coin.CoinID] = map[string]float64{
-						currency: coin.Price,
-					}
+		reply, err := marketClient.DescribeCoinsByFields(
+			context.Background(), &v1.DescribeCoinsByFieldsRequest{
+				EventId: fmt.Sprintf("%d", time.Now().Unix()),
+				CoinIDs: coinIds[i:endIndex],
+				Fields:  []string{"price"},
+			})
+		if err != nil {
+			return result, err
+		}
+		for _, coin := range reply.Coins {
+			if coin.Price != nil {
+				result[coin.CoinID] = map[string]float64{
+					"cny": coin.Price.Cny,
+					"usd": coin.Price.Usd,
 				}
+			}
+		}
+	}
+	return result, nil
+}
 
+func GetPriceByMarketToken(tokenAddress []string) (map[string]map[string]float64, error) {
+	result := make(map[string]map[string]float64, len(tokenAddress))
+	pageSize := 100
+	endIndex := 0
+	for i := 0; i < len(tokenAddress); i += pageSize {
+		if i+pageSize > len(tokenAddress) {
+			endIndex = len(tokenAddress)
+		} else {
+			endIndex = i + pageSize
+		}
+		reply, err := marketClient.DescribeTokensByFields(
+			context.Background(), &v1.DescribeTokensByFieldsRequest{
+				EventId: fmt.Sprintf("%d", time.Now().Unix()),
+				Address: tokenAddress[i:endIndex],
+				Fields:  []string{"price"},
+			})
+		if err != nil {
+			return result, err
+		}
+		for _, coin := range reply.Tokens {
+			if coin.Price != nil {
+				result[coin.Address] = map[string]float64{
+					"cny": coin.Price.Cny,
+					"usd": coin.Price.Usd,
+				}
 			}
 		}
 	}
