@@ -23,9 +23,9 @@ func GetSUINFTAsset(chain, tokenAddress, tokenId string) (models.NftList, error)
 		ImageOriginalURL:      objectInfo.Data.Display.Data.ImageURL,
 		Chain:                 chain,
 		Network:               chain,
-		CollectionName:        objectInfo.Data.Display.Data.Collection,
+		CollectionName:        objectInfo.Data.Display.Data.Name,
 		CollectionDescription: objectInfo.Data.Display.Data.Description,
-		CollectionImageURL:    objectInfo.Data.Display.Data.ImgURL,
+		CollectionImageURL:    objectInfo.Data.Display.Data.ImageURL,
 		NftName:               objectInfo.Data.Display.Data.Name,
 		TokenType:             "SuiNFT",
 	}, nil

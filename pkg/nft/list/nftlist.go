@@ -163,7 +163,7 @@ func GetNFTInfo(chain string, tokenInfos []*v1.GetNftInfoRequest_NftInfo) ([]*v1
 			address = strings.ToLower(tokenInfo.TokenAddress)
 		}
 		params = append(params, []interface{}{address, tokenInfo.TokenId})
-		addressMap[address+"_"+tokenInfo.TokenId] = tokenInfo.TokenAddress
+		addressMap[address+"_+"+tokenInfo.TokenId] = tokenInfo.TokenAddress
 	}
 	var nftListModes []models.NftList
 	err := nft.GetNFTDb().Where("(chain = ? and (token_address,token_id) IN ?) or (chain = 'Aptos' and (token_address,nft_name) IN ? )", chain, params, params).Find(&nftListModes).Error
@@ -177,14 +177,14 @@ func GetNFTInfo(chain string, tokenInfos []*v1.GetNftInfoRequest_NftInfo) ([]*v1
 		tempId := nftList.TokenId
 		var key string
 		if chain == "Aptos" {
-			if value, ok := addressMap[nftList.TokenAddress+"_"+nftList.NftName]; ok {
+			if value, ok := addressMap[nftList.TokenAddress+"_+"+nftList.NftName]; ok {
 				address = value
-				key = nftList.TokenAddress + "_" + nftList.NftName
+				key = nftList.TokenAddress + "_+" + nftList.NftName
 			}
 		}
-		if value, ok := addressMap[nftList.TokenAddress+"_"+nftList.TokenId]; ok {
+		if value, ok := addressMap[nftList.TokenAddress+"_+"+nftList.TokenId]; ok {
 			address = value
-			key = nftList.TokenAddress + "_" + tempId
+			key = nftList.TokenAddress + "_+" + tempId
 		}
 		result = append(result, nftModel2Info(chain, address, nftList))
 		if nftList.ImageURL != "" || nftList.AnimationURL != "" || nftList.RefreshCount >= int(nft.GetRefreshCount()) {
@@ -202,7 +202,7 @@ func GetNFTInfo(chain string, tokenInfos []*v1.GetNftInfoRequest_NftInfo) ([]*v1
 			wg.Add(1)
 			go func(addressInfo, oldAddress string) {
 				defer wg.Done()
-				addressAndId := strings.Split(addressInfo, "_")
+				addressAndId := strings.Split(addressInfo, "_+")
 				if len(addressAndId) > 1 {
 					address, tokenId := addressAndId[0], addressAndId[1]
 					nftListModel, err := GetNFTListModel(chain, address, tokenId)
