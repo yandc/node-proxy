@@ -158,7 +158,6 @@ platform:
   - chain: Avalanche
     type: EVM
     rpcURL:
-      - https://exchainrpc.okex.org/
       - https://okchain.mytokenpocket.vip/
       - https://ava-mainnet.public.blastapi.io/ext/bc/C/rpc
   - chain: Optimism
