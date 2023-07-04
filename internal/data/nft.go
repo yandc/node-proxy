@@ -38,6 +38,7 @@ func (r *nftListRepo) GetNFTInfo(ctx context.Context, chain string, tokenInfos [
 		strings.ToLower(chain) == "optimism" ||
 		strings.ToLower(chain) == "klaytn" ||
 		strings.ToLower(chain) == "arbitrumnova" ||
+		strings.ToLower(chain) == "conflux" ||
 		strings.ToLower(chain) == "arbitrum" {
 		var nftInfos []*v1.GetNftReply_NftInfoResp
 
