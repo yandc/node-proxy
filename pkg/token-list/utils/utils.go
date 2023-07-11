@@ -142,6 +142,7 @@ var dbName2HandlerMap = map[string]string{
 	"arbitrum-nova":       "arbitrumnova",
 	"zkSync":              "zksync",
 	"SUI":                 "sui",
+	"evm210425":           "evm210425",
 }
 
 var handlerNameMap = map[string]string{
@@ -173,6 +174,7 @@ var handlerNameMap = map[string]string{
 	"conflux":      "conflux",
 	"zksync":       "zkSync",
 	"sui":          "SUI",
+	"evm210425":    "evm210425",
 }
 
 var ChainNameMap = map[string]string{
@@ -205,6 +207,7 @@ var ChainNameMap = map[string]string{
 	"Conflux":      "conflux",
 	"zkSync":       "zkSync",
 	"SUI":          "SUI",
+	"evm210425":    "evm210425",
 
 	"ETHTEST":          "ethereum",
 	"HECOTEST":         "huobi-token",
@@ -272,6 +275,7 @@ var db2Chain = map[string]string{
 	"conflux":             "Conflux",
 	"zkSync":              "zkSync",
 	"SUI":                 "SUI",
+	"evm210425":           "evm210425",
 }
 
 var TokenFileMap = map[string][]string{
