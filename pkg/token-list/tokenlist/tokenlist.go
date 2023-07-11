@@ -1640,6 +1640,8 @@ func UpdateChainToken(chain string) {
 		UpdateSUITESTToken()
 	case "SUI":
 		UpdateSUIToken()
+	case "evm210425":
+		Updateevm210425Token()
 
 		//default:
 		//	utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")

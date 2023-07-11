@@ -70,6 +70,7 @@ tokenList:
     - zkSync
     - SUI
     - Cosmos
+    - evm210425
 
 nftList:
   ipfs: https://cloudflare-ipfs.com/ipfs/
