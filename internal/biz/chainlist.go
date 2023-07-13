@@ -125,6 +125,13 @@ func (uc *ChainListUsecase) UseChainNode(ctx context.Context, chainId string, ur
 			return errors.New("use chain node error: update chain node failed")
 		}
 	case models.ChainNodeUrlSourceCustom:
+		nodeUrl, err := uc.repo.GetByChainIdAndUrl(context.Background(), chainId, url)
+		if err == nil && nodeUrl != nil {
+			nodeUrl.InUsed = true
+			err = uc.repo.Update(context.Background(), nodeUrl)
+			return err
+		}
+
 		//连接节点
 		client, err := ethclient.Dial(url)
 		if err != nil {
