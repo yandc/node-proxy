@@ -24,6 +24,7 @@ type ChainListGetNodeUrlJob struct {
 	db       *gorm.DB
 	rdb      *redis.Client
 	log      *log.Helper
+	client   *http.Client
 }
 
 func NewChainListGetNodeUrlJob(db *gorm.DB, rdb *redis.Client, logger log.Logger) *ChainListGetNodeUrlJob {
@@ -32,9 +33,9 @@ func NewChainListGetNodeUrlJob(db *gorm.DB, rdb *redis.Client, logger log.Logger
 		rdb:      rdb,
 		execTime: "0 0/1 * * *",
 		log:      log.NewHelper(logger),
+		client:   &http.Client{Timeout: time.Second * 10},
 	}
 
-	go job.Run() //部署之后立马执行一次
 	return job
 }
 
@@ -111,14 +112,26 @@ func (j *ChainListGetNodeUrlJob) Run() {
 		//
 		var nodeUrls []*models.ChainNodeUrl
 		for _, rpc := range chain.Rpc {
-			nodeUrls = append(nodeUrls, &models.ChainNodeUrl{
+			if !strings.HasPrefix(rpc.Url, "https://") {
+				continue
+			}
+
+			nodeUrl := &models.ChainNodeUrl{
 				ChainId: chain.ChainId.String(),
 				Url:     rpc.Url,
 				Privacy: rpc.Tracking,
-				Status:  models.ChainNodeUrlStatusUnAvailable, //默认不可用
+				Status:  models.ChainNodeUrlStatusAvailable, //默认可用
 				Source:  models.ChainNodeUrlSourcePublic,
-			})
+			}
+			nodeUrls = append(nodeUrls, nodeUrl)
 		}
+
+		group := sync.WaitGroup{}
+		for _, nodeUrl := range nodeUrls {
+			group.Add(1)
+			go checkChainId(j.client, nodeUrl, &group)
+		}
+		group.Wait()
 
 		if len(nodeUrls) != 0 {
 			if err := j.db.Clauses(clause.OnConflict{DoNothing: true}).Create(nodeUrls).Error; err != nil {
@@ -192,114 +205,15 @@ type ChainListData struct {
 	ScriptLoader []interface{} `json:"scriptLoader"`
 }
 
-type NodeUrlHeightJob struct {
-	execTime string
-	db       *gorm.DB
-	rdb      *redis.Client
-	log      *log.Helper
-	client   *http.Client
-}
-
-func NewNodeUrlHeightJob(db *gorm.DB, rdb *redis.Client, logger log.Logger) *NodeUrlHeightJob {
-	return &NodeUrlHeightJob{
-		db:       db,
-		rdb:      rdb,
-		execTime: "0/10 * * * *",
-		log:      log.NewHelper(logger),
-		client:   &http.Client{Timeout: time.Second * 5}, //超时时间5秒，超过5秒则认为节点不可用
-	}
-}
-
-func (j *NodeUrlHeightJob) Run() {
-
-	//分布式锁
-	muxKey := fmt.Sprintf("mux:%s", "NodeUrlHeightJob")
-	if ok, _ := j.rdb.SetNX(muxKey, true, time.Second*3).Result(); !ok {
-		return
-	}
-
-	jobName := "NodeUrlHeightJob"
-	j.log.Infof("任务执行开始：%s", jobName)
-
-	var offset int
-	limit := 50
-	var nodeUrls []*models.ChainNodeUrl
-
-	//分批查询节点
-	for true {
-		if err := j.db.Offset(offset).Limit(limit).Find(&nodeUrls).Error; err != nil {
-			j.log.Warnf(err.Error())
-			break
-		}
-
-		if len(nodeUrls) == 0 {
-			break
-		}
-
-		offset += limit
-
-		group := sync.WaitGroup{}
-		for _, nodeUrl := range nodeUrls {
-			group.Add(1)
-			go j.checkAndUpdate(nodeUrl, &group)
-		}
-		group.Wait()
-	}
-
-	j.log.Infof("任务执行完成：%s", jobName)
-}
-
-type GetByBlockNumberResp struct {
-	Jsonrpc string `json:"jsonrpc"`
-	Id      int    `json:"id"`
-	Result  struct {
-		Number string `json:"number"`
-	} `json:"result"`
-}
-
 type ChainIdResp struct {
 	Jsonrpc string `json:"jsonrpc"`
 	Id      int    `json:"id"`
 	Result  string `json:"result"`
 }
 
-func (j *NodeUrlHeightJob) checkAndUpdate(nodeUrl *models.ChainNodeUrl, group *sync.WaitGroup) {
+func checkChainId(client *http.Client, nodeUrl *models.ChainNodeUrl, group *sync.WaitGroup) error {
+
 	defer group.Done()
-
-	//如果不是https节点，标记节点不可用
-	if !strings.HasPrefix(nodeUrl.Url, "https://") {
-		nodeUrl.Status = 2
-		if err := j.db.Updates(nodeUrl).Error; err != nil {
-			j.log.Warnf(err.Error())
-		}
-		return
-	}
-
-	//检查chainId
-	err := checkChainId(j.client, nodeUrl)
-	if err != nil {
-		if err := j.db.Updates(nodeUrl).Error; err != nil {
-			j.log.Warnf(err.Error())
-		}
-		return
-	}
-
-	//检查块高
-	err = checkHeight(j.client, nodeUrl)
-	if err != nil {
-		if err := j.db.Updates(nodeUrl).Error; err != nil {
-			j.log.Warnf(err.Error())
-		}
-		return
-	}
-
-	//保存或更新
-	if err := j.db.Updates(nodeUrl).Error; err != nil {
-		j.log.Warnf(err.Error())
-	}
-}
-
-func checkChainId(client *http.Client, nodeUrl *models.ChainNodeUrl) error {
 
 	//检查chainId
 	resp, err := client.Post(nodeUrl.Url, "application/json", strings.NewReader(`{"jsonrpc": "2.0","method": "eth_chainId","params": [],"id": 1}`))
@@ -341,53 +255,6 @@ func checkChainId(client *http.Client, nodeUrl *models.ChainNodeUrl) error {
 		nodeUrl.Status = 2
 		return errors.New(fmt.Sprintf("chain id not match,expect:%d,get:%d", chainId.Int64(), nodeUrl.ChainId))
 	}
-
-	return nil
-}
-
-func checkHeight(client *http.Client, nodeUrl *models.ChainNodeUrl) error {
-	//获取节点高度
-	start := time.Now().UnixMilli()
-	resp, err := client.Post(nodeUrl.Url, "application/json", strings.NewReader(`{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest",false],"id":1}`))
-	end := time.Now().UnixMilli()
-
-	//请求失败，标记节点不可用
-	if err != nil {
-		nodeUrl.Status = 2
-		return errors.New(fmt.Sprintf("check height error , err : %s", err.Error()))
-	}
-
-	//请求失败，标记节点不可用
-	if resp.StatusCode != 200 {
-		nodeUrl.Status = 2
-		return errors.New(fmt.Sprintf("check height error"))
-	}
-
-	respBytes, err := io.ReadAll(resp.Body)
-	//读取响应数据失败，标记节点不可用
-	if err != nil {
-		nodeUrl.Status = 2
-		return errors.New(fmt.Sprintf("check height error , err : %s", err.Error()))
-	}
-
-	getByBlockNumberResp := &GetByBlockNumberResp{}
-	err = json.Unmarshal(respBytes, getByBlockNumberResp)
-	//解析响应数据失败，标记节点不可用
-	if err != nil {
-		nodeUrl.Status = 2
-		return errors.New(fmt.Sprintf("check height error , err : %s", err.Error()))
-	}
-
-	height, err := hexutil.DecodeUint64(getByBlockNumberResp.Result.Number)
-	//解析高度失败，标记节点不可用
-	if err != nil {
-		nodeUrl.Status = 2
-		return errors.New(fmt.Sprintf("check height error , err : %s", err.Error()))
-	}
-
-	nodeUrl.Height = height
-	nodeUrl.Status = 1
-	nodeUrl.Latency = uint64(end - start)
 
 	return nil
 }

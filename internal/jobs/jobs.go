@@ -6,13 +6,15 @@ import (
 )
 
 // ProviderSet is jobs providers.
-var ProviderSet = wire.NewSet(NewChainListGetNodeUrlJob, NewNodeUrlHeightJob, NewTopCoinJob, NewJobManager)
+var ProviderSet = wire.NewSet(NewChainListGetNodeUrlJob, NewTopCoinJob, NewJobManager)
 
-func NewJobManager(job1 *ChainListGetNodeUrlJob, job2 *NodeUrlHeightJob, job3 *TopCoinJob) *cron.Cron {
+func NewJobManager(job1 *ChainListGetNodeUrlJob, job2 *TopCoinJob) *cron.Cron {
 	jobManager := cron.New()
+
+	go job1.Run()
+
 	_, err := jobManager.AddJob(job1.execTime, job1)
-	//_, err = jobManager.AddJob(job2.execTime, job2) //不再执行该脚本
-	_, err = jobManager.AddJob(job3.execTime, job3)
+	_, err = jobManager.AddJob(job2.execTime, job2)
 	if err != nil {
 		panic(err.Error())
 	}
