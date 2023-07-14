@@ -16,6 +16,7 @@ import (
 	"github.com/qiniu/go-sdk/v7/cdn"
 	"github.com/qiniu/go-sdk/v7/storage"
 	"github.com/shopspring/decimal"
+	v12 "gitlab.bixin.com/mili/node-proxy/api/market/v1"
 	v1 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/conf"
 	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
@@ -99,8 +100,9 @@ func HandlerPrice() {
 }
 
 func updateCreatePrice(priceChains []string) {
-	var cgIds, cmcIds, tokenAddress []string
+	var cgIds, cmcIds []string
 	addressIdMap := make(map[string]string, len(priceChains))
+	tokenAddresses := make([]*v12.Tokens, 0, len(priceChains))
 
 	//处理地址
 	for _, priceChain := range priceChains {
@@ -117,15 +119,20 @@ func updateCreatePrice(priceChains []string) {
 		var tempTokenList models.TokenList
 		c.db.Where("chain = ? AND address = ?", chain, address).First(&tempTokenList)
 
-		id := address
+		var id string
 		if tempTokenList.CgId != "" {
 			id = tempTokenList.CgId
 			cgIds = append(cgIds, tempTokenList.CgId)
 		} else if tempTokenList.CmcId > 0 {
 			id = fmt.Sprintf("%d", tempTokenList.CmcId)
 			cmcIds = append(cmcIds, fmt.Sprintf("%v", id))
-		} else {
-			tokenAddress = append(tokenAddress, address)
+		} else if len(address) > 0 {
+			//tokenAddress = append(tokenAddress, address)
+			tokenAddresses = append(tokenAddresses, &v12.Tokens{
+				Chain:   utils3.GetChainByHandler(addressInfo[0]),
+				Address: address,
+			})
+			id = fmt.Sprintf("%s_%s", utils3.GetChainByHandler(addressInfo[0]), address)
 		}
 		if id != "" {
 			addressIdMap[id] = fmt.Sprintf("%s_%s", addressInfo[0], address)
@@ -137,8 +144,8 @@ func updateCreatePrice(priceChains []string) {
 	if len(cmcIds) > 0 {
 		go handlerCMCPrice(cmcIds, addressIdMap)
 	}
-	if len(tokenAddress) > 0 {
-		go handlerPriceByToken(tokenAddress, addressIdMap)
+	if len(tokenAddresses) > 0 {
+		go handlerPriceByToken(tokenAddresses, addressIdMap)
 	}
 
 }
@@ -806,7 +813,7 @@ func handlerCMCPrice(cmcIds []string, addressIdMap map[string]string) {
 	}
 }
 
-func handlerPriceByToken(tokenAddress []string, addressIdMap map[string]string) {
+func handlerPriceByToken(tokenAddress []*v12.Tokens, addressIdMap map[string]string) {
 	c.log.Infof("handlerPriceByToken tokenAddress:", tokenAddress)
 	marketPricesMap, err := utils3.GetPriceByMarketToken(tokenAddress)
 	if err != nil {

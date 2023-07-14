@@ -82,6 +82,7 @@ func Init() {
 	}
 	db = data.NewDB(bc.Data, logger)
 	client = data.NewRedis(bc.Data)
+	data.NewMarketClient(bc.TokenList)
 }
 
 func main() {

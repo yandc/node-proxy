@@ -6,6 +6,7 @@ import (
 	"github.com/go-redis/redis"
 	v12 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
+	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/types"
 	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
 	"io/ioutil"
 	"math/big"
@@ -19,7 +20,7 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/rpc"
-	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/types"
+	//"gitlab.bixin.com/mili/node-proxy/pkg/token-list/types"
 )
 
 const (

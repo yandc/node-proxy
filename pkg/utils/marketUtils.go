@@ -57,7 +57,7 @@ func GetPriceByMarket(coinIds []string) (map[string]map[string]float64, error) {
 	return result, nil
 }
 
-func GetPriceByMarketToken(tokenAddress []string) (map[string]map[string]float64, error) {
+func GetPriceByMarketToken(tokenAddress []*v1.Tokens) (map[string]map[string]float64, error) {
 	result := make(map[string]map[string]float64, len(tokenAddress))
 	pageSize := 100
 	endIndex := 0
@@ -67,18 +67,18 @@ func GetPriceByMarketToken(tokenAddress []string) (map[string]map[string]float64
 		} else {
 			endIndex = i + pageSize
 		}
-		reply, err := marketClient.DescribeTokensByFields(
-			context.Background(), &v1.DescribeTokensByFieldsRequest{
+		reply, err := marketClient.DescribePriceByCoinAddress(
+			context.Background(), &v1.DescribePriceByCoinAddressRequest{
 				EventId: fmt.Sprintf("%d", time.Now().Unix()),
-				Address: tokenAddress[i:endIndex],
-				Fields:  []string{"price"},
+				Tokens:  tokenAddress[i:endIndex],
 			})
 		if err != nil {
 			return result, err
 		}
 		for _, coin := range reply.Tokens {
 			if coin.Price != nil {
-				result[coin.Address] = map[string]float64{
+				handler := GetHandlerByChain(coin.Chain)
+				result[handler+"_"+coin.Address] = map[string]float64{
 					"cny": coin.Price.Cny,
 					"usd": coin.Price.Usd,
 				}
