@@ -37,6 +37,7 @@ service Market {
   rpc DescribeSwapConfig (DescribeSwapConfigRequest) returns (DescribeSwapConfigReply);
   rpc DescribeCoinsByFields (DescribeCoinsByFieldsRequest) returns (DescribeCoinsByFieldsReply);
   rpc DescribeTokensByFields (DescribeTokensByFieldsRequest) returns (DescribeTokensByFieldsReply);
+  rpc DescribePriceByCoinAddress (DescribePriceByCoinAddressRequest) returns (DescribePriceByCoinAddressReply);
 }
 
 message ModifyColumnRequest {
@@ -173,7 +174,9 @@ message DescribeCexCoinsRequest{
     SortFieldEnum sortField = 7 [(validate.rules).enum = {defined_only: true}];
     string sortType = 8;
     int32 columnID = 9;
+    repeated Tokens tokens = 10 [(validate.rules).repeated = {min_items: 0, max_items: 1000}];
 }
+
 message DescribeCexCoinsReply{
     repeated Coin coins = 1;
     int32 total = 2;
@@ -251,10 +254,13 @@ message DescribeMarketExtraDetailReply {
 
 message DescribeCoinPriceChartRequest {
     string eventId = 1;
-    string coinID = 2 [(validate.rules).string.min_len = 1];
+    string coinID = 2;
     string vsCurrency = 3 [(validate.rules).string.min_len = 1];
     int32 days = 4 [(validate.rules).int32 = {gt: 0, lte:11430}];
+    string chain = 5;
+    string tokenAddress = 6;
 }
+
 message DescribeCoinPriceChartReply {
     repeated PriceChart prices = 1;
     message PriceChart {
@@ -576,7 +582,38 @@ message DescribeTokensByFieldsReply {
     }
 }
 
+message DescribePriceByCoinAddressRequest {
+    string eventId = 1;
+    repeated string coinIDs = 2 [(validate.rules).repeated = {min_items: 0, max_items: 1000}];
+    repeated Tokens tokens = 3 [(validate.rules).repeated = {min_items: 0, max_items: 1000}];
+
+}
+
+message DescribePriceByCoinAddressReply {
+    repeated  CoinCurrency coins = 1;
+    repeated Tokens tokens = 2;
+
+    message Tokens {
+        Currency price = 1;
+        string chain = 2;
+        string address = 3;
+        string icon = 4;
+        string coinID = 5;
+    }
+
+    message CoinCurrency {
+        Currency price = 1;
+        string icon = 2;
+        string coinID = 3;
+    }
+}
+
 message Currency {
     double cny = 1;
     double usd = 2;
+}
+
+message Tokens {
+    string chain = 1 [(validate.rules).string.min_len = 1];
+    string address = 2 [(validate.rules).string.min_len = 1];
 }

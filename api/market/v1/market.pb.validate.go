@@ -2178,6 +2178,51 @@ func (m *DescribeCexCoinsRequest) validate(all bool) error {
 
 	// no validation rules for ColumnID
 
+	if len(m.GetTokens()) > 1000 {
+		err := DescribeCexCoinsRequestValidationError{
+			field:  "Tokens",
+			reason: "value must contain no more than 1000 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetTokens() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DescribeCexCoinsRequestValidationError{
+						field:  fmt.Sprintf("Tokens[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DescribeCexCoinsRequestValidationError{
+						field:  fmt.Sprintf("Tokens[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DescribeCexCoinsRequestValidationError{
+					field:  fmt.Sprintf("Tokens[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if m.Category != nil {
 
 		if utf8.RuneCountInString(m.GetCategory()) < 1 {
@@ -3211,16 +3256,7 @@ func (m *DescribeCoinPriceChartRequest) validate(all bool) error {
 
 	// no validation rules for EventId
 
-	if utf8.RuneCountInString(m.GetCoinID()) < 1 {
-		err := DescribeCoinPriceChartRequestValidationError{
-			field:  "CoinID",
-			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for CoinID
 
 	if utf8.RuneCountInString(m.GetVsCurrency()) < 1 {
 		err := DescribeCoinPriceChartRequestValidationError{
@@ -3243,6 +3279,10 @@ func (m *DescribeCoinPriceChartRequest) validate(all bool) error {
 		}
 		errors = append(errors, err)
 	}
+
+	// no validation rules for Chain
+
+	// no validation rules for TokenAddress
 
 	if len(errors) > 0 {
 		return DescribeCoinPriceChartRequestMultiError(errors)
@@ -7589,6 +7629,340 @@ var _ interface {
 	ErrorName() string
 } = DescribeTokensByFieldsReplyValidationError{}
 
+// Validate checks the field values on DescribePriceByCoinAddressRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *DescribePriceByCoinAddressRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribePriceByCoinAddressRequest
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// DescribePriceByCoinAddressRequestMultiError, or nil if none found.
+func (m *DescribePriceByCoinAddressRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribePriceByCoinAddressRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if len(m.GetCoinIDs()) > 1000 {
+		err := DescribePriceByCoinAddressRequestValidationError{
+			field:  "CoinIDs",
+			reason: "value must contain no more than 1000 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetTokens()) > 1000 {
+		err := DescribePriceByCoinAddressRequestValidationError{
+			field:  "Tokens",
+			reason: "value must contain no more than 1000 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetTokens() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DescribePriceByCoinAddressRequestValidationError{
+						field:  fmt.Sprintf("Tokens[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DescribePriceByCoinAddressRequestValidationError{
+						field:  fmt.Sprintf("Tokens[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DescribePriceByCoinAddressRequestValidationError{
+					field:  fmt.Sprintf("Tokens[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DescribePriceByCoinAddressRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribePriceByCoinAddressRequestMultiError is an error wrapping multiple
+// validation errors returned by
+// DescribePriceByCoinAddressRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DescribePriceByCoinAddressRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribePriceByCoinAddressRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribePriceByCoinAddressRequestMultiError) AllErrors() []error { return m }
+
+// DescribePriceByCoinAddressRequestValidationError is the validation error
+// returned by DescribePriceByCoinAddressRequest.Validate if the designated
+// constraints aren't met.
+type DescribePriceByCoinAddressRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribePriceByCoinAddressRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribePriceByCoinAddressRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribePriceByCoinAddressRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribePriceByCoinAddressRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribePriceByCoinAddressRequestValidationError) ErrorName() string {
+	return "DescribePriceByCoinAddressRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribePriceByCoinAddressRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribePriceByCoinAddressRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribePriceByCoinAddressRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribePriceByCoinAddressRequestValidationError{}
+
+// Validate checks the field values on DescribePriceByCoinAddressReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribePriceByCoinAddressReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribePriceByCoinAddressReply with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// DescribePriceByCoinAddressReplyMultiError, or nil if none found.
+func (m *DescribePriceByCoinAddressReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribePriceByCoinAddressReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetCoins() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DescribePriceByCoinAddressReplyValidationError{
+						field:  fmt.Sprintf("Coins[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DescribePriceByCoinAddressReplyValidationError{
+						field:  fmt.Sprintf("Coins[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DescribePriceByCoinAddressReplyValidationError{
+					field:  fmt.Sprintf("Coins[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetTokens() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DescribePriceByCoinAddressReplyValidationError{
+						field:  fmt.Sprintf("Tokens[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DescribePriceByCoinAddressReplyValidationError{
+						field:  fmt.Sprintf("Tokens[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DescribePriceByCoinAddressReplyValidationError{
+					field:  fmt.Sprintf("Tokens[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DescribePriceByCoinAddressReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribePriceByCoinAddressReplyMultiError is an error wrapping multiple
+// validation errors returned by DescribePriceByCoinAddressReply.ValidateAll()
+// if the designated constraints aren't met.
+type DescribePriceByCoinAddressReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribePriceByCoinAddressReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribePriceByCoinAddressReplyMultiError) AllErrors() []error { return m }
+
+// DescribePriceByCoinAddressReplyValidationError is the validation error
+// returned by DescribePriceByCoinAddressReply.Validate if the designated
+// constraints aren't met.
+type DescribePriceByCoinAddressReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribePriceByCoinAddressReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribePriceByCoinAddressReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribePriceByCoinAddressReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribePriceByCoinAddressReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribePriceByCoinAddressReplyValidationError) ErrorName() string {
+	return "DescribePriceByCoinAddressReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribePriceByCoinAddressReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribePriceByCoinAddressReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribePriceByCoinAddressReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribePriceByCoinAddressReplyValidationError{}
+
 // Validate checks the field values on Currency with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -7691,6 +8065,126 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CurrencyValidationError{}
+
+// Validate checks the field values on Tokens with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Tokens) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Tokens with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in TokensMultiError, or nil if none found.
+func (m *Tokens) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Tokens) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetChain()) < 1 {
+		err := TokensValidationError{
+			field:  "Chain",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetAddress()) < 1 {
+		err := TokensValidationError{
+			field:  "Address",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return TokensMultiError(errors)
+	}
+
+	return nil
+}
+
+// TokensMultiError is an error wrapping multiple validation errors returned by
+// Tokens.ValidateAll() if the designated constraints aren't met.
+type TokensMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TokensMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TokensMultiError) AllErrors() []error { return m }
+
+// TokensValidationError is the validation error returned by Tokens.Validate if
+// the designated constraints aren't met.
+type TokensValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TokensValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TokensValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TokensValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TokensValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TokensValidationError) ErrorName() string { return "TokensValidationError" }
+
+// Error satisfies the builtin error interface
+func (e TokensValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTokens.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TokensValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TokensValidationError{}
 
 // Validate checks the field values on DescribeColumnListReply_Column with the
 // rules defined in the proto definition for this message. If any rules are
@@ -10298,3 +10792,286 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DescribeTokensByFieldsReply_TokenValidationError{}
+
+// Validate checks the field values on DescribePriceByCoinAddressReply_Tokens
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the first error encountered is returned, or nil if
+// there are no violations.
+func (m *DescribePriceByCoinAddressReply_Tokens) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// DescribePriceByCoinAddressReply_Tokens with the rules defined in the proto
+// definition for this message. If any rules are violated, the result is a
+// list of violation errors wrapped in
+// DescribePriceByCoinAddressReply_TokensMultiError, or nil if none found.
+func (m *DescribePriceByCoinAddressReply_Tokens) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribePriceByCoinAddressReply_Tokens) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetPrice()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DescribePriceByCoinAddressReply_TokensValidationError{
+					field:  "Price",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DescribePriceByCoinAddressReply_TokensValidationError{
+					field:  "Price",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPrice()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DescribePriceByCoinAddressReply_TokensValidationError{
+				field:  "Price",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Chain
+
+	// no validation rules for Address
+
+	// no validation rules for Icon
+
+	// no validation rules for CoinID
+
+	if len(errors) > 0 {
+		return DescribePriceByCoinAddressReply_TokensMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribePriceByCoinAddressReply_TokensMultiError is an error wrapping
+// multiple validation errors returned by
+// DescribePriceByCoinAddressReply_Tokens.ValidateAll() if the designated
+// constraints aren't met.
+type DescribePriceByCoinAddressReply_TokensMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribePriceByCoinAddressReply_TokensMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribePriceByCoinAddressReply_TokensMultiError) AllErrors() []error { return m }
+
+// DescribePriceByCoinAddressReply_TokensValidationError is the validation
+// error returned by DescribePriceByCoinAddressReply_Tokens.Validate if the
+// designated constraints aren't met.
+type DescribePriceByCoinAddressReply_TokensValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribePriceByCoinAddressReply_TokensValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribePriceByCoinAddressReply_TokensValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribePriceByCoinAddressReply_TokensValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribePriceByCoinAddressReply_TokensValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribePriceByCoinAddressReply_TokensValidationError) ErrorName() string {
+	return "DescribePriceByCoinAddressReply_TokensValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribePriceByCoinAddressReply_TokensValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribePriceByCoinAddressReply_Tokens.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribePriceByCoinAddressReply_TokensValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribePriceByCoinAddressReply_TokensValidationError{}
+
+// Validate checks the field values on
+// DescribePriceByCoinAddressReply_CoinCurrency with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *DescribePriceByCoinAddressReply_CoinCurrency) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// DescribePriceByCoinAddressReply_CoinCurrency with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in
+// DescribePriceByCoinAddressReply_CoinCurrencyMultiError, or nil if none found.
+func (m *DescribePriceByCoinAddressReply_CoinCurrency) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribePriceByCoinAddressReply_CoinCurrency) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetPrice()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DescribePriceByCoinAddressReply_CoinCurrencyValidationError{
+					field:  "Price",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DescribePriceByCoinAddressReply_CoinCurrencyValidationError{
+					field:  "Price",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPrice()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DescribePriceByCoinAddressReply_CoinCurrencyValidationError{
+				field:  "Price",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Icon
+
+	// no validation rules for CoinID
+
+	if len(errors) > 0 {
+		return DescribePriceByCoinAddressReply_CoinCurrencyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribePriceByCoinAddressReply_CoinCurrencyMultiError is an error wrapping
+// multiple validation errors returned by
+// DescribePriceByCoinAddressReply_CoinCurrency.ValidateAll() if the
+// designated constraints aren't met.
+type DescribePriceByCoinAddressReply_CoinCurrencyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribePriceByCoinAddressReply_CoinCurrencyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribePriceByCoinAddressReply_CoinCurrencyMultiError) AllErrors() []error { return m }
+
+// DescribePriceByCoinAddressReply_CoinCurrencyValidationError is the
+// validation error returned by
+// DescribePriceByCoinAddressReply_CoinCurrency.Validate if the designated
+// constraints aren't met.
+type DescribePriceByCoinAddressReply_CoinCurrencyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribePriceByCoinAddressReply_CoinCurrencyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribePriceByCoinAddressReply_CoinCurrencyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribePriceByCoinAddressReply_CoinCurrencyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribePriceByCoinAddressReply_CoinCurrencyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribePriceByCoinAddressReply_CoinCurrencyValidationError) ErrorName() string {
+	return "DescribePriceByCoinAddressReply_CoinCurrencyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribePriceByCoinAddressReply_CoinCurrencyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribePriceByCoinAddressReply_CoinCurrency.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribePriceByCoinAddressReply_CoinCurrencyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribePriceByCoinAddressReply_CoinCurrencyValidationError{}
