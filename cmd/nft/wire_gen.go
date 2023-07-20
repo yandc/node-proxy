@@ -20,7 +20,8 @@ func initNFTcase(confData *conf.Data, nftList *conf.NFTList, logger log.Logger) 
 	db := data.NewDB(confData, logger)
 	nftRepo := data.NewNFTRepo(db, logger, nftList)
 	nftApiClient := data.NewNFTApiClient(nftList)
-	nftUsecase := biz.NewNFTUsecase(nftRepo, nftApiClient, logger)
+	collectionApiClient := data.NewCollectionApiClient(nftList)
+	nftUsecase := biz.NewNFTUsecase(nftRepo, nftApiClient, collectionApiClient, logger)
 	return nftUsecase, func() {
 	}, nil
 }

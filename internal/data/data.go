@@ -6,6 +6,7 @@ import (
 	"github.com/google/wire"
 	marketv1 "gitlab.bixin.com/mili/node-proxy/api/market/v1"
 	nftmarketplacev1 "gitlab.bixin.com/mili/node-proxy/api/nft-marketplace/v1"
+	nftmarketplacev2 "gitlab.bixin.com/mili/node-proxy/api/nft-marketplace/v2"
 	"gitlab.bixin.com/mili/node-proxy/internal/conf"
 	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
 	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
@@ -15,7 +16,7 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewDB, NewRedis, NewTokenListRepo, NewChainListRepo, NewPlatformRepo, NewNFTRepo, NewCommRPCRepo, NewMarketClient, NewNFTApiClient)
+var ProviderSet = wire.NewSet(NewData, NewDB, NewRedis, NewTokenListRepo, NewChainListRepo, NewPlatformRepo, NewNFTRepo, NewCommRPCRepo, NewMarketClient, NewNFTApiClient, NewCollectionApiClient)
 
 // Data .
 type Data struct {
@@ -83,5 +84,15 @@ func NewNFTApiClient(nftList *conf.NFTList) nftmarketplacev1.NFTApiClient {
 	}
 	cli := nftmarketplacev1.NewNFTApiClient(conn)
 	utils.SetNFTApiClient(cli)
+	return cli
+}
+
+func NewCollectionApiClient(nftList *conf.NFTList) nftmarketplacev2.CollectionApiClient {
+	conn, err := grpc.Dial(nftList.NftMarketplaceAddr, grpc.WithInsecure())
+	if err != nil {
+		panic(err)
+	}
+	cli := nftmarketplacev2.NewCollectionApiClient(conn)
+	utils.SetCollectionApiClient(cli)
 	return cli
 }
