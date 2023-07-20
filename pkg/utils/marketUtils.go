@@ -5,11 +5,13 @@ import (
 	"fmt"
 	v1 "gitlab.bixin.com/mili/node-proxy/api/market/v1"
 	nftmarketplacev1 "gitlab.bixin.com/mili/node-proxy/api/nft-marketplace/v1"
+	nftmarketplacev2 "gitlab.bixin.com/mili/node-proxy/api/nft-marketplace/v2"
 	"time"
 )
 
 var marketClient v1.MarketClient
 var nftApiClient nftmarketplacev1.NFTApiClient
+var collectionApiClient nftmarketplacev2.CollectionApiClient
 
 func SetMarketClient(cli v1.MarketClient) {
 	marketClient = cli
@@ -24,6 +26,14 @@ func SetNFTApiClient(cli nftmarketplacev1.NFTApiClient) {
 
 func GetNFTApiClient() nftmarketplacev1.NFTApiClient {
 	return nftApiClient
+}
+
+func SetCollectionApiClient(cli nftmarketplacev2.CollectionApiClient) {
+	collectionApiClient = cli
+}
+
+func GetCollectionApiClient() nftmarketplacev2.CollectionApiClient {
+	return collectionApiClient
 }
 
 func GetPriceByMarket(coinIds []string) (map[string]map[string]float64, error) {

@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package collection.v1;
+
+option go_package = "nft-marketplace/api/collection/v1;v1";
+option java_multiple_files = true;
+option java_package = "dev.kratos.api.collection.v1";
+option java_outer_classname = "CollectionProtoV1";
+
+// 对外提供的接口
+service CollectionApi{
+
+  rpc Info (InfoApiReq) returns (InfoApiResp) {}
+}
+
+message InfoApiReq{
+  //合约地址
+  string address = 1;
+  //链 1-ethereum
+  string chain = 2;
+}
+
+message InfoApiResp{
+  bool ok = 1;
+  string errMsg = 2;
+  Data data = 3;
+
+  message Data{
+    //合集名称
+    string name = 1;
+    //合集合约地址
+    string address = 2;
+    //合集描述
+    string description = 3;
+    //合集logo
+    string logo = 4;
+    //合集banner图
+    string banner = 5;
+    //合集类型
+    string ercType = 6;
+    //链
+    string chain = 7;
+  }
+}

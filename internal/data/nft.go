@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	v12 "gitlab.bixin.com/mili/node-proxy/api/nft-marketplace/v1"
+	v2 "gitlab.bixin.com/mili/node-proxy/api/nft-marketplace/v2"
 	v1 "gitlab.bixin.com/mili/node-proxy/api/nft/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/biz"
 	"gitlab.bixin.com/mili/node-proxy/internal/conf"
@@ -39,6 +40,8 @@ func (r *nftListRepo) GetNFTInfo(ctx context.Context, chain string, tokenInfos [
 		strings.ToLower(chain) == "klaytn" ||
 		strings.ToLower(chain) == "arbitrumnova" ||
 		strings.ToLower(chain) == "conflux" ||
+		strings.ToLower(chain) == "zksync" ||
+		strings.ToLower(chain) == "scrolll2test" ||
 		strings.ToLower(chain) == "arbitrum" {
 		var nftInfos []*v1.GetNftReply_NftInfoResp
 
@@ -94,6 +97,44 @@ func (r *nftListRepo) GetNFTInfo(ctx context.Context, chain string, tokenInfos [
 
 func (r *nftListRepo) GetNftCollectionInfo(ctx context.Context, chain, address string) (*v1.GetNftCollectionInfoReply, error) {
 	r.log.WithContext(ctx).Infof("NetNftCollectionInfo", chain, address)
+
+	if strings.ToLower(chain) == "solana" ||
+		strings.ToLower(chain) == "eth" ||
+		strings.ToLower(chain) == "avalanche" ||
+		strings.ToLower(chain) == "bsc" ||
+		strings.ToLower(chain) == "polygon" ||
+		strings.ToLower(chain) == "optimism" ||
+		strings.ToLower(chain) == "klaytn" ||
+		strings.ToLower(chain) == "arbitrumnova" ||
+		strings.ToLower(chain) == "conflux" ||
+		strings.ToLower(chain) == "zksync" ||
+		strings.ToLower(chain) == "scrolll2test" ||
+		strings.ToLower(chain) == "arbitrum" {
+
+		info, err := utils.GetCollectionApiClient().Info(context.Background(), &v2.InfoApiReq{
+			Address: address,
+			Chain:   chain,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		collectionInfo := &v1.GetNftCollectionInfoReply_Data{
+			Chain:   chain,
+			Address: address,
+			Name:    info.Data.Name,
+			//Slug:        info.Data.slug,
+			ImageURL:    info.Data.Logo,
+			Description: info.Data.Description,
+			TokenType:   info.Data.ErcType,
+		}
+
+		return &v1.GetNftCollectionInfoReply{
+			Data: collectionInfo,
+			Ok:   true,
+		}, nil
+	}
+
 	collectionInfo, err := collection.GetNFTCollectionInfo(chain, address)
 	ok := true
 	errMsg := ""
