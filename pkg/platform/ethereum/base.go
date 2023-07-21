@@ -8,7 +8,9 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/metachris/eth-go-bindings/erc165"
 	"github.com/metachris/eth-go-bindings/erc20"
+	"github.com/metachris/eth-go-bindings/erc721"
 	v1 "gitlab.bixin.com/mili/node-proxy/api/platform/v1"
 	v12 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/types"
@@ -18,15 +20,66 @@ import (
 	"strings"
 )
 
+const (
+	ERC20   = "ERC20"
+	ERC721  = "ERC721"
+	ERC1155 = "ERC1155"
+)
+
 type platform struct {
 	rpcURL []string
 	log    *log.Helper
 	chain  string
 }
 
+func Platform2EVMPlatform(p types.Platform) *platform {
+	evmPlatform, ok := p.(*platform)
+	if ok {
+		return evmPlatform
+	}
+	return nil
+}
+
 func NewEVMPlatform(chain string, rpcURL []string, logger log.Logger) types.Platform {
 	log := log.NewHelper(log.With(logger, "module", "platform/ethereum"))
 	return &platform{rpcURL: rpcURL, log: log, chain: chain}
+}
+
+func (p *platform) GetERCType(token string) string {
+	if strings.HasPrefix(p.chain, "Ronin") && strings.HasPrefix(token, "ronin:") {
+		token = strings.Replace(token, "ronin:", "0x", -1)
+	}
+	tokenAddress := common.HexToAddress(token)
+	for i := 0; i < len(p.rpcURL); i++ {
+		client, err := ethclient.Dial(p.rpcURL[i])
+		erc20Token, err := erc20.NewErc20(tokenAddress, client)
+		if err != nil {
+			continue
+		}
+		_, err = erc20Token.Decimals(nil)
+		if err == nil {
+			return ERC20
+		}
+		erc721Token, err := erc721.NewErc721(tokenAddress, client)
+		if err != nil {
+			continue
+		}
+		checkMap := map[string][4]byte{
+			ERC721:  erc165.InterfaceIdErc721,
+			ERC1155: erc165.InterfaceIdErc1155,
+		}
+		for key, value := range checkMap {
+			result, err := erc721Token.SupportsInterface(nil, value)
+			if err != nil {
+				continue
+			}
+			if result {
+				return key
+			}
+		}
+	}
+	return ""
+
 }
 
 func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error) {

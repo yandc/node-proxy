@@ -285,3 +285,17 @@ func getETHGasEstimate(gasInfo string) (string, error) {
 	}
 	return out.Result, nil
 }
+
+func GetERCType(chain, token string) string {
+	platform := newPlatform(chain)
+	if platform == nil {
+		c.log.Error("get platform is nil")
+		return ""
+	}
+	evmPlatform := ethereum.Platform2EVMPlatform(platform)
+	if platform == nil {
+		c.log.Error("sui platform is nil")
+		return ""
+	}
+	return evmPlatform.GetERCType(token)
+}
