@@ -11,6 +11,8 @@ import (
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/collection"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/list"
+	"gitlab.bixin.com/mili/node-proxy/pkg/platform"
+	"gitlab.bixin.com/mili/node-proxy/pkg/platform/ethereum"
 	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
 	"gorm.io/gorm"
 	"strings"
@@ -97,7 +99,17 @@ func (r *nftListRepo) GetNFTInfo(ctx context.Context, chain string, tokenInfos [
 
 func (r *nftListRepo) GetNftCollectionInfo(ctx context.Context, chain, address string) (*v1.GetNftCollectionInfoReply, error) {
 	r.log.WithContext(ctx).Infof("NetNftCollectionInfo", chain, address)
-
+	ercType := platform.GetERCType(chain, address)
+	if ercType == ethereum.ERC20 {
+		collectionInfo := &v1.GetNftCollectionInfoReply_Data{
+			Chain:   chain,
+			Address: address,
+		}
+		return &v1.GetNftCollectionInfoReply{
+			Data: collectionInfo,
+			Ok:   true,
+		}, nil
+	}
 	if strings.ToLower(chain) == "solana" ||
 		strings.ToLower(chain) == "eth" ||
 		strings.ToLower(chain) == "avalanche" ||
