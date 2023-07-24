@@ -259,7 +259,7 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 	if err := json.Unmarshal(result, &objectReads); err != nil {
 		return nil, err
 	}
-	gasLimit := 2000
+	gasLimit := 3000
 	sort.Slice(objectReads, func(i, j int) bool {
 		balanceI, _ := strconv.Atoi(objectReads[i].Data.Content.Fields.Balance)
 		balanceJ, _ := strconv.Atoi(objectReads[j].Data.Content.Fields.Balance)
