@@ -54,7 +54,7 @@ func (r *nftListRepo) GetNFTInfo(ctx context.Context, chain string, tokenInfos [
 				TokenId: tokenInfo.TokenId,
 				Chain:   chain,
 			})
-			if err != nil {
+			if err != nil || info == nil || info.Data == nil {
 				continue
 			}
 
@@ -127,7 +127,7 @@ func (r *nftListRepo) GetNftCollectionInfo(ctx context.Context, chain, address s
 			Address: address,
 			Chain:   chain,
 		})
-		if err != nil {
+		if err != nil || info == nil || info.Data == nil {
 			return nil, err
 		}
 
