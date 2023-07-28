@@ -61,3 +61,22 @@ func (t TronScanClient) GetTokenBalance(address string, tokenAddress string, dec
 	}
 	return balance, nil
 }
+
+type TronscanContract struct {
+	Data []tronscanContractData `json:"data"`
+}
+
+type tronscanContractData struct {
+	Address string `json:"address"`
+}
+
+func (t TronScanClient) IsContractAddress(address string) (bool, error) {
+	url := t.url + "/api/contract?contract=" + address
+	out := &TronscanContract{}
+	err := utils.HttpsGetForm(url, nil, out)
+	if err != nil {
+		return false, nil
+	}
+	isContract := len(out.Data) > 0 && out.Data[0].Address == address
+	return isContract, nil
+}

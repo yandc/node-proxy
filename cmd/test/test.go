@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"encoding/hex"
 	"encoding/json"
 	"flag"
 	"fmt"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/go-kratos/kratos/v2/log"
@@ -19,6 +22,8 @@ import (
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/collection"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/list"
+	"gitlab.bixin.com/mili/node-proxy/pkg/platform"
+	"gitlab.bixin.com/mili/node-proxy/pkg/platform/types"
 	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/tokenlist"
 	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
 	"google.golang.org/grpc"
@@ -50,7 +55,7 @@ var (
 
 func init() {
 
-	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
+	flag.StringVar(&flagconf, "conf", "./../../configs", "config path, eg: -conf config.yaml")
 	flag.StringVar(&testFunc, "name", "price", "test func name")
 	flag.StringVar(&cgIds, "cgIds", "", "coingecko id list(comma separation)")
 
@@ -83,6 +88,7 @@ func Init() {
 	db = data.NewDB(bc.Data, logger)
 	client = data.NewRedis(bc.Data)
 	data.NewMarketClient(bc.TokenList)
+	utils.SetRedisClient(client)
 }
 
 func main() {
@@ -135,6 +141,14 @@ func main() {
 		testDeleteTokenList()
 	case "updateTokenPrice":
 		TestUpdatePriceByChain()
+	case "abi":
+		TestGetContractAbi()
+	case "migrateABI":
+		TestResetContractABI()
+	case "parseABI":
+		TestParseDataByABI()
+	default:
+		TestGetContractAbi()
 	}
 	fmt.Println("test main end")
 }
@@ -509,4 +523,102 @@ func TestUpdatePriceByChain() {
 		return
 	}
 	tokenlist.UpdatePriceByChains(chainIds, []string{"ethereum"})
+}
+
+func TestGetContractAbi() {
+	platform.InitPlatform(bc.Platform, logger, client)
+	utils.InitConfig(bc)
+	ret, err := platform.GetContractABI("ETH", "0xdac17f958d2ee523a2206206994597c13d831ec7", "a9059cbb")
+	if err != nil {
+		fmt.Println("error==", err)
+	}
+	fmt.Println("ret==", ret)
+}
+
+func TestResetContractABI() {
+	keys, _ := client.Keys("contract_abi:*").Result()
+	for _, key := range keys {
+		if !strings.HasPrefix(key, "contract_abi:methodId:") {
+			cacheData, err := client.Get(key).Result()
+			if err != nil {
+				fmt.Println("redis get error:", err)
+			}
+			if cacheData != "" {
+				if strings.Contains(key, "Aptos") || strings.Contains(key, "AptosTEST") {
+					var aptosCacheData map[string]interface{}
+					if err := json.Unmarshal([]byte(cacheData), &aptosCacheData); err != nil {
+						fmt.Println("unmarshal error:", err)
+					}
+					for fullName, ef := range aptosCacheData {
+						aptosKey := fmt.Sprintf("contract_abi:methodId:%v", fullName)
+						aptosData, _ := client.Get(aptosKey).Result()
+						if aptosData == "" || aptosData == "[]" {
+							aptosDataList := make([]interface{}, 0, 1)
+							aptosDataList = append(aptosDataList, ef)
+							aptosDataListRedis, _ := jsonEncode(aptosDataList)
+							err = client.Set(aptosKey, aptosDataListRedis, -1).Err()
+							if err != nil {
+								fmt.Println("set method redis error:", err)
+							}
+						}
+					}
+				} else {
+					var evmCacheData []interface{}
+					if err := json.Unmarshal([]byte(cacheData), &evmCacheData); err != nil {
+						fmt.Println("json unmarshal error:", err)
+					}
+					for _, value := range evmCacheData {
+						var abiMethod types.ABIMethod
+						valueByte, _ := json.Marshal(value)
+						if err := json.Unmarshal(valueByte, &abiMethod); err != nil {
+							fmt.Println("json unmarshal error:", err)
+						}
+						if strings.ToLower(abiMethod.Type) == "function" {
+							method := abiMethod.Name + "("
+							for i, m := range abiMethod.Inputs {
+								method += m.Type
+								if i != len(abiMethod.Inputs)-1 {
+									method += ","
+								}
+							}
+							method += ")"
+							ret := crypto.Keccak256([]byte(method))
+							methodIdkey := fmt.Sprintf("contract_abi:methodId:%v", hex.EncodeToString(ret)[:8])
+							methodRedisData, _ := client.Get(methodIdkey).Result()
+							if methodRedisData == "" || methodRedisData == "[]" {
+								methodABIList := make([]interface{}, 0, 1)
+								methodABIList = append(methodABIList, value)
+								methodABIListRedis, _ := json.Marshal(methodABIList)
+								err = client.Set(methodIdkey, string(methodABIListRedis), -1).Err()
+								if err != nil {
+									fmt.Println("set method redis error:", err)
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+func jsonEncode(source interface{}) (string, error) {
+	bytesBuffer := &bytes.Buffer{}
+	encoder := json.NewEncoder(bytesBuffer)
+	encoder.SetEscapeHTML(false)
+	err := encoder.Encode(source)
+	if err != nil {
+		return "", err
+	}
+
+	jsons := string(bytesBuffer.Bytes())
+	tsjsons := strings.TrimSuffix(jsons, "\n")
+	return tsjsons, nil
+}
+
+func TestParseDataByABI() {
+	platform.InitPlatform(bc.Platform, logger, client)
+	utils.InitConfig(bc)
+	ret := platform.ParseDataByABI("ETH", "0xdac17f958d2ee523a2206206994597c13d831ec7", "0xa9059cbb000000000000000000000000aaf75fe0b77b6c3d3de14554becf25d55414b19b0000000000000000000000000000000000000000000000000000000008d568f3")
+	fmt.Println("ret==", ret)
 }

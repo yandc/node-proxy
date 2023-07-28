@@ -45,6 +45,7 @@ type Platform interface {
 	AnalysisWasmResponse(ctx context.Context, functionName, params, response string) (string, error)
 	GetRpcURL() []string
 	GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error)
+	IsContractAddress(address string) (bool, error)
 }
 
 type BtcClient interface {
@@ -54,6 +55,7 @@ type BtcClient interface {
 type TronClient interface {
 	GetBalance(address string) (string, error)
 	GetTokenBalance(address string, tokenAddress string, decimals int) (string, error)
+	IsContractAddress(address string) (bool, error)
 }
 
 type STCBalance struct {
@@ -192,4 +194,78 @@ type STCResource struct {
 
 type STCDecimal struct {
 	ScalingFactor int `json:"scaling_factor"`
+}
+
+type ABIMethod struct {
+	Type   string `json:"type"`
+	Name   string `json:"name"`
+	Inputs []struct {
+		Type string `json:"type"`
+	} `json:"inputs"`
+}
+
+type AptosExposedFunctions struct {
+	Name              string        `json:"name"`
+	Visibility        string        `json:"visibility"`
+	IsEntry           bool          `json:"is_entry"`
+	IsView            bool          `json:"is_view"`
+	GenericTypeParams []interface{} `json:"generic_type_params"`
+	Params            []string      `json:"params"`
+	Return            []interface{} `json:"return"`
+}
+
+type AptosABI []struct {
+	Abi struct {
+		Address          string                  `json:"address"`
+		Name             string                  `json:"name"`
+		ExposedFunctions []AptosExposedFunctions `json:"exposed_functions"`
+	} `json:"abi"`
+}
+
+type KlaytnABI struct {
+	MatchedContract struct {
+		ContractAbi string `json:"contractAbi"`
+	} `json:"matchedContract"`
+}
+
+type RoninABI struct {
+	Output struct {
+		ABI []interface{} `json:"abi"`
+	} `json:"output"`
+}
+
+type AbiDecodeResult struct {
+	MethodName string                 `json:"method_name"`
+	InputArgs  map[string]interface{} `json:"input_args"`
+	Selector   string                 `json:"selector"`
+}
+
+type ParseDataResponse struct {
+	TransactionType string          `json:"transaction_type"`
+	DesData         AbiDecodeResult `json:"des_data"`
+}
+
+type PretreatmentResponse struct {
+	ID       string `json:"id"`
+	ChainID  string `json:"chainId"`
+	Signer   string `json:"signer"`
+	Hostname string `json:"hostname"`
+	Type     string `json:"type"`
+	To       struct {
+		Description  string      `json:"description"`
+		Address      string      `json:"address"`
+		EtherscanURL string      `json:"etherscanUrl"`
+		Info         interface{} `json:"info"`
+	} `json:"to"`
+	AssetChanges []struct {
+		Action   string `json:"action"`
+		Color    string `json:"color"`
+		Metadata struct {
+			Icon          string      `json:"icon"`
+			URL           string      `json:"url"`
+			Verified      bool        `json:"verified"`
+			Name          string      `json:"name"`
+			SecondaryLine interface{} `json:"secondaryLine"`
+		} `json:"metadata"`
+	} `json:"assetChanges"`
 }

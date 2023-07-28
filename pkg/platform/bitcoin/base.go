@@ -142,3 +142,7 @@ func respErrorMaker(statusCode int, body io.Reader) (err error) {
 	}
 	return
 }
+
+func (p *platform) IsContractAddress(address string) (bool, error) {
+	return false, nil
+}

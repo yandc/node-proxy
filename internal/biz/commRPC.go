@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/go-kratos/kratos/v2/log"
 	v1 "gitlab.bixin.com/mili/node-proxy/api/commRPC/v1"
+	"gitlab.bixin.com/mili/node-proxy/pkg/platform/types"
 	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
 	"reflect"
 	"strings"
@@ -12,6 +13,10 @@ import (
 
 type CommRPCRepo interface {
 	GetPriceV2(ctx context.Context, coinName, coinAddress []string, currency string) (map[string]map[string]string, error)
+	GetContractABI(ctx context.Context, chain, contract, methodId string) (interface{}, error)
+	ParseDataByABI(ctx context.Context, chain, contract, data string) *types.ParseDataResponse
+	GetPretreatmentAmount(ctx context.Context, chain, from, to, data, value string) map[string][]interface{}
+	IsContractAddress(ctx context.Context, chain, address string) (bool, error)
 }
 
 type CommRPCUsecase struct {
@@ -65,12 +70,32 @@ func (uc *CommRPCUsecase) ExecNodeProxyRPC(ctx context.Context, req *v1.ExecNode
 	}
 	respone := ss[0].Interface()
 	ret, _ := json.Marshal(respone)
+	result := string(ret)
+	if result == "null" {
+		result = ""
+	}
 	return &v1.ExecNodeProxyRPCReply{
-		Result: string(ret),
+		Result: result,
 		Ok:     true,
 	}, nil
 }
 
 func (uc *CommRPCUsecase) GetPriceV2(ctx context.Context, req *utils.GetPriceV2Req) (map[string]map[string]string, error) {
 	return uc.repo.GetPriceV2(ctx, req.CoinName, req.CoinAddress, req.Currency)
+}
+
+func (uc *CommRPCUsecase) GetContractABI(ctx context.Context, req *utils.GetABIReq) (interface{}, error) {
+	return uc.repo.GetContractABI(ctx, req.Chain, req.Contract, req.MethodId)
+}
+
+func (uc *CommRPCUsecase) ParseDataByABI(ctx context.Context, req *utils.ParseDataByABIReq) *types.ParseDataResponse {
+	return uc.repo.ParseDataByABI(ctx, req.Chain, req.Contract, req.Data)
+}
+
+func (uc *CommRPCUsecase) GetPretreatment(ctx context.Context, req *utils.PretreatmentReq) map[string][]interface{} {
+	return uc.repo.GetPretreatmentAmount(ctx, req.Chain, req.From, req.To, req.Data, req.Value)
+}
+
+func (uc *CommRPCUsecase) IsContractAddress(ctx context.Context, req *utils.IsContractReq) (bool, error) {
+	return uc.repo.IsContractAddress(ctx, req.Chain, req.Address)
 }

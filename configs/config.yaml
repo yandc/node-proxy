@@ -89,12 +89,14 @@ lark:
 platform:
   - chain: Cronos
     type: EVM
+    chainId: 25
     rpcURL:
       - https://evm.cronos.org
       - https://rpc.artemisone.org/cronos
       - https://rpc.vvs.finance/
   - chain: BSC
     type: EVM
+    chainId: 56
     rpcURL:
       - https://rpc.ankr.com/bsc
       - https://bsc-dataseed.binance.org/
@@ -114,18 +116,21 @@ platform:
       - https://rpc.onekey.so/bsc
   - chain: BTC
     type: BTC
+    chainId: 0
     rpcURL:
       - https://api.blockcypher.com/v1/btc/main
       - https://chain.so
       - https://blockstream.info
   - chain: Cronos
     type: EVM
+    chainId: 25
     rpcURL:
       - https://evm.cronos.org
       - https://rpc.artemisone.org/cronos
       - https://rpc.vvs.finance/
   - chain: ETH
     type: EVM
+    chainId: 1
     rpcURL:
       - https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161
       - https://geth.mytokenpocket.vip
@@ -137,38 +142,45 @@ platform:
       - https://rpc.ankr.com/eth
   - chain: Fantom
     type: EVM
+    chainId: 250
     rpcURL:
       - https://rpc.ftm.tools/
       - https://rpcapi.fantom.network
       - https://rpc.ankr.com/fantom
   - chain: HECO
     type: EVM
+    chainId: 128
     rpcURL:
       - https://http-mainnet.hecochain.com/
       - https://http-mainnet-node.defibox.com
   - chain: Klaytn
     type: EVM
+    chainId: 8217
     rpcURL:
       - https://public-node-api.klaytnapi.com/v1/cypress
       - https://klaytn.blockpi.network/v1/rpc/public
   - chain: OEC
     type: EVM
+    chainId: 66
     rpcURL:
       - https://exchainrpc.okex.org/
       - https://okchain.mytokenpocket.vip/
   - chain: Avalanche
     type: EVM
+    chainId: 43114
     rpcURL:
       - https://okchain.mytokenpocket.vip/
       - https://ava-mainnet.public.blastapi.io/ext/bc/C/rpc
   - chain: Optimism
     type: EVM
+    chainId: 10
     rpcURL:
       - https://mainnet.optimism.io
       - https://optimism-mainnet.public.blastapi.io
       - https://optimism-mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161
   - chain: Polygon
     type: EVM
+    chainId: 137
     rpcURL:
       - https://rpc-mainnet.maticvigil.com/
       - https://polygon-rpc.com
@@ -179,21 +191,25 @@ platform:
       - https://rpc.ankr.com/polygon
   - chain: STC
     type: STC
+    chainId: 1
     rpcURL:
       - https://main-seed.starcoin.org
   - chain: TRX
     type: TVM
+    chainId: 1
     rpcURL:
       - https://api.trongrid.io
       - https://api.tronstack.io
   - chain: Aptos
     type: APTOS
+    chainId: 1
     rpcURL:
       - https://fullnode.mainnet.aptoslabs.com/v1
       - https://aptos-mainnet.pontem.network/v1
       - https://fullnode.mainnet.martianwallet.xyz/v1
   - chain: xDai
     type: EVM
+    chainId: 100
     rpcURL:
       - https://rpc.ankr.com/gnosis
       - https://gnosischain-rpc.gateway.pokt.network
@@ -202,12 +218,14 @@ platform:
       - https://rpc.gnosischain.com
   - chain: ETC
     type: EVM
+    chainId: 61
     rpcURL:
       - https://etc.mytokenpocket.vip
       - https://etc.etcdesktop.com
       - https://www.ethercluster.com/etc
   - chain: Solana
     type: SOL
+    chainId: 0
     rpcURL:
       - https://api.mainnet-beta.solana.com
       - https://ssc-dao.genesysgo.net
@@ -215,33 +233,39 @@ platform:
       - https://rpc.ankr.com/solana
   - chain: Arbitrum
     type: EVM
+    chainId: 42161
     rpcURL:
       - https://arb1.arbitrum.io/rpc
       - https://rpc.ankr.com/arbitrum
       - https://arbitrum-mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161
   - chain: Cosmos
     type: COSMOS
+    chainId: 0
     rpcURL:
       - https://cosmos-mainnet-rpc.allthatnode.com:1317
       - https://api.cosmos.network
       - https://us-atom-restapi.binancechain.io
   - chain: Casper
     type: CSPR
+    chainId: 0
     rpcURL:
       - https://node-clarity-mainnet.make.services/rpc
   - chain: SmartBCH
     type: EVM
+    chainId: 10000
     rpcURL:
       - https://global.uat.cash
       - https://smartbch.greyh.at
   - chain: Osmosis
     type: COSMOS
+    chainId: 0
     rpcURL:
       - https://osmosis-mainnet-rpc.allthatnode.com:1317
       - https://lcd-osmosis.cosmostation.io
       - https://lcd.osmosis.zone
   - chain: Harmony
     type: EVM
+    chainId: 1666600000
     rpcURL:
       - https://harmony-0-rpc.gateway.pokt.network
       - https://rpc.ankr.com/harmony
@@ -250,23 +274,28 @@ platform:
       - https://api.harmony.one
   - chain: Ronin
     type: EVM
+    chainId: 2020
     rpcURL:
       - https://api.roninchain.com/rpc
   - chain: ArbitrumNova
     type: EVM
+    chainId: 0
     rpcURL:
       - https://nova.arbitrum.io/rpc
   - chain: Conflux
     type: EVM
+    chainId: 1030
     rpcURL:
       - https://evm.confluxrpc.com
       - https://evm.confluxrpc.org
   - chain: zkSync
     type: EVM
+    chainId: 324
     rpcURL:
       - https://mainnet.era.zksync.io
   - chain: SUI
     type: SUI
+    chainId: 1
     rpcURL:
       - https://fullnode.mainnet.sui.io:443
       - https://wallet-rpc.mainnet.sui.io/
@@ -276,10 +305,12 @@ platform:
 
   - chain: AvalancheTEST
     type: EVM
+    chainId: 0
     rpcURL:
       - https://api.avax-test.network/ext/bc/C/rpc
   - chain: BSCTEST
     type: EVM
+    chainId: 97
     rpcURL:
       - https://data-seed-prebsc-1-s1.binance.org:8545
       - https://data-seed-prebsc-1-s2.binance.org:8545
@@ -289,42 +320,51 @@ platform:
       - https://data-seed-prebsc-2-s3.binance.org:8545
   - chain: BTCTEST
     type: BTC
+    chainId: 1
     rpcURL:
       - https://api.blockcypher.com/v1/btc/test3
   - chain: CronosTEST
     type: EVM
+    chainId: 0
     rpcURL:
       - https://evm-t3.cronos.org/
       - https://cronos-testnet-3.crypto.org:8545
   - chain: ETHGoerliTEST
     type: EVM
+    chainId: 5
     rpcURL:
       - https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161
   - chain: FantomTEST
     type: EVM
+    chainId: 0
     rpcURL:
       - https://xapi.testnet.fantom.network/lachesis
   - chain: HECOTEST
     type: EVM
+    chainId: 0
     rpcURL:
       - https://http-testnet.hecochain.com/
   - chain: KlaytnTEST
     type: EVM
+    chainId: 0
     rpcURL:
       - https://public-node-api.klaytnapi.com/v1/baobab
       - https://baobab01.fandom.finance
       - https://baobab02.fandom.finance
   - chain: OECTEST
     type: EVM
+    chainId: 0
     rpcURL:
       - https://exchaintestrpc.okex.org
   - chain: OptimismTEST
     type: EVM
+    chainId: 0
     rpcURL:
       - https://kovan.optimism.io
       - https://optimism-kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161
   - chain: PolygonTEST
     type: EVM
+    chainId: 0
     rpcURL:
       - https://rpc-mumbai.matic.today
       - https://rpc.ankr.com/polygon_mumbai
@@ -334,15 +374,12 @@ platform:
       - https://matic-mumbai.chainstacklabs.com
   - chain: TRXTEST
     type: TVM
+    chainId: 2
     rpcURL:
       - https://api.shasta.trongrid.io
-  - chain: SuiTEST
-    type: SUI
-    rpcURL:
-      - https://wallet-rpc.testnet.sui.io
-      - https://fullnode.testnet.sui.io:443
   - chain: SUITEST
     type: SUI
+    chainId: 1
     rpcURL:
       - https://wallet-rpc.testnet.sui.io
       - https://fullnode.testnet.sui.io:443
@@ -350,34 +387,85 @@ platform:
       - https://sui-testnet-endpoint.blockvision.org:443
   - chain: AptosTEST
     type: APTOS
+    chainId: 2
     rpcURL:
       - https://testnet.aptoslabs.com/v1
   - chain: SolanaTEST
     type: SOL
+    chainId: 0
     rpcURL:
       - https://api.testnet.solana.com
   - chain: ArbitrumTEST
     type: EVM
+    chainId: 0
     rpcURL:
       - https://rinkeby.arbitrum.io/rpc
       - https://arbitrum-rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161
   - chain: CosmosTEST
     type: COSMOS
+    chainId: 0
     rpcURL:
       - https://cosmos-testnet-rpc.allthatnode.com:1317
   - chain: zkSyncTEST
     type: EVM
+    chainId: 280
     rpcURL:
       - https://zksync2-testnet.zksync.dev
   - chain: ScrollL1TEST
     type: EVM
+    chainId: 0
     rpcURL:
       - https://prealpha.scroll.io/l1
   - chain: ScrollL2TEST
     type: EVM
+    chainId: 534353
     rpcURL:
       - https://alpha-rpc.scroll.io/l2
   - chain: CasperTEST
     type: CSPR
+    chainId: 0
     rpcURL:
       - https://node-clarity-testnet.make.services/rpc
+
+defaultAbiList:
+  EVM: '[
+      { "constant": false,"inputs": [ { "name": "_to","type": "address" },{ "name": "_value","type": "uint256" } ],"name": "transfer","outputs": [ { "name": "","type": "bool" } ],"payable": false,"stateMutability": "nonpayable","type": "function" },
+      { "constant": false,"inputs": [ { "name": "_spender","type": "address" },{ "name": "_value","type": "uint256" } ],"name": "approve","outputs": [ { "name": "","type": "bool" } ],"payable": false,"stateMutability": "nonpayable","type": "function" },
+      { "constant": false,"inputs": [ { "name": "_from","type": "address" },{ "name": "_to","type": "address" },{ "name": "_value","type": "uint256" } ],"name": "transferFrom","outputs": [ { "name": "","type": "bool" } ],"payable": false,"stateMutability": "nonpayable","type": "function" },
+      { "constant": false,"inputs": [ { "internalType": "address","name": "to","type": "address" },{ "internalType": "bool","name": "approved","type": "bool" } ],"name": "setApprovalForAll","outputs": [ ],"payable": false,"stateMutability": "nonpayable","type": "function" },
+      { "constant": false,"inputs": [ { "internalType": "address","name": "from","type": "address" },{ "internalType": "address","name": "to","type": "address" },{ "internalType": "uint256","name": "tokenId","type": "uint256" } ],"name": "safeTransferFrom","outputs": [ ],"payable": false,"stateMutability": "nonpayable","type": "function" },
+      { "constant": false,"inputs": [ { "internalType": "address","name": "from","type": "address" },{ "internalType": "address","name": "to","type": "address" },{ "internalType": "uint256","name": "tokenId","type": "uint256" },{ "internalType": "bytes","name": "_data","type": "bytes" } ],"name": "safeTransferFrom","outputs": [ ],"payable": false,"stateMutability": "nonpayable","type": "function" }
+    ]'
+  TVM: '[
+      { "constant": false,"inputs": [ { "name": "_to","type": "address" },{ "name": "_value","type": "uint256" } ],"name": "transfer","outputs": [ { "name": "","type": "bool" } ],"payable": false,"stateMutability": "nonpayable","type": "function" },
+      { "constant": false,"inputs": [ { "name": "_spender","type": "address" },{ "name": "_value","type": "uint256" } ],"name": "approve","outputs": [ { "name": "","type": "bool" } ],"payable": false,"stateMutability": "nonpayable","type": "function" },
+      { "constant": false,"inputs": [ { "name": "_from","type": "address" },{ "name": "_to","type": "address" },{ "name": "_value","type": "uint256" } ],"name": "transferFrom","outputs": [ { "name": "","type": "bool" } ],"payable": false,"stateMutability": "nonpayable","type": "function" },
+      { "constant": false,"inputs": [ { "internalType": "address","name": "to","type": "address" },{ "internalType": "bool","name": "approved","type": "bool" } ],"name": "setApprovalForAll","outputs": [ ],"payable": false,"stateMutability": "nonpayable","type": "function" },
+      { "constant": false,"inputs": [ { "internalType": "address","name": "from","type": "address" },{ "internalType": "address","name": "to","type": "address" },{ "internalType": "uint256","name": "tokenId","type": "uint256" } ],"name": "safeTransferFrom","outputs": [ ],"payable": false,"stateMutability": "nonpayable","type": "function" },
+      { "constant": false,"inputs": [ { "internalType": "address","name": "from","type": "address" },{ "internalType": "address","name": "to","type": "address" },{ "internalType": "uint256","name": "tokenId","type": "uint256" },{ "internalType": "bytes","name": "_data","type": "bytes" } ],"name": "safeTransferFrom","outputs": [ ],"payable": false,"stateMutability": "nonpayable","type": "function" }
+    ]'
+
+blockExplorerApi:
+  ETH: https://api.etherscan.io/api?module=contract&action=getabi&address=%v
+  BSC: https://api.bscscan.com/api?module=contract&action=getabi&address=%v
+  HECO: https://api.hecoinfo.com/api?module=contract&action=getabi&address=%v
+  OEC: https://www.oklink.com/api/explorer/v1/okexchain/addresses/%v/contract
+  Fantom: https://api.ftmscan.com/api?module=contract&action=getabi&address=%v
+  Polygon: https://api.polygonscan.com/api?module=contract&action=getabi&address=%v
+  Avalanche: https://api.snowtrace.io/api?module=contract&action=getabi&address=%v
+  Cronos: https://api.cronoscan.com/api?module=contract&action=getabi&address=%v
+  Arbitrum: https://api.arbiscan.io/api?module=contract&action=getabi&address=%v
+  Klaytn: https://api-cypress.klaytnscope.com/v2/accounts/%v
+  Aurora: https://api.aurorascan.dev/api?module=contract&action=getabi&address=%v
+  Optimism: https://api-optimistic.etherscan.io/api?module=contract&action=getabi&address=%v
+  Oasis: https://explorer.emerald.oasis.dev/api?module=contract&action=getabi&address=%v
+  ETC: https://blockscout.com/etc/mainnet/api?module=contract&action=getabi&address=%v
+  xDai: https://api.gnosisscan.io/api?module=contract&action=getabi&address=%v
+  Aptos: https://fullnode.mainnet.aptoslabs.com/v1/accounts/%v/modules
+  AptosTEST: https://fullnode.testnet.aptoslabs.com/v1/accounts/%v/modules
+  TRX: https://apilist.tronscan.org/api/contracts/code?contract=%v
+  TRXTEST: https://shastapi.tronscan.org/api/contracts/code?contract=%v
+  ScrollL2TEST: https://blockscout.scroll.io/api?module=contract&action=getabi&address=%v
+  ArbitrumNova: https://api-nova.arbiscan.io/api?module=contract&action=getabi&address=%v
+  Ronin: https://explorer-kintsugi.roninchain.com/v2/2020/contract/%v/abi
+  Conflux: https://evm.confluxscan.net/v1/contract/%v?fields=abi

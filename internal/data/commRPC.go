@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"gitlab.bixin.com/mili/node-proxy/internal/biz"
+	"gitlab.bixin.com/mili/node-proxy/pkg/platform"
+	"gitlab.bixin.com/mili/node-proxy/pkg/platform/types"
 	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/tokenlist"
 )
 
@@ -23,4 +25,32 @@ func (c *commRPCRepo) GetPriceV2(ctx context.Context, coinName, coinAddress []st
 	price := tokenlist.GetTokenListPrice(coinName, coinAddress, currency)
 	fmt.Println("price==v2===", price)
 	return price, nil
+}
+
+func (c *commRPCRepo) GetContractABI(ctx context.Context, chain, contract, methodId string) (interface{}, error) {
+	c.log.WithContext(ctx).Infof("GetContractABI", chain, contract, methodId)
+	ret, err := platform.GetContractABI(chain, contract, methodId)
+	fmt.Println("GetContractABI==result===", ret)
+	return ret, err
+}
+
+func (c *commRPCRepo) ParseDataByABI(ctx context.Context, chain, contract, data string) *types.ParseDataResponse {
+	c.log.WithContext(ctx).Infof("ParseDataByABI", chain, contract, data)
+	ret := platform.ParseDataByABI(chain, contract, data)
+	fmt.Println("ParseDataByABI==result===", ret)
+	return ret
+}
+
+func (c *commRPCRepo) GetPretreatmentAmount(ctx context.Context, chain, from, to, data, value string) map[string][]interface{} {
+	c.log.WithContext(ctx).Infof("GetPretreatmentAmount", chain, from, to, data, value)
+	ret := platform.GetPretreatmentAmount(chain, from, to, data, value)
+	c.log.WithContext(ctx).Infof("GetPretreatmentAmount==result===", ret)
+	return ret
+}
+
+func (c *commRPCRepo) IsContractAddress(ctx context.Context, chain, address string) (bool, error) {
+	c.log.WithContext(ctx).Infof("IsContractAddress", chain, address)
+	ret, err := platform.IsContractAddress(chain, address)
+	c.log.WithContext(ctx).Infof("IsContractAddress==result===", ret)
+	return ret, err
 }

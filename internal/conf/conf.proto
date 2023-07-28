@@ -13,6 +13,8 @@ message Bootstrap {
   repeated Platform platform = 4;
   NFTList nftList = 5;
   Lark lark = 6;
+  map<string,string> defaultAbiList = 7;
+  map<string,string> blockExplorerApi = 8;
 }
 
 message Server {
@@ -75,6 +77,7 @@ message Platform  {
   string chain = 1;
   string type = 2;
   repeated string rpcURL = 3;
+  uint64 chainId = 4;
 }
 
 message NFTList {

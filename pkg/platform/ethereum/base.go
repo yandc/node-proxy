@@ -215,3 +215,17 @@ func batchTokenBalance(url, address string, tokenMap map[string]int) (map[string
 func (p *platform) GetRpcURL() []string {
 	return p.rpcURL
 }
+
+func (p *platform) IsContractAddress(address string) (bool, error) {
+	var resultErr error
+	for i := 0; i < len(p.rpcURL); i++ {
+		client, err := ethclient.Dial(p.rpcURL[i])
+		codeAt, err := client.CodeAt(context.Background(), common.HexToAddress(address), nil)
+		if err != nil {
+			resultErr = err
+			continue
+		}
+		return len(codeAt) > 0, nil
+	}
+	return false, resultErr
+}
