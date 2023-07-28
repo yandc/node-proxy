@@ -114,3 +114,16 @@ func Base58ToHex(address string) string {
 	result := hex.EncodeToString(decodeData)
 	return result
 }
+
+func (p *platform) IsContractAddress(address string) (bool, error) {
+	for i := 0; i < len(p.rpcURL); i++ {
+		client := getClient(p.rpcURL[i])
+		isContract, err := client.IsContractAddress(address)
+		if err != nil {
+			p.log.Error("IsContractAddress error:", err)
+			continue
+		}
+		return isContract, nil
+	}
+	return false, nil
+}

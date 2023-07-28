@@ -51,3 +51,18 @@ func (t TronGridClient) GetTokenBalance(address string, tokenAddress string, dec
 	}
 	return tokenBalance, err
 }
+
+func (t TronGridClient) IsContractAddress(address string) (bool, error) {
+	url := t.url + "/wallet/getcontractinfo"
+	out := make(map[string]interface{})
+	reqBody := map[string]interface{}{
+		"value":   address,
+		"visible": true,
+	}
+	err := utils.HttpsForm(url, http.MethodPost, nil, nil, reqBody, out)
+	if err != nil {
+		return false, err
+	}
+	_, isContract := out["smart_contract"]
+	return isContract, nil
+}

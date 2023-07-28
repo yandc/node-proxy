@@ -4,6 +4,7 @@ import (
 	"flag"
 	"gitlab.bixin.com/mili/node-proxy/pkg/lark"
 	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/tokenlist"
+	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
 	"os"
 
 	"gitlab.bixin.com/mili/node-proxy/internal/conf"
@@ -82,6 +83,8 @@ func main() {
 	go func() {
 		tokenlist.HandlerPrice()
 	}()
+	//init config
+	utils.InitConfig(bc)
 	// start and wait for stop signal
 	if err := app.Run(); err != nil {
 		panic(err)

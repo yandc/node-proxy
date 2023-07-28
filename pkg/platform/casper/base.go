@@ -234,3 +234,7 @@ func NewCasperPlatform(chain string, rpcURL []string, logger log.Logger) types.P
 	log := log.NewHelper(log.With(logger, "module", "platform/sui"))
 	return &platform{rpcURL: rpcURL, log: log, chain: chain}
 }
+
+func (p *platform) IsContractAddress(address string) (bool, error) {
+	return false, nil
+}

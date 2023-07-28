@@ -391,3 +391,23 @@ func call(url string, id int, method string, out interface{}, params []interface
 	}
 	return json.Unmarshal(resp.Result, &out)
 }
+
+func (p *platform) IsContractAddress(address string) (bool, error) {
+	var resultErr error
+	for i := 0; i < len(p.rpcURL); i++ {
+		method := "sui_getObject"
+		out := &types.SuiObjectRead{}
+		params := []interface{}{address}
+		err := call(p.rpcURL[i], JSONID, method, &out, params)
+		if err != nil {
+			resultErr = err
+			continue
+		}
+		if out.Status != RESULT_SUCCESS {
+			resultErr = errors.New(out.Status)
+			continue
+		}
+		return out.Error.Code != "notExists", nil
+	}
+	return false, resultErr
+}

@@ -24,7 +24,11 @@ type SuiObjectInfo struct {
 }
 
 type SuiObjectRead struct {
-	Status  string `json:"status"`
+	Status string `json:"status"`
+	Error  struct {
+		Code     string `json:"code"`
+		ObjectId string `json:"object_id"`
+	} `json:"error"`
 	Details struct {
 		Data struct {
 			DataType          string `json:"dataType"`

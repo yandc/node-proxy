@@ -279,3 +279,19 @@ func (p *platform) GetBalance(ctx context.Context, address, tokenAddress, decima
 	}
 	return "0", nil
 }
+
+func (p *platform) IsContractAddress(address string) (bool, error) {
+	var resultErr error
+	for _, url := range p.rpcURL {
+		method := "getAccountInfo"
+		params := []interface{}{address, map[string]string{"encoding": "base58"}}
+		out := &types.SolanaAccountInfo{}
+		err := utils.JsonHttpsPost(url, ID, method, JSONRPC, out, params)
+		if err != nil {
+			resultErr = err
+			continue
+		}
+		return out.Value.Executable, nil
+	}
+	return false, resultErr
+}

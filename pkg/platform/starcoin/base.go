@@ -148,3 +148,7 @@ func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error
 		Name:     symbol,
 	}, nil
 }
+
+func (p *platform) IsContractAddress(address string) (bool, error) {
+	return false, nil
+}
