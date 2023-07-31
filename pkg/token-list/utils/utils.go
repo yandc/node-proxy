@@ -144,6 +144,7 @@ var dbName2HandlerMap = map[string]string{
 	"zkSync":              "zksync",
 	"SUI":                 "sui",
 	"evm210425":           "evm210425",
+	"Linea":               "linea",
 }
 
 var handlerNameMap = map[string]string{
@@ -176,6 +177,7 @@ var handlerNameMap = map[string]string{
 	"zksync":       "zkSync",
 	"sui":          "SUI",
 	"evm210425":    "evm210425",
+	"linea":        "Linea",
 }
 
 var ChainNameMap = map[string]string{
@@ -209,6 +211,7 @@ var ChainNameMap = map[string]string{
 	"zkSync":       "zkSync",
 	"SUI":          "SUI",
 	"evm210425":    "evm210425",
+	"Linea":        "Linea",
 
 	"ETHTEST":          "ethereum",
 	"HECOTEST":         "huobi-token",
@@ -277,6 +280,7 @@ var db2Chain = map[string]string{
 	"zkSync":              "zkSync",
 	"SUI":                 "SUI",
 	"evm210425":           "evm210425",
+	"Linea":               "Linea",
 }
 
 var TokenFileMap = map[string][]string{
