@@ -31,6 +31,7 @@ var handler2ChainMap = map[string]string{
 	"zksync":       "zkSync",
 	"sui":          "SUI",
 	"evm210425":    "evm210425",
+	"linea":        "Linea",
 }
 
 var chain2HandlerMap = map[string]string{
@@ -64,6 +65,7 @@ var chain2HandlerMap = map[string]string{
 	"zkSync":       "zksync",
 	"SUI":          "sui",
 	"evm210425":    "evm210425",
+	"Linea":        "linea",
 }
 
 func GetChainByHandler(handler string) string {

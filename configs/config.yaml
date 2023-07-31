@@ -71,6 +71,7 @@ tokenList:
     - SUI
     - Cosmos
     - evm210425
+    - Linea
 
 nftList:
   ipfs: https://cloudflare-ipfs.com/ipfs/
@@ -302,6 +303,10 @@ platform:
       - https://rpc-mainnet.suiscan.xyz:443
       - https://sui-mainnet-endpoint.blockvision.org:443
       - https://explorer-rpc.mainnet.sui.io
+  - chain: Linea
+    type: EVM
+    rpcURL:
+      - https://linea-mainnet.infura.io/v3/b6bf7d3508c941499b10025c0776eaf8
 
   - chain: AvalancheTEST
     type: EVM
@@ -469,3 +474,4 @@ blockExplorerApi:
   ArbitrumNova: https://api-nova.arbiscan.io/api?module=contract&action=getabi&address=%v
   Ronin: https://explorer-kintsugi.roninchain.com/v2/2020/contract/%v/abi
   Conflux: https://evm.confluxscan.net/v1/contract/%v?fields=abi
+  Linea: https://explorer.linea.build/api?module=contract&action=getabi&address=%v
