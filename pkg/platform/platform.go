@@ -408,7 +408,7 @@ func GetContractABI(chain, contract, methodId string) (interface{}, error) {
 	if err != nil {
 		return abiResultList, err
 	}
-	if chain != "Aptos" && chain != "AptosTEST" {
+	if chain != "Aptos" && chain != "AptosTEST" && chain != "zkSync" {
 		json.Unmarshal(body, &out)
 	}
 	var rawAbiList []interface{}
@@ -493,6 +493,10 @@ func GetContractABI(chain, contract, methodId string) (interface{}, error) {
 				c.log.Error("decode error:", err)
 			}
 		}
+	} else if chain == "zkSync" {
+		var zkSyncResp types.ZkSyncABIInfo
+		json.Unmarshal(body, &zkSyncResp)
+		rawAbiList = zkSyncResp.Info.VerificationInfo.Artifacts.Abi
 	} else {
 		dec := json.NewDecoder(strings.NewReader(out["result"].(string)))
 		if err := dec.Decode(&rawAbiList); err != nil {
