@@ -305,6 +305,7 @@ platform:
       - https://explorer-rpc.mainnet.sui.io
   - chain: Linea
     type: EVM
+    chainId: 59144
     rpcURL:
       - https://linea-mainnet.infura.io/v3/b6bf7d3508c941499b10025c0776eaf8
 
