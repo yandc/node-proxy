@@ -269,3 +269,13 @@ type PretreatmentResponse struct {
 		} `json:"metadata"`
 	} `json:"assetChanges"`
 }
+
+type ZkSyncABIInfo struct {
+	Info struct {
+		VerificationInfo struct {
+			Artifacts struct {
+				Abi []interface{} `json:"abi"`
+			} `json:"artifacts"`
+		} `json:"verificationInfo"`
+	} `json:"info"`
+}
