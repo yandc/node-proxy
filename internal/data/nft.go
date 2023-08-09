@@ -44,6 +44,7 @@ func (r *nftListRepo) GetNFTInfo(ctx context.Context, chain string, tokenInfos [
 		strings.ToLower(chain) == "conflux" ||
 		strings.ToLower(chain) == "zksync" ||
 		strings.ToLower(chain) == "scrolll2test" ||
+		strings.ToLower(chain) == "ronin" ||
 		strings.ToLower(chain) == "arbitrum" {
 		var nftInfos []*v1.GetNftReply_NftInfoResp
 
@@ -121,6 +122,7 @@ func (r *nftListRepo) GetNftCollectionInfo(ctx context.Context, chain, address s
 		strings.ToLower(chain) == "conflux" ||
 		strings.ToLower(chain) == "zksync" ||
 		strings.ToLower(chain) == "scrolll2test" ||
+		strings.ToLower(chain) == "ronin" ||
 		strings.ToLower(chain) == "arbitrum" {
 
 		info, err := utils.GetCollectionApiClient().Info(context.Background(), &v2.InfoApiReq{
