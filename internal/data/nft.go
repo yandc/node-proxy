@@ -124,6 +124,7 @@ func (r *nftListRepo) GetNftCollectionInfo(ctx context.Context, chain, address s
 		strings.ToLower(chain) == "zksync" ||
 		strings.ToLower(chain) == "scrolll2test" ||
 		strings.ToLower(chain) == "ronin" ||
+		strings.ToLower(chain) == "seitest" ||
 		strings.ToLower(chain) == "arbitrum" {
 
 		info, err := utils.GetCollectionApiClient().Info(context.Background(), &v2.InfoApiReq{
