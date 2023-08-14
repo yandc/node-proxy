@@ -101,11 +101,14 @@ func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error
 			resultErr = err
 			continue
 		}
-		if decimals > 0 && err == nil {
+		if err == nil {
 			symbol, err := erc20Token.Symbol(nil)
 			if err != nil {
-				resultErr = err
-				continue
+				symbol, err = erc20Token.Name(nil)
+				if err != nil {
+					resultErr = err
+					continue
+				}
 			}
 			return &v12.GetTokenInfoResp_Data{
 				Chain:    p.chain,
