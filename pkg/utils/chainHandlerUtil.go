@@ -32,6 +32,7 @@ var handler2ChainMap = map[string]string{
 	"sui":          "SUI",
 	"evm210425":    "evm210425",
 	"linea":        "Linea",
+	"evm8453":      "evm8453",
 }
 
 var chain2HandlerMap = map[string]string{
@@ -66,6 +67,7 @@ var chain2HandlerMap = map[string]string{
 	"SUI":          "sui",
 	"evm210425":    "evm210425",
 	"Linea":        "linea",
+	"evm8453":      "evm8453",
 }
 
 func GetChainByHandler(handler string) string {

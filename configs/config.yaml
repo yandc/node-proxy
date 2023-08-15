@@ -72,6 +72,7 @@ tokenList:
     - Cosmos
     - evm210425
     - Linea
+    - evm8453
 
 nftList:
   ipfs: https://cloudflare-ipfs.com/ipfs/
@@ -308,6 +309,16 @@ platform:
     chainId: 59144
     rpcURL:
       - https://linea-mainnet.infura.io/v3/b6bf7d3508c941499b10025c0776eaf8
+  - chain: evm8453
+    type: EVM
+    chainId: 8453
+    rpcURL:
+      - https://base.meowrpc.com
+      - https://developer-access-mainnet.base.org
+      - https://base.blockpi.network/v1/rpc/public
+      - https://base-mainnet.public.blastapi.io
+      - https://mainnet.base.org
+      - https://1rpc.io/base
 
   - chain: AvalancheTEST
     type: EVM
