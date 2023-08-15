@@ -1651,6 +1651,8 @@ func UpdateChainToken(chain string) {
 		Updateevm210425Token()
 	case "Linea":
 		UpdateLineaToken()
+	case "evm8453":
+		UpdateEvm8453Token()
 
 		//default:
 		//	utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")
