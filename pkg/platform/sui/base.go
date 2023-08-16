@@ -314,16 +314,15 @@ func (p *platform) GetRpcURL() []string {
 }
 
 func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error) {
-	var resultErr error
+	var err error
+	var ret *v12.GetTokenInfoResp_Data
 	for i := 0; i < len(p.rpcURL); i++ {
-		ret, err := getWASMCoinMetadata(p.chain, p.rpcURL[i], token)
+		ret, err = getWASMCoinMetadata(p.chain, p.rpcURL[i], token)
 		if err != nil {
-			resultErr = err
 			continue
 		}
-		return ret, nil
 	}
-	if resultErr != nil && strings.Contains(token, "::") {
+	if err != nil && strings.Contains(token, "::") {
 		tokenInfo := strings.Split(token, "::")
 		if len(tokenInfo) >= 3 {
 			return &v12.GetTokenInfoResp_Data{
@@ -336,7 +335,7 @@ func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error
 		}
 
 	}
-	return nil, resultErr
+	return ret, err
 }
 
 func (p *platform) GetNFTObject(objectId string) (*types.SuiNFTObjectResponse, error) {
@@ -369,6 +368,9 @@ func getWASMCoinMetadata(chain, url, coinType string) (*v12.GetTokenInfoResp_Dat
 	err := call(url, JSONID, method, &out, params)
 	if err != nil {
 		return nil, err
+	}
+	if out == nil {
+		return nil, errors.New("get token info error")
 	}
 	return &v12.GetTokenInfoResp_Data{
 		Chain:    chain,

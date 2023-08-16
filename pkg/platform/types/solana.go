@@ -78,3 +78,15 @@ type SolanaAccountInfo struct {
 		RentEpoch  int      `json:"rentEpoch"`
 	} `json:"value"`
 }
+
+type SolanaTokenType struct {
+	Succcess bool `json:"succcess"`
+	Data     struct {
+		Symbol   string `json:"symbol"`
+		Address  string `json:"address"`
+		Name     string `json:"name"`
+		Icon     string `json:"icon"`
+		Decimals uint32 `json:"decimals"`
+		Holder   int    `json:"holder"`
+	} `json:"data"`
+}

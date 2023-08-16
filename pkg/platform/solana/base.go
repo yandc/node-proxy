@@ -225,23 +225,37 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 }
 
 func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error) {
-	method := "getTokenSupply"
-	params := []interface{}{token}
-	out := &types.SolanaTokenInfo{}
-	var resultErr error
-	for _, url := range p.rpcURL {
-		err := utils.JsonHttpsPost(url, ID, method, JSONRPC, out, params)
-		if err != nil {
-			resultErr = err
-			continue
+	resp, err := utils.CommDoWebRequest("https://api.solscan.io/token/meta?token=" + token + "&cluster=")
+	var tokenMateResp types.SolanaTokenType
+	json.Unmarshal([]byte(resp), &tokenMateResp)
+	if err != nil || !tokenMateResp.Succcess {
+		method := "getTokenSupply"
+		params := []interface{}{token}
+		out := &types.SolanaTokenInfo{}
+		var resultErr error
+		for _, url := range p.rpcURL {
+			err := utils.JsonHttpsPost(url, ID, method, JSONRPC, out, params)
+			if err != nil {
+				resultErr = err
+				continue
+			}
+			return &v12.GetTokenInfoResp_Data{
+				Chain:    p.chain,
+				Address:  token,
+				Decimals: uint32(out.Value.Decimals),
+			}, nil
 		}
-		return &v12.GetTokenInfoResp_Data{
-			Chain:    p.chain,
-			Address:  token,
-			Decimals: uint32(out.Value.Decimals),
-		}, nil
+		return nil, resultErr
 	}
-	return nil, resultErr
+
+	return &v12.GetTokenInfoResp_Data{
+		Chain:    p.chain,
+		Address:  token,
+		Decimals: tokenMateResp.Data.Decimals,
+		Symbol:   tokenMateResp.Data.Symbol,
+		Name:     tokenMateResp.Data.Name,
+		LogoURI:  tokenMateResp.Data.Icon,
+	}, nil
 }
 
 func (p *platform) GetBalance(ctx context.Context, address, tokenAddress, decimals string) (string, error) {
