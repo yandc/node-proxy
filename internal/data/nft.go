@@ -159,6 +159,7 @@ func forward(chain string) bool {
 		strings.ToLower(chain) == "ronin" ||
 		strings.ToLower(chain) == "seitest" ||
 		strings.ToLower(chain) == "xdai" ||
+		strings.ToLower(chain) == "fantom" ||
 		strings.ToLower(chain) == "arbitrum" {
 		return true
 	}
