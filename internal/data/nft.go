@@ -33,20 +33,7 @@ func NewNFTRepo(db *gorm.DB, logger log.Logger, nftList *conf.NFTList) biz.NFTRe
 func (r *nftListRepo) GetNFTInfo(ctx context.Context, chain string, tokenInfos []*v1.GetNftInfoRequest_NftInfo) (*v1.GetNftReply, error) {
 	r.log.WithContext(ctx).Infof("GetNFTInfo", chain, tokenInfos)
 
-	if strings.ToLower(chain) == "solana" ||
-		strings.ToLower(chain) == "eth" ||
-		strings.ToLower(chain) == "avalanche" ||
-		strings.ToLower(chain) == "bsc" ||
-		strings.ToLower(chain) == "polygon" ||
-		strings.ToLower(chain) == "optimism" ||
-		strings.ToLower(chain) == "klaytn" ||
-		strings.ToLower(chain) == "arbitrumnova" ||
-		strings.ToLower(chain) == "conflux" ||
-		strings.ToLower(chain) == "zksync" ||
-		strings.ToLower(chain) == "scrolll2test" ||
-		strings.ToLower(chain) == "ronin" ||
-		strings.ToLower(chain) == "seitest" ||
-		strings.ToLower(chain) == "arbitrum" {
+	if forward(chain) {
 		var nftInfos []*v1.GetNftReply_NftInfoResp
 
 		for _, tokenInfo := range tokenInfos {
@@ -112,20 +99,7 @@ func (r *nftListRepo) GetNftCollectionInfo(ctx context.Context, chain, address s
 			Ok:   true,
 		}, nil
 	}
-	if strings.ToLower(chain) == "solana" ||
-		strings.ToLower(chain) == "eth" ||
-		strings.ToLower(chain) == "avalanche" ||
-		strings.ToLower(chain) == "bsc" ||
-		strings.ToLower(chain) == "polygon" ||
-		strings.ToLower(chain) == "optimism" ||
-		strings.ToLower(chain) == "klaytn" ||
-		strings.ToLower(chain) == "arbitrumnova" ||
-		strings.ToLower(chain) == "conflux" ||
-		strings.ToLower(chain) == "zksync" ||
-		strings.ToLower(chain) == "scrolll2test" ||
-		strings.ToLower(chain) == "ronin" ||
-		strings.ToLower(chain) == "seitest" ||
-		strings.ToLower(chain) == "arbitrum" {
+	if forward(chain) {
 
 		info, err := utils.GetCollectionApiClient().Info(context.Background(), &v2.InfoApiReq{
 			Address: address,
@@ -168,4 +142,25 @@ func (r *nftListRepo) GetNftCollectionInfo(ctx context.Context, chain, address s
 func (r *nftListRepo) AutoUpdateNFTInfo(ctx context.Context) {
 	r.log.WithContext(ctx).Infof("AutoUpdateNFTInfo")
 	list.AutoUpdateNFTInfo()
+}
+
+func forward(chain string) bool {
+	if strings.ToLower(chain) == "solana" ||
+		strings.ToLower(chain) == "eth" ||
+		strings.ToLower(chain) == "avalanche" ||
+		strings.ToLower(chain) == "bsc" ||
+		strings.ToLower(chain) == "polygon" ||
+		strings.ToLower(chain) == "optimism" ||
+		strings.ToLower(chain) == "klaytn" ||
+		strings.ToLower(chain) == "arbitrumnova" ||
+		strings.ToLower(chain) == "conflux" ||
+		strings.ToLower(chain) == "zksync" ||
+		strings.ToLower(chain) == "scrolll2test" ||
+		strings.ToLower(chain) == "ronin" ||
+		strings.ToLower(chain) == "seitest" ||
+		strings.ToLower(chain) == "xdai" ||
+		strings.ToLower(chain) == "arbitrum" {
+		return true
+	}
+	return false
 }
