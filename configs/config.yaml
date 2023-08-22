@@ -73,6 +73,7 @@ tokenList:
     - evm210425
     - Linea
     - evm8453
+    - Sei
 
 nftList:
   ipfs: https://cloudflare-ipfs.com/ipfs/
@@ -319,6 +320,14 @@ platform:
       - https://base-mainnet.public.blastapi.io
       - https://mainnet.base.org
       - https://1rpc.io/base
+  - chain: Sei
+    type: COSMOS
+    chainId: 10000119
+    rpcURL:
+      - https://sei-api.polkachu.com/
+      - https://sei-rest.brocha.in/
+      - https://rest.sei-apis.com/
+      - https://sei-m.api.manticore.team/
 
   - chain: AvalancheTEST
     type: EVM
