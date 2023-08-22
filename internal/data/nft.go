@@ -161,6 +161,7 @@ func forward(chain string) bool {
 		strings.ToLower(chain) == "xdai" ||
 		strings.ToLower(chain) == "fantom" ||
 		strings.ToLower(chain) == "cronos" ||
+		strings.ToLower(chain) == "etc" ||
 		strings.ToLower(chain) == "arbitrum" {
 		return true
 	}
