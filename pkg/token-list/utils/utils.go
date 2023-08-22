@@ -146,6 +146,7 @@ var dbName2HandlerMap = map[string]string{
 	"evm210425":           "evm210425",
 	"Linea":               "linea",
 	"evm8453":             "evm8453",
+	"Sei":                 "Sei",
 }
 
 var handlerNameMap = map[string]string{
@@ -180,6 +181,7 @@ var handlerNameMap = map[string]string{
 	"evm210425":    "evm210425",
 	"linea":        "Linea",
 	"evm8453":      "evm8453",
+	"sei":          "Sei",
 }
 
 var ChainNameMap = map[string]string{
@@ -215,6 +217,7 @@ var ChainNameMap = map[string]string{
 	"evm210425":    "evm210425",
 	"Linea":        "Linea",
 	"evm8453":      "evm8453",
+	"Sei":          "Sei",
 
 	"ETHTEST":          "ethereum",
 	"HECOTEST":         "huobi-token",
@@ -285,6 +288,7 @@ var db2Chain = map[string]string{
 	"evm210425":           "evm210425",
 	"Linea":               "Linea",
 	"evm8453":             "evm8453",
+	"Sei":                 "Sei",
 }
 
 var TokenFileMap = map[string][]string{

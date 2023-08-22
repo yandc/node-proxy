@@ -1360,6 +1360,8 @@ func DownLoadImages(tokenLists []models.TokenList) {
 			address := t.Address
 			if (t.Chain == "osmosis" || t.Chain == "cosmos") && strings.Contains(t.Address, "/") {
 				address = strings.Split(t.Address, "/")[1]
+			} else if t.Chain == "Sei" && strings.Contains(t.Address, "/") {
+				address = strings.Replace(t.Address, "/", "_", -1)
 			}
 			fileName := path + "/" + t.Chain + "_" + address + fileSuffix
 			wg.Add(1)
@@ -1487,6 +1489,8 @@ func InsertLogoURI() {
 				address := chainAddress[1]
 				if (chain == "osmosis" || chain == "cosmos") && len(address) == 64 {
 					address = fmt.Sprintf("ibc/%s", address)
+				} else if chain == "Sei" {
+					address = strings.Replace(address, "_", "/", -1)
 				}
 				err := c.db.Model(&models.TokenList{}).Where("chain = ? AND address = ?", chain, address).Update("logo_uri", logoURI).Error
 				if err != nil {
@@ -1653,6 +1657,8 @@ func UpdateChainToken(chain string) {
 		UpdateLineaToken()
 	case "evm8453":
 		UpdateEvm8453Token()
+	case "Sei":
+		UpdateSEIToken()
 
 		//default:
 		//	utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")
