@@ -3,12 +3,13 @@ package biz
 import (
 	"context"
 	"encoding/json"
+	"reflect"
+	"strings"
+
 	"github.com/go-kratos/kratos/v2/log"
 	v1 "gitlab.bixin.com/mili/node-proxy/api/commRPC/v1"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/types"
 	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
-	"reflect"
-	"strings"
 )
 
 type CommRPCRepo interface {
@@ -17,6 +18,7 @@ type CommRPCRepo interface {
 	ParseDataByABI(ctx context.Context, chain, contract, data string) *types.ParseDataResponse
 	GetPretreatmentAmount(ctx context.Context, chain, from, to, data, value string) map[string][]interface{}
 	IsContractAddress(ctx context.Context, chain, address string) (bool, error)
+	GetGasConstants(ctx context.Context) map[string]interface{}
 }
 
 type CommRPCUsecase struct {
@@ -98,4 +100,8 @@ func (uc *CommRPCUsecase) GetPretreatment(ctx context.Context, req *utils.Pretre
 
 func (uc *CommRPCUsecase) IsContractAddress(ctx context.Context, req *utils.IsContractReq) (bool, error) {
 	return uc.repo.IsContractAddress(ctx, req.Chain, req.Address)
+}
+
+func (uc *CommRPCUsecase) GetGasConstants(ctx context.Context, req *utils.GasDefaultsReq) map[string]interface{} {
+	return uc.repo.GetGasConstants(ctx)
 }

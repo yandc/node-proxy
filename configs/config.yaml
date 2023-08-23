@@ -203,6 +203,8 @@ platform:
     rpcURL:
       - https://api.trongrid.io
       - https://api.tronstack.io
+    gasDefaults:
+      gasLimit: 280_000
   - chain: Aptos
     type: APTOS
     chainId: 1

@@ -37,7 +37,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, tokenList *conf.Token
 	collectionApiClient := data.NewCollectionApiClient(nftList)
 	nftUsecase := biz.NewNFTUsecase(nftRepo, nftApiClient, collectionApiClient, logger)
 	nftService := service.NewNFTService(nftUsecase)
-	commRPCRepo := data.NewCommRPCRepo(logger)
+	commRPCRepo := data.NewCommRPCRepo(logger, arg)
 	commRPCUsecase := biz.NewCommRPCUsecase(commRPCRepo, logger)
 	commRPCService := service.NewCommRPCService(commRPCUsecase)
 	chainListGetNodeUrlJob := jobs.NewChainListGetNodeUrlJob(db, client, logger)

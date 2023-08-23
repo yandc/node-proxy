@@ -3,20 +3,24 @@ package data
 import (
 	"context"
 	"fmt"
+
 	"github.com/go-kratos/kratos/v2/log"
 	"gitlab.bixin.com/mili/node-proxy/internal/biz"
+	"gitlab.bixin.com/mili/node-proxy/internal/conf"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/types"
 	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/tokenlist"
 )
 
 type commRPCRepo struct {
-	log *log.Helper
+	log       *log.Helper
+	platforms []*conf.Platform
 }
 
-func NewCommRPCRepo(logger log.Logger) biz.CommRPCRepo {
+func NewCommRPCRepo(logger log.Logger, platforms []*conf.Platform) biz.CommRPCRepo {
 	return &commRPCRepo{
-		log: log.NewHelper(logger),
+		log:       log.NewHelper(logger),
+		platforms: platforms,
 	}
 }
 
@@ -53,4 +57,16 @@ func (c *commRPCRepo) IsContractAddress(ctx context.Context, chain, address stri
 	ret, err := platform.IsContractAddress(chain, address)
 	c.log.WithContext(ctx).Infof("IsContractAddress==result===", ret)
 	return ret, err
+}
+
+func (c *commRPCRepo) GetGasConstants(ctx context.Context) map[string]interface{} {
+	c.log.WithContext(ctx).Infof("GetGasConstants")
+	result := make(map[string]interface{})
+	for _, p := range c.platforms {
+		if p.GetGasDefaults() != nil {
+			result[p.Chain] = p.GetGasDefaults()
+		}
+	}
+	c.log.WithContext(ctx).Infof("GetGasConstants==result===", result)
+	return result
 }
