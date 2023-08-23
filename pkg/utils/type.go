@@ -30,3 +30,6 @@ type IsContractReq struct {
 	Chain   string `json:"chain"`
 	Address string `json:"address"`
 }
+
+type GasDefaultsReq struct {
+}

@@ -78,6 +78,15 @@ message Platform  {
   string type = 2;
   repeated string rpcURL = 3;
   uint64 chainId = 4;
+  optional GasDefaults gasDefaults = 5;
+}
+
+message GasDefaults {
+  uint64 gasLimit = 1;
+  uint64 gasPrice = 2;
+  string minAmount = 3;
+  uint64 activateFee = 4;
+  map<string, string> extras = 5;
 }
 
 message NFTList {
@@ -94,4 +103,3 @@ message Lark {
   uint64 lockNum = 4;
   string larkAtList = 5;
 }
-
