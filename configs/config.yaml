@@ -205,6 +205,8 @@ platform:
       - https://api.tronstack.io
     gasDefaults:
       gasLimit: 280_000
+      activateFee: 820_000 # 1_100_000 - 280_000
+
   - chain: Aptos
     type: APTOS
     chainId: 1
