@@ -146,3 +146,7 @@ func respErrorMaker(statusCode int, body io.Reader) (err error) {
 func (p *platform) IsContractAddress(address string) (bool, error) {
 	return false, nil
 }
+
+func (p *platform) GetERCType(token string) string {
+	return ""
+}

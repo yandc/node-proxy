@@ -309,3 +309,7 @@ func (p *platform) IsContractAddress(address string) (bool, error) {
 	}
 	return false, resultErr
 }
+
+func (p *platform) GetERCType(token string) string {
+	return ""
+}

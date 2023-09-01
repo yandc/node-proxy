@@ -152,3 +152,7 @@ func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error
 func (p *platform) IsContractAddress(address string) (bool, error) {
 	return false, nil
 }
+
+func (p *platform) GetERCType(token string) string {
+	return ""
+}

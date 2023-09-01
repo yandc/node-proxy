@@ -111,3 +111,7 @@ func getResourceByAddress(noderpc, address, resourceType string) *types.AptosRes
 func (p *platform) IsContractAddress(address string) (bool, error) {
 	return false, nil
 }
+
+func (p *platform) GetERCType(token string) string {
+	return ""
+}

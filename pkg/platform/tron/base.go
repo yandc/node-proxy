@@ -17,6 +17,7 @@ const (
 	TronscanURL  = "tronscan.org"
 	TrongridURL  = "trongrid.io"
 	TronstackURL = "tronstack.io"
+	TRC20        = "trc20"
 )
 
 type platform struct {
@@ -90,6 +91,27 @@ func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error
 		Decimals: uint32(out.Data[0].TokenInfo.TokenDecimal),
 		Symbol:   strings.ToUpper(out.Data[0].TokenInfo.TokenName),
 	}, nil
+}
+
+func (p *platform) GetERCType(token string) string {
+	var url string
+	if strings.Contains(p.chain, "TEST") {
+		url = "https://shastapi.tronscan.org/api/contract"
+	} else {
+		url = "https://apilist.tronscan.org/api/contract"
+	}
+	params := map[string]string{
+		"contract": token,
+	}
+	out := &types.TronTokenInfo{}
+	err := utils.HttpsGetForm(url, params, out)
+	if err != nil {
+		return ""
+	}
+	if len(out.Data) == 0 {
+		return ""
+	}
+	return out.Data[0].TokenInfo.TokenType
 }
 
 func (p *platform) GetRpcURL() []string {

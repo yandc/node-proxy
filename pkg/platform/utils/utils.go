@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/types"
+	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
 	"io/ioutil"
 	"math/big"
 	"net/http"
@@ -156,11 +157,11 @@ func HttpsGetForm(url string, params map[string]string, out interface{}) error {
 		req.URL.RawQuery = q.Encode()
 	}
 
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-	}
-	client := &http.Client{Transport: tr}
-	resp, err := client.Do(req)
+	//tr := &http.Transport{
+	//	TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	//}
+	//client := &http.Client{Transport: tr}
+	resp, err := utils.GetGlobalClient().Do(req)
 	if err != nil {
 		return err
 	}
