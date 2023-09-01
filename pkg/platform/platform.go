@@ -302,12 +302,7 @@ func GetERCType(chain, token string) string {
 		c.log.Error("get platform is nil")
 		return ""
 	}
-	evmPlatform := ethereum.Platform2EVMPlatform(platform)
-	if platform == nil {
-		c.log.Error("sui platform is nil")
-		return ""
-	}
-	return evmPlatform.GetERCType(token)
+	return platform.GetERCType(token)
 }
 
 func ParseDataByABI(chain, contract, data string) *types.ParseDataResponse {

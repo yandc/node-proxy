@@ -46,6 +46,7 @@ type Platform interface {
 	GetRpcURL() []string
 	GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error)
 	IsContractAddress(address string) (bool, error)
+	GetERCType(token string) string
 }
 
 type BtcClient interface {

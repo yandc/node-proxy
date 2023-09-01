@@ -160,3 +160,7 @@ func NewCosmosPlatform(chain string, rpcURL []string, logger log.Logger) types.P
 func (p *platform) IsContractAddress(address string) (bool, error) {
 	return false, nil
 }
+
+func (p *platform) GetERCType(token string) string {
+	return ""
+}

@@ -31,6 +31,10 @@ type platform struct {
 	chain  string
 }
 
+func (p *platform) GetERCType(token string) string {
+	return ""
+}
+
 func Platform2SUIPlatform(p types.Platform) *platform {
 	suiPlatform, ok := p.(*platform)
 	if ok {
