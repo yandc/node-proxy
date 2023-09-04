@@ -16,3 +16,9 @@ type CoinGecko struct {
 	CoinGeckoRank uint16
 }
 
+type CoinGeckoList struct {
+	BaseModel
+	CgId   string `gorm:"primaryKey"`
+	Symbol string
+	Name   string
+}

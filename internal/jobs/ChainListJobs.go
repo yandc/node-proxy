@@ -9,6 +9,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-redis/redis"
 	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
+	"gitlab.bixin.com/mili/node-proxy/pkg/chainlist"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"io"
@@ -76,7 +77,7 @@ func (j *ChainListGetNodeUrlJob) Run() {
 	}
 
 	for _, chain := range chainListData.Props.PageProps.Chains {
-
+		getPriceKey := chainlist.GetPriceKeyBySymbol(chain.NativeCurrency.Symbol)
 		blockChain := &models.BlockChain{
 			Name:           chain.Name,
 			Chain:          chain.Chain,
@@ -87,6 +88,7 @@ func (j *ChainListGetNodeUrlJob) Run() {
 			Decimals:       uint8(chain.NativeCurrency.Decimals),
 			ChainSlug:      chain.ChainSlug,
 			IsTest:         false,
+			GetPriceKey:    getPriceKey,
 		}
 
 		if strings.Contains(strings.ToLower(chain.Name), "test") ||

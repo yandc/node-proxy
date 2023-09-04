@@ -36,6 +36,7 @@ message GetAllChainListResp {
     string logo = 10;
     string type = 11;
     bool isTest = 12;
+    string getPriceKey = 13;
   }
 }
 
@@ -59,6 +60,7 @@ message GetChainListResp{
     string logo = 10;
     string type = 11;
     bool isTest = 12;
+    string getPriceKey = 13;
   }
 }
 

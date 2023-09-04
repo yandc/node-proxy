@@ -33,8 +33,9 @@ func NewDB(conf *conf.Data, logger log.Logger) *gorm.DB {
 	if err != nil {
 		log.Fatalf("failed opening connection to postgres: %v", err)
 	}
-	if err := db.AutoMigrate(&models.CoinGecko{}, &models.CoinMarketCap{}, &models.TokenList{}, &models.NftList{}, &models.BlockChain{}, &models.ChainNodeUrl{}, &models.FakeCoinWhiteList{},
-		&models.NftCollection{}); err != nil {
+	if err := db.AutoMigrate(&models.CoinGecko{}, &models.CoinMarketCap{}, &models.TokenList{}, &models.NftList{},
+		&models.BlockChain{}, &models.ChainNodeUrl{}, &models.FakeCoinWhiteList{}, &models.NftCollection{},
+		&models.CoinGeckoList{}); err != nil {
 		log.Fatal(err)
 	}
 	return db
