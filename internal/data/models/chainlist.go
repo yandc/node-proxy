@@ -13,6 +13,7 @@ type BlockChain struct {
 	Explorer       string
 	ChainSlug      string
 	IsTest         bool `gorm:"index"`
+	GetPriceKey    string
 }
 
 const (

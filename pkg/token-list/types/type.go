@@ -94,7 +94,9 @@ type CMCPriceQuote struct {
 }
 
 type CoinsListItem struct {
-	ID string `json:"id"`
+	ID     string `json:"id"`
+	Symbol string `json:"symbol"`
+	Name   string `json:"name"`
 }
 
 type CGDetailPlatformInfo struct {

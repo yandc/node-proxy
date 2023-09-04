@@ -8,6 +8,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"gitlab.bixin.com/mili/node-proxy/api/chainlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
+	"gitlab.bixin.com/mili/node-proxy/pkg/chainlist"
 	"strings"
 	"time"
 )
@@ -41,6 +42,9 @@ func (uc *ChainListUsecase) GetAllChainList(ctx context.Context) ([]*v1.GetAllCh
 
 	result := make([]*v1.GetAllChainListResp_Data, len(chainList))
 	for i, chain := range chainList {
+		if chain.GetPriceKey == "" {
+			chain.GetPriceKey = chainlist.GetPriceKeyBySymbol(chain.CurrencySymbol)
+		}
 		result[i] = &v1.GetAllChainListResp_Data{
 			ChainId:        chain.ChainId,
 			Name:           chain.Name,
@@ -54,6 +58,7 @@ func (uc *ChainListUsecase) GetAllChainList(ctx context.Context) ([]*v1.GetAllCh
 			Logo:           chain.Logo,
 			Type:           "EVM",
 			IsTest:         chain.IsTest,
+			GetPriceKey:    chain.GetPriceKey,
 		}
 	}
 
@@ -68,6 +73,9 @@ func (uc *ChainListUsecase) GetChainList(ctx context.Context, chainIds []string)
 
 	result := make([]*v1.GetChainListResp_Data, len(chainList))
 	for i, chain := range chainList {
+		if chain.GetPriceKey == "" {
+			chain.GetPriceKey = chainlist.GetPriceKeyBySymbol(chain.CurrencySymbol)
+		}
 		result[i] = &v1.GetChainListResp_Data{
 			ChainId:        chain.ChainId,
 			Name:           chain.Name,
@@ -81,6 +89,7 @@ func (uc *ChainListUsecase) GetChainList(ctx context.Context, chainIds []string)
 			Logo:           chain.Logo,
 			Type:           "EVM",
 			IsTest:         chain.IsTest,
+			GetPriceKey:    chain.GetPriceKey,
 		}
 	}
 

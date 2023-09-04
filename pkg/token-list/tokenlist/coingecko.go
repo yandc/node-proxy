@@ -290,3 +290,24 @@ func PatchCreateCGC(items []types.CoinsListItem) (errorItems []types.CoinsListIt
 	}
 	return
 }
+
+func CreateCoinGeckoList() {
+	cgList, err := CGCoinsList()
+	for i := 0; i < 3 && err != nil; i++ {
+		time.Sleep(1 * time.Second)
+		cgList, err = CGCoinsList()
+	}
+	c.log.Info("cgList length=", len(cgList))
+	coinGeckoList := make([]models.CoinGeckoList, 0, len(cgList))
+	for i := 0; i < len(cgList); i++ {
+		coinGeckoList = append(coinGeckoList, models.CoinGeckoList{
+			CgId:   cgList[i].ID,
+			Name:   cgList[i].Name,
+			Symbol: cgList[i].Symbol,
+		})
+	}
+	c.log.Info("coinGeckoList length=", len(coinGeckoList))
+	if len(coinGeckoList) > 0 {
+		c.db.Create(coinGeckoList)
+	}
+}

@@ -5,6 +5,7 @@ import (
 	"github.com/go-redis/redis"
 	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
 	"gorm.io/gorm"
+	"strings"
 )
 
 type config struct {
@@ -88,4 +89,13 @@ func GetAllWithInUsed() ([]*models.ChainNodeUrl, error) {
 	}
 
 	return nodeUrls, nil
+}
+
+func GetPriceKeyBySymbol(symbol string) string {
+	var tempCoinGeckoList models.CoinGeckoList
+	c.db.Where("symbol = ?", strings.ToLower(symbol)).First(&tempCoinGeckoList)
+	if tempCoinGeckoList.CgId != "" {
+		return tempCoinGeckoList.CgId
+	}
+	return ""
 }

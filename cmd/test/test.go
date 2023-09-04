@@ -19,6 +19,8 @@ import (
 	v1 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/conf"
 	"gitlab.bixin.com/mili/node-proxy/internal/data"
+	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
+	"gitlab.bixin.com/mili/node-proxy/pkg/chainlist"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/collection"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/list"
@@ -147,6 +149,10 @@ func main() {
 		TestResetContractABI()
 	case "parseABI":
 		TestParseDataByABI()
+	case "cgList":
+		TestCreateCGList()
+	case "getPriceKey":
+		TestInitGetPriceKey()
 	default:
 		TestGetContractAbi()
 	}
@@ -621,4 +627,30 @@ func TestParseDataByABI() {
 	utils.InitConfig(bc)
 	ret := platform.ParseDataByABI("ETH", "0xdac17f958d2ee523a2206206994597c13d831ec7", "0xa9059cbb000000000000000000000000aaf75fe0b77b6c3d3de14554becf25d55414b19b0000000000000000000000000000000000000000000000000000000008d568f3")
 	fmt.Println("ret==", ret)
+}
+
+func TestCreateCGList() {
+	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
+	tokenlist.CreateCoinGeckoList()
+}
+
+func TestInitGetPriceKey() {
+	chainlist.InitChainList(db, client, logger)
+	blockChainLists, err := chainlist.GetAllBlockChain()
+	if err != nil {
+		fmt.Println("error=", err)
+		return
+	}
+	fmt.Println("blockChainLists=", len(blockChainLists))
+	for index, blockChain := range blockChainLists {
+		if blockChain.GetPriceKey == "" {
+			var tempCoinGeckoList models.CoinGeckoList
+			db.Where("symbol = ?", strings.ToLower(blockChain.CurrencySymbol)).First(&tempCoinGeckoList)
+			if tempCoinGeckoList.CgId != "" {
+				blockChain.GetPriceKey = tempCoinGeckoList.CgId
+				blockChainLists[index] = blockChain
+				db.Model(&models.BlockChain{}).Where("id = ?", blockChain.ID).Update("get_price_key", tempCoinGeckoList.CgId)
+			}
+		}
+	}
 }

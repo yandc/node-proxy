@@ -23,15 +23,15 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ChainListClient interface {
-	// 获取所有链列表
+	//获取所有链列表
 	GetAllChainList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetAllChainListResp, error)
-	// 批量获取链列表
+	//批量获取链列表
 	GetChainList(ctx context.Context, in *GetChainListReq, opts ...grpc.CallOption) (*GetChainListResp, error)
-	// 获取对应链节点列表
+	//获取对应链节点列表
 	GetChainNodeList(ctx context.Context, in *GetChainNodeListReq, opts ...grpc.CallOption) (*GetChainNodeListResp, error)
-	// 获取使用中的节点列表
+	//获取使用中的节点列表
 	GetChainNodeInUsedList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetChainNodeInUsedListResp, error)
-	// 标记节点为使用状态
+	//标记节点为使用状态
 	UseChainNode(ctx context.Context, in *UseChainNodeReq, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
@@ -92,15 +92,15 @@ func (c *chainListClient) UseChainNode(ctx context.Context, in *UseChainNodeReq,
 // All implementations must embed UnimplementedChainListServer
 // for forward compatibility
 type ChainListServer interface {
-	// 获取所有链列表
+	//获取所有链列表
 	GetAllChainList(context.Context, *emptypb.Empty) (*GetAllChainListResp, error)
-	// 批量获取链列表
+	//批量获取链列表
 	GetChainList(context.Context, *GetChainListReq) (*GetChainListResp, error)
-	// 获取对应链节点列表
+	//获取对应链节点列表
 	GetChainNodeList(context.Context, *GetChainNodeListReq) (*GetChainNodeListResp, error)
-	// 获取使用中的节点列表
+	//获取使用中的节点列表
 	GetChainNodeInUsedList(context.Context, *emptypb.Empty) (*GetChainNodeInUsedListResp, error)
-	// 标记节点为使用状态
+	//标记节点为使用状态
 	UseChainNode(context.Context, *UseChainNodeReq) (*emptypb.Empty, error)
 	mustEmbedUnimplementedChainListServer()
 }
