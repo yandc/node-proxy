@@ -238,6 +238,7 @@ func (uc *ChainListUsecase) GetChainNodeInUsedList(ctx context.Context) ([]*v1.G
 			ChainSlug:      chain.ChainSlug,
 			Logo:           chain.Logo,
 			Type:           "EVM",
+			IsTest:         chain.IsTest,
 		}
 
 		urls := make([]string, len(nodeUrlMap[chain.ChainId]))
