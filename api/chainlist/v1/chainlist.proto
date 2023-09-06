@@ -97,6 +97,7 @@ message GetChainNodeInUsedListResp{
     string chainSlug = 10;
     string logo = 11;
     string type = 12;
+    bool isTest = 13;
   }
 }
 
