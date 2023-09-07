@@ -98,6 +98,7 @@ message GetChainNodeInUsedListResp{
     string logo = 11;
     string type = 12;
     bool isTest = 13;
+    string getPriceKey = 14;
   }
 }
 
