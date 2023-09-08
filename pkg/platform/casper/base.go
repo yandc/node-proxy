@@ -56,68 +56,52 @@ func (p *platform) BuildWasmRequest(ctx context.Context, nodeRpc, functionName, 
 	json.Unmarshal(tempParams, &reqParams)
 	var body string
 	var err error
-	switch functionName {
-	case types.RESPONSE_HEIGHT:
-		block, err := getBlock(nodeRpc)
-		if err != nil {
-			return nil, err
-		}
-		body = fmt.Sprintf("%v", block.Block.Header.Height)
-	case types.RESPONSE_MAINPURSE:
-		account, err := getAccount(nodeRpc, reqParams)
-		if err != nil {
-			return nil, err
-		}
-		body = account.Account.MainPurse
-	case types.RESPONSE_STATEROOTHASH:
-		block, err := getBlock(nodeRpc)
-		if err != nil {
-			return nil, err
-		}
-		body = block.Block.Header.StateRootHash
-
-	case types.RESPONSE_BALANCE:
-		out := &types.CasperBalance{}
-		err = callContext(nodeRpc, "state_get_balance", out, reqParams)
-		if err != nil {
-			return nil, err
-		}
-
-		if out != nil && out.BalanceValue != "" {
-			body = utils.UpdateDecimals(out.BalanceValue, DECIMALS)
-		}
-	case types.RESPONSE_TXHASH:
-		out := &types.CasperTxResponse{}
-		err = callContext(nodeRpc, "account_put_deploy", out, reqParams)
-		if err != nil {
-			return nil, err
-		}
-		body = out.DeployHash
-
-	}
-	//body,err := callContext(nodeRpc,functionName,reqParams)
-	//if err != nil{
-	//	return nil,err
-	//}
-
-	//request := types.CasperRequest{
-	//	Id:      JSONID,
-	//	JsonRPC: JSONRPC,
-	//	Method:  functionName,
-	//	Params:  reqParams,
-	//}
-	//body, err := json.Marshal(request)
-	//if err != nil {
-	//	return nil, err
-	//}
-	return &v1.BuildWasmRequestReply{
+	result := &v1.BuildWasmRequestReply{
 		Method: "POST",
 		Url:    nodeRpc,
 		Head: map[string]string{
 			"Content-Type": "application/json",
 		},
 		Body: body,
-	}, nil
+	}
+	switch functionName {
+	case types.RESPONSE_HEIGHT:
+		block, err := getBlock(nodeRpc)
+		if err != nil {
+			body = "-1"
+		} else {
+			body = fmt.Sprintf("%v", block.Block.Header.Height)
+		}
+	case types.RESPONSE_MAINPURSE:
+		account, err := getAccount(nodeRpc, reqParams)
+		if err == nil {
+			body = account.Account.MainPurse
+		}
+	case types.RESPONSE_STATEROOTHASH:
+		block, err := getBlock(nodeRpc)
+		if err == nil {
+			body = block.Block.Header.StateRootHash
+		}
+	case types.RESPONSE_BALANCE:
+		out := &types.CasperBalance{}
+		err = callContext(nodeRpc, "state_get_balance", out, reqParams)
+		if err == nil {
+			if out != nil && out.BalanceValue != "" {
+				body = utils.UpdateDecimals(out.BalanceValue, DECIMALS)
+			}
+		}
+	case types.RESPONSE_TXHASH:
+		out := &types.CasperTxResponse{}
+		err = callContext(nodeRpc, "account_put_deploy", out, reqParams)
+		if err == nil {
+			body = out.DeployHash
+		}
+	}
+	if err != nil {
+		result.Method = err.Error()
+	}
+	result.Body = body
+	return result, nil
 }
 
 func callContext(url, method string, out interface{}, params interface{}) error {
