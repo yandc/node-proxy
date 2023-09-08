@@ -248,6 +248,9 @@ func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error
 		return nil, resultErr
 	}
 
+	if tokenMateResp.Data.Holder == 1 {
+		return nil, nil
+	}
 	return &v12.GetTokenInfoResp_Data{
 		Chain:    p.chain,
 		Address:  token,
