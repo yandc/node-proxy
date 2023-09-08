@@ -270,11 +270,12 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 		return balanceI > balanceJ
 	})
 	suiObjects := make([]interface{}, 0, len(objectReads))
+	nativeObjects := make([]interface{}, 0, len(objectReads))
 	for _, objectRead := range objectReads {
 		if objectRead.Data.Type == NATIVE_TYPE {
 			if objectRead.Data.Content.Fields.Balance != "" && objectRead.Data.Content.Fields.Balance != "0" {
 				filedBalance, _ := strconv.Atoi(objectRead.Data.Content.Fields.Balance)
-				suiObjects = append(suiObjects, map[string]interface{}{
+				nativeObjects = append(nativeObjects, map[string]interface{}{
 					"objectId": objectRead.Data.ObjectID,
 					"seqNo":    fmt.Sprintf("%v", objectRead.Data.Version),
 					"digest":   objectRead.Data.Digest,
@@ -295,7 +296,16 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 		}
 
 	}
-	if len(objectReads) == 0 {
+	// 主币转账
+	if coinKey == "" {
+		suiObjects = append(suiObjects, nativeObjects...)
+	} else {
+		// token/nft转账
+		if len(suiObjects) > 0 {
+			suiObjects = append(suiObjects, nativeObjects...)
+		}
+	}
+	if len(objectReads) == 0 && coinKey == "" {
 		return nil, errors.New("insufficiency of balance")
 	}
 	return map[string]interface{}{
@@ -407,10 +417,6 @@ func (p *platform) IsContractAddress(address string) (bool, error) {
 		err := call(p.rpcURL[i], JSONID, method, &out, params)
 		if err != nil {
 			resultErr = err
-			continue
-		}
-		if out.Status != RESULT_SUCCESS {
-			resultErr = errors.New(out.Status)
 			continue
 		}
 		return out.Error.Code != "notExists", nil
