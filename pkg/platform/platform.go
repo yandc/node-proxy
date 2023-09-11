@@ -121,7 +121,7 @@ func GetPlatformTokenInfo(chain, token string) (*v12.GetTokenInfoResp_Data, erro
 	if err != nil {
 		return result, err
 	}
-	if result == nil {
+	if result == nil && !strings.Contains(chain, "Solana") {
 		return nil, errors.New("dont get token:" + token + " info")
 	}
 	return result, nil
