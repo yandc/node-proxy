@@ -153,10 +153,21 @@ func main() {
 		TestCreateCGList()
 	case "getPriceKey":
 		TestInitGetPriceKey()
+	case "logoByAddress":
+		testRefreshLogoURIByAddress()
 	default:
 		TestGetContractAbi()
 	}
 	fmt.Println("test main end")
+}
+
+func testRefreshLogoURIByAddress() {
+	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
+	tokenlist.RefreshLogoURIByAddress("arbitrum-one", []string{"0xaf88d065e77c8cc2239327c5edb3a432268e5831"})
+	//tokenlist.RefreshLogoURI([]string{"ethereum", "huobi-token", "okex-chain", "binance-smart-chain", "polygon-pos", "fantom",
+	//	"avalanche", "cronos", "arbitrum-one", "klay-token", "aurora", "optimistic-ethereum",
+	//	"oasis", "tron", "xdai", "solana", "starcoin", "ethereum-classic", "aptos", "nervos", "osmosis",
+	//	"bitcoin-cash", "harmony-shard-0", "ronin", "arbitrum-nova"})
 }
 
 func testRefreshLogoURI() {

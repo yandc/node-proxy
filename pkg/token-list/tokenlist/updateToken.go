@@ -1158,3 +1158,26 @@ yer enabled wallet. Tether has no transaction fees, although external wallets an
 		}).Create(&t)
 	}
 }
+
+func UpdateArbitrumToken() {
+	var tokenLists = []models.TokenList{
+		{
+			Chain:       "arbitrum-one",
+			Address:     "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
+			Name:        "USD Coin",
+			Symbol:      "USDC",
+			Logo:        "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+			Decimals:    6,
+			CmcId:       3408,
+			CgId:        "usd-coin",
+			WebSite:     "https://www.centre.io/usdc",
+			Description: `{"en":"USDC is a fully collateralized US dollar stablecoin. USDC is the bridge between dollars and trading on cryptocurrency exchanges. The technology behind CENTRE makes it possible to exchange value between people, businesses and financial institutions just like email between mail services and texts between SMS providers. We believe by removing artificial economic borders, we can create a more inclusive global economy."}`,
+		},
+	}
+	for _, t := range tokenLists {
+		c.db.Clauses(clause.OnConflict{
+			Columns:   []clause.Column{{Name: "address"}, {Name: "chain"}},
+			UpdateAll: true,
+		}).Create(&t)
+	}
+}
