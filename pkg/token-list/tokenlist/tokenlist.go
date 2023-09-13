@@ -1076,6 +1076,30 @@ func AutoUpdateTokenList(cmcFlag, cgFlag, jsonFlag bool) {
 
 }
 
+func RefreshLogoURIByAddress(chain string, addresses []string) {
+	var tokenLists []models.TokenList
+	err := c.db.Where("chain = ? AND address in ?", chain, addresses).Find(&tokenLists).Error
+	if err != nil {
+		c.log.Error("get token list error:", err)
+		return
+	}
+	fmt.Println("tokenList length=", len(tokenLists))
+	//download images
+	DownLoadImages(tokenLists)
+
+	//upload images
+	UpLoadImages()
+
+	//update logo uri
+	InsertLogoURI()
+
+	//delete images path
+	err = os.RemoveAll("./images")
+	if err != nil {
+		c.log.Error("delete images path:", err)
+	}
+}
+
 func RefreshLogoURI(chains []string) {
 	//get all token list
 	var tokenLists []models.TokenList
@@ -1659,6 +1683,8 @@ func UpdateChainToken(chain string) {
 		UpdateEvm8453Token()
 	case "Sei":
 		UpdateSEIToken()
+	case "arbitrum-one":
+		UpdateArbitrumToken()
 
 		//default:
 		//	utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")
