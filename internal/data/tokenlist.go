@@ -3,7 +3,6 @@ package data
 import (
 	"context"
 	"encoding/json"
-	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
 	"strings"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -78,7 +77,23 @@ func (r *tokenListRepo) GetTokenTop20(ctx context.Context, chain string) ([]*v1.
 	return tokenlist.GetTopNTokenList(chain, 20)
 }
 
-func (r *tokenListRepo) GetFakeCoinWhiteListBySymbol(ctx context.Context, chain, symbol string) (*models.FakeCoinWhiteList, error) {
-	r.log.WithContext(ctx).Infof("GetFakeCoinWhiteListBySymbol", chain)
-	return tokenlist.GetFakeCoinWhiteListBySymbol(chain, symbol)
+//func (r *tokenListRepo) GetFakeCoinWhiteListBySymbol(ctx context.Context, chain, symbol string) (*models.FakeCoinWhiteList, error) {
+//	r.log.WithContext(ctx).Infof("GetFakeCoinWhiteListBySymbol", chain)
+//	return tokenlist.GetFakeCoinWhiteListBySymbol(chain, symbol)
+//}
+
+func (r *tokenListRepo) IsFakeResp(ctx context.Context, chain, symbol, address string) *v1.IsFakeResp_Data {
+	r.log.WithContext(ctx).Infof("IsFakeResp", chain, symbol, address)
+	fakeCoinWhiteList, err := tokenlist.GetFakeCoinWhiteListBySymbol(chain, symbol)
+	if err != nil || fakeCoinWhiteList == nil {
+		return &v1.IsFakeResp_Data{IsFake: false}
+	} else if strings.ToLower(fakeCoinWhiteList.Address) != strings.ToLower(address) {
+		//查询tokenList
+		tokenLists, _ := tokenlist.GetTokenListByChainAddress(chain, address)
+		if len(tokenLists) > 0 {
+			return &v1.IsFakeResp_Data{IsFake: false}
+		}
+		return &v1.IsFakeResp_Data{IsFake: true}
+	}
+	return &v1.IsFakeResp_Data{IsFake: false}
 }
