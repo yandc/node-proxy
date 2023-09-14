@@ -547,6 +547,16 @@ func GetDBTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfo
 	return tokenInfos, nil
 }
 
+func GetTokenListByChainAddress(chain, address string) ([]models.TokenList, error) {
+	address = utils.GetUnificationAddress(chain, address)
+	var tokenLists []models.TokenList
+	err := c.db.Where("chain = ? AND address = ?", chain, address).Find(&tokenLists).Error
+	if err != nil {
+		c.log.Error("get token list error:", err)
+	}
+	return tokenLists, err
+}
+
 func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoResp_Data, error) {
 	tokenInfos := make([]*v1.GetTokenInfoResp_Data, 0, len(addressInfos))
 	params := make([][]interface{}, 0, len(addressInfos))
