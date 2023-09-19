@@ -238,17 +238,22 @@ func getEVMGasEstimate(chain string, gasInfo string) (string, error) {
 		}
 	}
 	if esTimeData == "" || updateFlag {
+		updateRedisFalg := true
 		err := utils.HttpsGetForm(url, nil, out)
 		if err != nil {
-			return "", err
+			updateRedisFalg = false
+			c.log.Error("getEVMGasEstimate error:", err)
 		}
 		if out.Status != "1" {
-			return "", errors.New(out.Message)
+			updateRedisFalg = false
+			c.log.Error("getEVMGasEstimate response error:", out.Message)
 		}
-		resultByte, _ := json.Marshal(out.Result)
-		err = utils.SetESTimeRedisKey(c.redisClient, redisKey, string(resultByte))
-		if err != nil {
-			c.log.Error("set estime redis error:", err)
+		if updateRedisFalg {
+			resultByte, _ := json.Marshal(out.Result)
+			err = utils.SetESTimeRedisKey(c.redisClient, redisKey, string(resultByte))
+			if err != nil {
+				c.log.Error("set estime redis error:", err)
+			}
 		}
 	}
 
