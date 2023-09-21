@@ -63,3 +63,11 @@ type CasperTxResponse struct {
 	APIVersion string `json:"api_version"`
 	DeployHash string `json:"deploy_hash"`
 }
+
+type DeployResult struct {
+	Deploy JsonDeploy `json:"deploy"`
+}
+
+type JsonDeploy struct {
+	Hash string `json:"hash"`
+}
