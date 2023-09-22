@@ -35,6 +35,7 @@ const (
 	BUILD_ACCOUNTS = "accounts"
 	BUILD_BALANCE  = "balance"
 	BUILD_TX       = "transaction"
+	IS_COCHAIN     = "isCochain"
 )
 
 type AnalysisResponseType func(params string, result json.RawMessage) (interface{}, error)

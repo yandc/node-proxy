@@ -96,6 +96,14 @@ func (p *platform) BuildWasmRequest(ctx context.Context, nodeRpc, functionName, 
 		if err == nil {
 			body = out.DeployHash
 		}
+	case types.IS_COCHAIN:
+		out := &types.DeployResult{}
+		err = callContext(nodeRpc, "info_get_deploy", out, reqParams)
+		if err != nil || out == nil {
+			body = "false"
+		} else {
+			body = "true"
+		}
 	}
 	if err != nil {
 		result.Method = err.Error()
