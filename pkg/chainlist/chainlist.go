@@ -41,6 +41,14 @@ func GetAllBlockChain() ([]*models.BlockChain, error) {
 	return blockChains, nil
 }
 
+func GetBlockChainByChainId(chainId string) (*models.BlockChain, error) {
+	var blockChain *models.BlockChain
+	if err := c.db.Where("chain_id = ?", chainId).First(&blockChain).Error; err != nil {
+		return nil, err
+	}
+	return blockChain, nil
+}
+
 func FindBlockChainByChainIds(chainIds []string) ([]*models.BlockChain, error) {
 	var blockChains []*models.BlockChain
 	if err := c.db.Where("chain_id in ?", chainIds).Order("id asc").Find(&blockChains).Error; err != nil {

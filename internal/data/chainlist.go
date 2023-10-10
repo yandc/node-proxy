@@ -34,7 +34,11 @@ func (r chainListRepo) GetAllChainList(ctx context.Context) ([]*models.BlockChai
 	return chainlist.GetAllBlockChain()
 }
 
-func (r chainListRepo) FindChainListByChainIds(ctx context.Context, chainIds []string) ([]*models.BlockChain, error) {
+func (r chainListRepo) GetBlockChainByChainId(ctx context.Context, chainId string) (*models.BlockChain, error) {
+	return chainlist.GetBlockChainByChainId(chainId)
+}
+
+func (r chainListRepo) FindBlockChainsByChainIds(ctx context.Context, chainIds []string) ([]*models.BlockChain, error) {
 	return chainlist.FindBlockChainByChainIds(chainIds)
 }
 

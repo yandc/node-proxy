@@ -9,6 +9,7 @@ import (
 	"gitlab.bixin.com/mili/node-proxy/api/chainlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
 	"gitlab.bixin.com/mili/node-proxy/pkg/chainlist"
+	"gitlab.bixin.com/mili/node-proxy/pkg/lark"
 	"strings"
 	"time"
 )
@@ -17,7 +18,8 @@ type ChainListRepo interface {
 	Create(ctx context.Context, chainNode *models.ChainNodeUrl) error
 	Update(ctx context.Context, chainNode *models.ChainNodeUrl) error
 	GetAllChainList(ctx context.Context) ([]*models.BlockChain, error)
-	FindChainListByChainIds(ctx context.Context, chainIds []string) ([]*models.BlockChain, error)
+	GetBlockChainByChainId(ctx context.Context, chainId string) (*models.BlockChain, error)
+	FindBlockChainsByChainIds(ctx context.Context, chainIds []string) ([]*models.BlockChain, error)
 	FindChainNodeUrlByChainIds(ctx context.Context, chainIds []string) ([]*models.ChainNodeUrl, error)
 	FindChainNodeUrlListWithSource(ctx context.Context, chainId string, source uint8) ([]*models.ChainNodeUrl, error)
 	GetByChainIdAndUrl(ctx context.Context, chainId string, url string) (*models.ChainNodeUrl, error)
@@ -66,7 +68,7 @@ func (uc *ChainListUsecase) GetAllChainList(ctx context.Context) ([]*v1.GetAllCh
 }
 
 func (uc *ChainListUsecase) GetChainList(ctx context.Context, chainIds []string) ([]*v1.GetChainListResp_Data, error) {
-	chainList, err := uc.repo.FindChainListByChainIds(ctx, chainIds)
+	chainList, err := uc.repo.FindBlockChainsByChainIds(ctx, chainIds)
 	if err != nil {
 		return nil, err
 	}
@@ -186,6 +188,14 @@ func (uc *ChainListUsecase) UseChainNode(ctx context.Context, chainId string, ur
 			return errors.New("use chain node error: create chain node failed")
 		}
 
+		//如果用户添加节点的链不在我们的库中，则需要通知lark手动添加链的信息
+		blockChain, _ := uc.repo.GetBlockChainByChainId(ctx, chainId)
+		if blockChain == nil {
+			alarmMsg := fmt.Sprintf("用户添加了自定义节点：%s，需要手动添加该链的信息", url)
+			alarmOpts := lark.WithMsgLevel("FATAL")
+			lark.LarkClient.NotifyLark(alarmMsg, alarmOpts)
+		}
+
 	default:
 		return errors.New("use chain node error: source not support")
 	}
@@ -209,7 +219,7 @@ func (uc *ChainListUsecase) GetChainNodeInUsedList(ctx context.Context) ([]*v1.G
 		}
 	}
 
-	blockChains, err := uc.repo.FindChainListByChainIds(ctx, chainIds)
+	blockChains, err := uc.repo.FindBlockChainsByChainIds(ctx, chainIds)
 	if err != nil {
 		return nil, err
 	}
