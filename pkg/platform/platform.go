@@ -620,7 +620,10 @@ func GetPretreatmentAmount(chain, from, to, data, value string) map[string][]int
 
 	url := "https://api.pocketnode.app/request"
 	out := &types.PretreatmentResponse{}
-	if err := utils2.CommHttpsForm(url, "POST", nil, nil, pretreatmentParams, out); err != nil {
+	headers := map[string]string{
+		"X-Pocket-Id": time.Now().String(),
+	}
+	if err := utils2.CommHttpsForm(url, "POST", nil, headers, pretreatmentParams, out); err != nil {
 		c.log.Error("GetPretreatmentAmount error:", err)
 		return nil
 	}
