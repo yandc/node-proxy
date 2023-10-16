@@ -59,7 +59,7 @@ func FindBlockChainByChainIds(chainIds []string) ([]*models.BlockChain, error) {
 
 func FindChainNodeUrlByChainIds(chainIds []string) ([]*models.ChainNodeUrl, error) {
 	var nodeUrls []*models.ChainNodeUrl
-	if err := c.db.Where("chain_id in ? and status = 1", chainIds).Order("id asc").Find(&nodeUrls).Error; err != nil {
+	if err := c.db.Where("chain_id in ?", chainIds).Order("id asc").Find(&nodeUrls).Error; err != nil {
 		return nil, err
 	}
 	return nodeUrls, nil
@@ -67,7 +67,7 @@ func FindChainNodeUrlByChainIds(chainIds []string) ([]*models.ChainNodeUrl, erro
 
 func FindChainNodeUrlList(chainId string) ([]*models.ChainNodeUrl, error) {
 	var nodeUrls []*models.ChainNodeUrl
-	if err := c.db.Where("chain_id = ? and status = 1", chainId).Order("height desc,latency asc ").Find(&nodeUrls).Error; err != nil {
+	if err := c.db.Where("chain_id = ?", chainId).Order("height desc,latency asc ").Find(&nodeUrls).Error; err != nil {
 		return nil, err
 	}
 	return nodeUrls, nil
@@ -75,7 +75,7 @@ func FindChainNodeUrlList(chainId string) ([]*models.ChainNodeUrl, error) {
 
 func FindChainNodeUrlListWithSource(chainId string, source uint8) ([]*models.ChainNodeUrl, error) {
 	var nodeUrls []*models.ChainNodeUrl
-	if err := c.db.Where("chain_id = ? and source = ? and status = 1", chainId, source).Order("height desc,latency asc ").Find(&nodeUrls).Error; err != nil {
+	if err := c.db.Where("chain_id = ? and source = ?", chainId, source).Order("height desc,latency asc ").Find(&nodeUrls).Error; err != nil {
 		return nil, err
 	}
 	return nodeUrls, nil
