@@ -1695,6 +1695,8 @@ func UpdateChainToken(chain string) {
 		UpdateSEIToken()
 	case "arbitrum-one":
 		UpdateArbitrumToken()
+	case "ethereum":
+		UpdateEthereumToken()
 
 		//default:
 		//	utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")
