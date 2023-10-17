@@ -1186,7 +1186,7 @@ func UpdateEthereumToken() {
 	var tokenLists = []models.TokenList{
 		{
 			Chain:       "ethereum",
-			Address:     "0x64Bc2cA1Be492bE7185FAA2c8835d9b824c8a194",
+			Address:     "0x64bc2ca1be492be7185faa2c8835d9b824c8a194",
 			Name:        "Big Time",
 			Symbol:      "BIGTIME",
 			Logo:        "https://assets.coingecko.com/coins/images/32251/large/-6136155493475923781_121.jpg?1696998691",
