@@ -163,7 +163,7 @@ func main() {
 
 func testRefreshLogoURIByAddress() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
-	tokenlist.RefreshLogoURIByAddress("arbitrum-one", []string{"0xaf88d065e77c8cc2239327c5edb3a432268e5831"})
+	tokenlist.RefreshLogoURIByAddress("ethereum", []string{"0x64Bc2cA1Be492bE7185FAA2c8835d9b824c8a194"})
 	//tokenlist.RefreshLogoURI([]string{"ethereum", "huobi-token", "okex-chain", "binance-smart-chain", "polygon-pos", "fantom",
 	//	"avalanche", "cronos", "arbitrum-one", "klay-token", "aurora", "optimistic-ethereum",
 	//	"oasis", "tron", "xdai", "solana", "starcoin", "ethereum-classic", "aptos", "nervos", "osmosis",
