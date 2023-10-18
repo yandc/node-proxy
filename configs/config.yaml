@@ -332,6 +332,12 @@ platform:
       - https://sei-rest.brocha.in/
       - https://rest.sei-apis.com/
       - https://sei-m.api.manticore.team/
+  - chain: Scroll
+    type: EVM
+    chainId: 534352
+    rpcURL:
+      - https://scroll.blockpi.network/v1/rpc/public
+      - https://rpc.scroll.io
 
   - chain: AvalancheTEST
     type: EVM
