@@ -43,7 +43,8 @@ func wireApp(confServer *conf.Server, confData *conf.Data, tokenList *conf.Token
 	chainListGetNodeUrlJob := jobs.NewChainListGetNodeUrlJob(db, client, logger)
 	marketClient := data.NewMarketClient(tokenList)
 	topCoinJob := jobs.NewTopCoinJob(db, client, marketClient, logger)
-	cron := jobs.NewJobManager(chainListGetNodeUrlJob, topCoinJob)
+	updateTokenListJob := jobs.NewUpdateTokenListJob(logger)
+	cron := jobs.NewJobManager(chainListGetNodeUrlJob, topCoinJob, updateTokenListJob)
 	grpcServer := server.NewGRPCServer(confServer, tokenlistService, chainListService, platformService, nftService, commRPCService, cron, logger)
 	app := newApp(logger, grpcServer)
 	return app, func() {

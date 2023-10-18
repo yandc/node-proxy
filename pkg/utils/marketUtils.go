@@ -97,3 +97,25 @@ func GetPriceByMarketToken(tokenAddress []*v1.Tokens) (map[string]map[string]flo
 	}
 	return result, nil
 }
+
+func GetCoinInfoByMarket(chain string) ([]*v1.DescribeCoinsByChainReply_Coin, error) {
+	pageSize := 300
+	page := 1
+	result := make([]*v1.DescribeCoinsByChainReply_Coin, 0, pageSize)
+	for ; ; page++ {
+		reply, err := marketClient.DescribeCoinsByChain(context.Background(), &v1.DescribeCoinsByChainRequest{
+			EventId:  fmt.Sprintf("%d", time.Now().Unix()),
+			Chain:    chain,
+			Page:     int32(page),
+			PageSize: int32(pageSize),
+		})
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, reply.Coins...)
+		if len(reply.Coins) < pageSize {
+			return result, nil
+		}
+	}
+	return nil, nil
+}

@@ -891,6 +891,77 @@ func setAutoPrice(priceMap map[string]map[string]float64, addressIdMap map[strin
 	}
 }
 
+func UpdateTokenListByMarket() {
+	tokenLists := make([]models.TokenList, 0, 50)
+	for chain, dbChain := range utils.UpdateChainNameMap {
+		//没有测试网
+		if !strings.Contains(chain, "TEST") {
+			//获取当前链token list
+			tempDBTokenList, err := GetCGTokenListByChain(dbChain)
+			if err != nil {
+				c.log.Error("get db token list error:", err, ",chain=", dbChain)
+				return
+			}
+			tempDBTokenListMap := make(map[string]struct{}, len(tempDBTokenList))
+			for _, t := range tempDBTokenList {
+				dbKey := t.Chain + "_*" + t.Address
+				tempDBTokenListMap[dbKey] = struct{}{}
+			}
+			replay, err := utils3.GetCoinInfoByMarket(chain)
+			if err != nil || replay == nil {
+				c.log.Error("get coin info error:", err, ",chain=", chain)
+				continue
+			}
+			count := 0
+			for _, coinInfo := range replay {
+				homePageByte, _ := json.Marshal(coinInfo.Homepage)
+				dbKey := dbChain + "_*" + coinInfo.Address
+				//fmt.Println("zql==1=dbKey=", dbKey)
+				if _, dbOk := tempDBTokenListMap[dbKey]; !dbOk {
+					count++
+					tokenLists = append(tokenLists, models.TokenList{
+						CgId:        coinInfo.CoinID,
+						Name:        coinInfo.Name,
+						Symbol:      strings.ToUpper(coinInfo.Symbol),
+						WebSite:     string(homePageByte),
+						Description: coinInfo.Description,
+						Chain:       dbChain,
+						Address:     coinInfo.Address,
+						Logo:        coinInfo.Icon,
+						Decimals:    int(coinInfo.DecimalPlace),
+					})
+				}
+			}
+		}
+	}
+	if len(tokenLists) > 0 {
+		for _, tokenList := range tokenLists {
+			if err := c.db.Clauses(clause.OnConflict{
+				Columns:   []clause.Column{{Name: "address"}, {Name: "chain"}},
+				UpdateAll: true,
+			}).Create(&tokenList).Error; err != nil {
+				c.log.Error("UpdateTokenListByMarket insert db error ", err)
+			}
+		}
+		//download images
+		DownLoadImages(tokenLists)
+
+		//upload images
+		UpLoadImages()
+
+		//update logo uri
+		InsertLogoURI()
+
+		//delete images path
+		err := os.RemoveAll("images")
+		if err != nil {
+			c.log.Error("delete images path:", err)
+		}
+	}
+
+	c.log.Info("UpdateTokenListByMarket End")
+}
+
 func AutoUpdateTokenList(cmcFlag, cgFlag, jsonFlag bool) {
 	var wg sync.WaitGroup
 	var coinMarketCaps []models.CoinMarketCap
@@ -1496,7 +1567,7 @@ func UpLoadImages() {
 			if err != nil {
 				c.log.Error("PutFile Error:", err)
 			}
-			c.log.Info("upload info:", ret.Bucket, ret.Key, ret.Fsize, ret.Hash, ret.Name)
+			//c.log.Info("upload info:", ret.Bucket, ret.Key, ret.Fsize, ret.Hash, ret.Name)
 			//}(p)
 		}
 	}
@@ -1628,7 +1699,7 @@ func UploadFileToS3(localFiles []string) {
 					buffer, _ := os.ReadFile(localFile)
 					key := awsInfo.KeyPrefix + localFile
 					//fmt.Println("tokenList==", string(buffer))
-					ret, err := s3.New(sess).PutObject(&s3.PutObjectInput{
+					_, err := s3.New(sess).PutObject(&s3.PutObjectInput{
 						Bucket: aws.String(awsInfo.Bucket), //桶名
 						Key:    aws.String(key),
 						Body:   bytes.NewReader(buffer),
@@ -1636,7 +1707,7 @@ func UploadFileToS3(localFiles []string) {
 					if err != nil {
 						c.log.Error("put file to s3 error:", err)
 					}
-					c.log.Info("upload s3 info:", ret)
+					//c.log.Info("upload s3 info:", ret)
 				}(l)
 			}
 			wg.Wait()
@@ -2058,4 +2129,13 @@ func UpdateTokenTop20() {
 			c.log.Error("set redis client cache error:", err)
 		}
 	}
+}
+
+func GetCGTokenListByChain(chain string) ([]models.TokenList, error) {
+	var tokenLists []models.TokenList
+	err := c.db.Where("chain = ? and cg_id != ?", chain, "").Find(&tokenLists).Error
+	if err != nil {
+		c.log.Error("get token list error:", err)
+	}
+	return tokenLists, err
 }
