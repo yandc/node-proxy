@@ -22,10 +22,21 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MarketClient interface {
+	DescribeHotCoins(ctx context.Context, in *DescribeHotCoinsRequest, opts ...grpc.CallOption) (*DescribeHotCoinsReply, error)
+	DescribeHotCoinsV2(ctx context.Context, in *DescribeHotCoinsRequest, opts ...grpc.CallOption) (*DescribeHotCoinsV2Reply, error)
+	DescribeChainsSupport(ctx context.Context, in *DescribeChainsSupportRequest, opts ...grpc.CallOption) (*DescribeChainsSupportReply, error)
+	DescribeAlerts(ctx context.Context, in *DescribeAlertsRequest, opts ...grpc.CallOption) (*DescribeAlertsReply, error)
+	CreateAlert(ctx context.Context, in *CreateAlertRequest, opts ...grpc.CallOption) (*CreateAlertReply, error)
+	ModifyAlert(ctx context.Context, in *ModifyAlertRequest, opts ...grpc.CallOption) (*ModifyAlertReply, error)
+	RemoveAlert(ctx context.Context, in *RemoveAlertRequest, opts ...grpc.CallOption) (*RemoveAlertReply, error)
+	DescribeCollectionGuideList(ctx context.Context, in *DescribeCollectionGuideListRequest, opts ...grpc.CallOption) (*DescribeCollectionGuideListReply, error)
+	DescribeCollectionGuides(ctx context.Context, in *DescribeCollectionGuidesRequest, opts ...grpc.CallOption) (*DescribeCollectionGuidesReply, error)
 	DescribeCoinSwaps(ctx context.Context, in *DescribeCoinSwapsRequest, opts ...grpc.CallOption) (*DescribeCoinSwapsReply, error)
 	DescribeCoinLiquidity(ctx context.Context, in *DescribeCoinLiquidityRequest, opts ...grpc.CallOption) (*DescribeCoinLiquidityReply, error)
 	DescribeCoinSwapStats(ctx context.Context, in *DescribeCoinSwapStatsRequest, opts ...grpc.CallOption) (*DescribeCoinSwapStatsReply, error)
 	DescribeCoinPriceChart(ctx context.Context, in *DescribeCoinPriceChartRequest, opts ...grpc.CallOption) (*DescribeCoinPriceChartReply, error)
+	DescribeCoinPriceByRange(ctx context.Context, in *DescribeCoinPriceByRangeRequest, opts ...grpc.CallOption) (*DescribeCoinPriceByRangeReply, error)
+	DescribeCoinPriceByTimestamp(ctx context.Context, in *DescribeCoinPriceByTimestampRequest, opts ...grpc.CallOption) (*DescribeCoinPriceByTimestampReply, error)
 	DescribeCexCoins(ctx context.Context, in *DescribeCexCoinsRequest, opts ...grpc.CallOption) (*DescribeCexCoinsReply, error)
 	DescribeAllExtraDetail(ctx context.Context, in *DescribeAllExtraDetailRequest, opts ...grpc.CallOption) (*DescribeAllExtraDetailReply, error)
 	DescribeMarketExtraDetail(ctx context.Context, in *DescribeMarketExtraDetailRequest, opts ...grpc.CallOption) (*DescribeMarketExtraDetailReply, error)
@@ -52,6 +63,32 @@ type MarketClient interface {
 	DescribeCoinsByFields(ctx context.Context, in *DescribeCoinsByFieldsRequest, opts ...grpc.CallOption) (*DescribeCoinsByFieldsReply, error)
 	DescribeTokensByFields(ctx context.Context, in *DescribeTokensByFieldsRequest, opts ...grpc.CallOption) (*DescribeTokensByFieldsReply, error)
 	DescribePriceByCoinAddress(ctx context.Context, in *DescribePriceByCoinAddressRequest, opts ...grpc.CallOption) (*DescribePriceByCoinAddressReply, error)
+	DescribeCoinIDByTokens(ctx context.Context, in *DescribeCoinIDByTokensRequest, opts ...grpc.CallOption) (*DescribeCoinIDByTokensReply, error)
+	CreateCoinGuide(ctx context.Context, in *CreateCoinGuideRequest, opts ...grpc.CallOption) (*CreateCoinGuideReply, error)
+	DeleteCoinGuide(ctx context.Context, in *DeleteCoinGuideRequest, opts ...grpc.CallOption) (*DeleteCoinGuideReply, error)
+	ModifyCoinGuide(ctx context.Context, in *ModifyCoinGuideRequest, opts ...grpc.CallOption) (*ModifyCoinGuideReply, error)
+	DescribeWhiteTokens(ctx context.Context, in *DescribeWhiteTokensRequest, opts ...grpc.CallOption) (*DescribeWhiteTokensReply, error)
+	CreateChain(ctx context.Context, in *CreateChainRequest, opts ...grpc.CallOption) (*CreateChainReply, error)
+	ModifyChain(ctx context.Context, in *ModifyChainRequest, opts ...grpc.CallOption) (*NoneReply, error)
+	DeleteChain(ctx context.Context, in *DeleteChainRequest, opts ...grpc.CallOption) (*NoneReply, error)
+	CreateChainRelation(ctx context.Context, in *CreateChainRelationRequest, opts ...grpc.CallOption) (*NoneReply, error)
+	DeleteChainRelation(ctx context.Context, in *DeleteChainRelationRequest, opts ...grpc.CallOption) (*NoneReply, error)
+	CheckCoins(ctx context.Context, in *CheckCoinsRequest, opts ...grpc.CallOption) (*CheckCoinsReply, error)
+	DescribeDex(ctx context.Context, in *DescribeDexRequest, opts ...grpc.CallOption) (*DescribeDexReply, error)
+	DescribePairs(ctx context.Context, in *DescribePairsRequest, opts ...grpc.CallOption) (*DescribePairsReply, error)
+	DescribePair(ctx context.Context, in *DescribePairRequest, opts ...grpc.CallOption) (*DescribePairReply, error)
+	DescribePairTrends(ctx context.Context, in *DescribePairTrendsRequest, opts ...grpc.CallOption) (*DescribePairTrendsReply, error)
+	DescribePairTrendsV2(ctx context.Context, in *DescribePairTrendsV2Request, opts ...grpc.CallOption) (*DescribePairTrendsV2Reply, error)
+	SearchCoinAndPair(ctx context.Context, in *SearchCoinAndPairRequest, opts ...grpc.CallOption) (*SearchCoinAndPairReply, error)
+	AddCollection(ctx context.Context, in *AddCollectionRequest, opts ...grpc.CallOption) (*AddCollectionReply, error)
+	RemoveCollection(ctx context.Context, in *RemoveCollectionRequest, opts ...grpc.CallOption) (*RemoveCollectionReply, error)
+	DescribeCollections(ctx context.Context, in *DescribeCollectionsRequest, opts ...grpc.CallOption) (*DescribeCollectionsReply, error)
+	CreateDex(ctx context.Context, in *CreateDexRequest, opts ...grpc.CallOption) (*CreateDexReply, error)
+	ModifyDex(ctx context.Context, in *ModifyDexRequest, opts ...grpc.CallOption) (*NoneReply, error)
+	DeleteDex(ctx context.Context, in *DeleteDexRequest, opts ...grpc.CallOption) (*NoneReply, error)
+	DescribeRate(ctx context.Context, in *DescribeRateRequest, opts ...grpc.CallOption) (*DescribeRateReply, error)
+	DescribePairGuides(ctx context.Context, in *DescribePairGuidesRequest, opts ...grpc.CallOption) (*DescribePairGuidesReply, error)
+	DescribeCoinsByChain(ctx context.Context, in *DescribeCoinsByChainRequest, opts ...grpc.CallOption) (*DescribeCoinsByChainReply, error)
 }
 
 type marketClient struct {
@@ -60,6 +97,87 @@ type marketClient struct {
 
 func NewMarketClient(cc grpc.ClientConnInterface) MarketClient {
 	return &marketClient{cc}
+}
+
+func (c *marketClient) DescribeHotCoins(ctx context.Context, in *DescribeHotCoinsRequest, opts ...grpc.CallOption) (*DescribeHotCoinsReply, error) {
+	out := new(DescribeHotCoinsReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DescribeHotCoins", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) DescribeHotCoinsV2(ctx context.Context, in *DescribeHotCoinsRequest, opts ...grpc.CallOption) (*DescribeHotCoinsV2Reply, error) {
+	out := new(DescribeHotCoinsV2Reply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DescribeHotCoinsV2", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) DescribeChainsSupport(ctx context.Context, in *DescribeChainsSupportRequest, opts ...grpc.CallOption) (*DescribeChainsSupportReply, error) {
+	out := new(DescribeChainsSupportReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DescribeChainsSupport", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) DescribeAlerts(ctx context.Context, in *DescribeAlertsRequest, opts ...grpc.CallOption) (*DescribeAlertsReply, error) {
+	out := new(DescribeAlertsReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DescribeAlerts", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) CreateAlert(ctx context.Context, in *CreateAlertRequest, opts ...grpc.CallOption) (*CreateAlertReply, error) {
+	out := new(CreateAlertReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/CreateAlert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) ModifyAlert(ctx context.Context, in *ModifyAlertRequest, opts ...grpc.CallOption) (*ModifyAlertReply, error) {
+	out := new(ModifyAlertReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/ModifyAlert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) RemoveAlert(ctx context.Context, in *RemoveAlertRequest, opts ...grpc.CallOption) (*RemoveAlertReply, error) {
+	out := new(RemoveAlertReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/RemoveAlert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) DescribeCollectionGuideList(ctx context.Context, in *DescribeCollectionGuideListRequest, opts ...grpc.CallOption) (*DescribeCollectionGuideListReply, error) {
+	out := new(DescribeCollectionGuideListReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DescribeCollectionGuideList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) DescribeCollectionGuides(ctx context.Context, in *DescribeCollectionGuidesRequest, opts ...grpc.CallOption) (*DescribeCollectionGuidesReply, error) {
+	out := new(DescribeCollectionGuidesReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DescribeCollectionGuides", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *marketClient) DescribeCoinSwaps(ctx context.Context, in *DescribeCoinSwapsRequest, opts ...grpc.CallOption) (*DescribeCoinSwapsReply, error) {
@@ -92,6 +210,24 @@ func (c *marketClient) DescribeCoinSwapStats(ctx context.Context, in *DescribeCo
 func (c *marketClient) DescribeCoinPriceChart(ctx context.Context, in *DescribeCoinPriceChartRequest, opts ...grpc.CallOption) (*DescribeCoinPriceChartReply, error) {
 	out := new(DescribeCoinPriceChartReply)
 	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DescribeCoinPriceChart", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) DescribeCoinPriceByRange(ctx context.Context, in *DescribeCoinPriceByRangeRequest, opts ...grpc.CallOption) (*DescribeCoinPriceByRangeReply, error) {
+	out := new(DescribeCoinPriceByRangeReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DescribeCoinPriceByRange", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) DescribeCoinPriceByTimestamp(ctx context.Context, in *DescribeCoinPriceByTimestampRequest, opts ...grpc.CallOption) (*DescribeCoinPriceByTimestampReply, error) {
+	out := new(DescribeCoinPriceByTimestampReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DescribeCoinPriceByTimestamp", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -332,14 +468,259 @@ func (c *marketClient) DescribePriceByCoinAddress(ctx context.Context, in *Descr
 	return out, nil
 }
 
+func (c *marketClient) DescribeCoinIDByTokens(ctx context.Context, in *DescribeCoinIDByTokensRequest, opts ...grpc.CallOption) (*DescribeCoinIDByTokensReply, error) {
+	out := new(DescribeCoinIDByTokensReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DescribeCoinIDByTokens", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) CreateCoinGuide(ctx context.Context, in *CreateCoinGuideRequest, opts ...grpc.CallOption) (*CreateCoinGuideReply, error) {
+	out := new(CreateCoinGuideReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/CreateCoinGuide", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) DeleteCoinGuide(ctx context.Context, in *DeleteCoinGuideRequest, opts ...grpc.CallOption) (*DeleteCoinGuideReply, error) {
+	out := new(DeleteCoinGuideReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DeleteCoinGuide", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) ModifyCoinGuide(ctx context.Context, in *ModifyCoinGuideRequest, opts ...grpc.CallOption) (*ModifyCoinGuideReply, error) {
+	out := new(ModifyCoinGuideReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/ModifyCoinGuide", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) DescribeWhiteTokens(ctx context.Context, in *DescribeWhiteTokensRequest, opts ...grpc.CallOption) (*DescribeWhiteTokensReply, error) {
+	out := new(DescribeWhiteTokensReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DescribeWhiteTokens", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) CreateChain(ctx context.Context, in *CreateChainRequest, opts ...grpc.CallOption) (*CreateChainReply, error) {
+	out := new(CreateChainReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/CreateChain", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) ModifyChain(ctx context.Context, in *ModifyChainRequest, opts ...grpc.CallOption) (*NoneReply, error) {
+	out := new(NoneReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/ModifyChain", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) DeleteChain(ctx context.Context, in *DeleteChainRequest, opts ...grpc.CallOption) (*NoneReply, error) {
+	out := new(NoneReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DeleteChain", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) CreateChainRelation(ctx context.Context, in *CreateChainRelationRequest, opts ...grpc.CallOption) (*NoneReply, error) {
+	out := new(NoneReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/CreateChainRelation", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) DeleteChainRelation(ctx context.Context, in *DeleteChainRelationRequest, opts ...grpc.CallOption) (*NoneReply, error) {
+	out := new(NoneReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DeleteChainRelation", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) CheckCoins(ctx context.Context, in *CheckCoinsRequest, opts ...grpc.CallOption) (*CheckCoinsReply, error) {
+	out := new(CheckCoinsReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/CheckCoins", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) DescribeDex(ctx context.Context, in *DescribeDexRequest, opts ...grpc.CallOption) (*DescribeDexReply, error) {
+	out := new(DescribeDexReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DescribeDex", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) DescribePairs(ctx context.Context, in *DescribePairsRequest, opts ...grpc.CallOption) (*DescribePairsReply, error) {
+	out := new(DescribePairsReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DescribePairs", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) DescribePair(ctx context.Context, in *DescribePairRequest, opts ...grpc.CallOption) (*DescribePairReply, error) {
+	out := new(DescribePairReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DescribePair", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) DescribePairTrends(ctx context.Context, in *DescribePairTrendsRequest, opts ...grpc.CallOption) (*DescribePairTrendsReply, error) {
+	out := new(DescribePairTrendsReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DescribePairTrends", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) DescribePairTrendsV2(ctx context.Context, in *DescribePairTrendsV2Request, opts ...grpc.CallOption) (*DescribePairTrendsV2Reply, error) {
+	out := new(DescribePairTrendsV2Reply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DescribePairTrendsV2", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) SearchCoinAndPair(ctx context.Context, in *SearchCoinAndPairRequest, opts ...grpc.CallOption) (*SearchCoinAndPairReply, error) {
+	out := new(SearchCoinAndPairReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/SearchCoinAndPair", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) AddCollection(ctx context.Context, in *AddCollectionRequest, opts ...grpc.CallOption) (*AddCollectionReply, error) {
+	out := new(AddCollectionReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/AddCollection", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) RemoveCollection(ctx context.Context, in *RemoveCollectionRequest, opts ...grpc.CallOption) (*RemoveCollectionReply, error) {
+	out := new(RemoveCollectionReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/RemoveCollection", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) DescribeCollections(ctx context.Context, in *DescribeCollectionsRequest, opts ...grpc.CallOption) (*DescribeCollectionsReply, error) {
+	out := new(DescribeCollectionsReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DescribeCollections", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) CreateDex(ctx context.Context, in *CreateDexRequest, opts ...grpc.CallOption) (*CreateDexReply, error) {
+	out := new(CreateDexReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/CreateDex", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) ModifyDex(ctx context.Context, in *ModifyDexRequest, opts ...grpc.CallOption) (*NoneReply, error) {
+	out := new(NoneReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/ModifyDex", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) DeleteDex(ctx context.Context, in *DeleteDexRequest, opts ...grpc.CallOption) (*NoneReply, error) {
+	out := new(NoneReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DeleteDex", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) DescribeRate(ctx context.Context, in *DescribeRateRequest, opts ...grpc.CallOption) (*DescribeRateReply, error) {
+	out := new(DescribeRateReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DescribeRate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) DescribePairGuides(ctx context.Context, in *DescribePairGuidesRequest, opts ...grpc.CallOption) (*DescribePairGuidesReply, error) {
+	out := new(DescribePairGuidesReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DescribePairGuides", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketClient) DescribeCoinsByChain(ctx context.Context, in *DescribeCoinsByChainRequest, opts ...grpc.CallOption) (*DescribeCoinsByChainReply, error) {
+	out := new(DescribeCoinsByChainReply)
+	err := c.cc.Invoke(ctx, "/api.market.v1.Market/DescribeCoinsByChain", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MarketServer is the server API for Market service.
 // All implementations must embed UnimplementedMarketServer
 // for forward compatibility
 type MarketServer interface {
+	DescribeHotCoins(context.Context, *DescribeHotCoinsRequest) (*DescribeHotCoinsReply, error)
+	DescribeHotCoinsV2(context.Context, *DescribeHotCoinsRequest) (*DescribeHotCoinsV2Reply, error)
+	DescribeChainsSupport(context.Context, *DescribeChainsSupportRequest) (*DescribeChainsSupportReply, error)
+	DescribeAlerts(context.Context, *DescribeAlertsRequest) (*DescribeAlertsReply, error)
+	CreateAlert(context.Context, *CreateAlertRequest) (*CreateAlertReply, error)
+	ModifyAlert(context.Context, *ModifyAlertRequest) (*ModifyAlertReply, error)
+	RemoveAlert(context.Context, *RemoveAlertRequest) (*RemoveAlertReply, error)
+	DescribeCollectionGuideList(context.Context, *DescribeCollectionGuideListRequest) (*DescribeCollectionGuideListReply, error)
+	DescribeCollectionGuides(context.Context, *DescribeCollectionGuidesRequest) (*DescribeCollectionGuidesReply, error)
 	DescribeCoinSwaps(context.Context, *DescribeCoinSwapsRequest) (*DescribeCoinSwapsReply, error)
 	DescribeCoinLiquidity(context.Context, *DescribeCoinLiquidityRequest) (*DescribeCoinLiquidityReply, error)
 	DescribeCoinSwapStats(context.Context, *DescribeCoinSwapStatsRequest) (*DescribeCoinSwapStatsReply, error)
 	DescribeCoinPriceChart(context.Context, *DescribeCoinPriceChartRequest) (*DescribeCoinPriceChartReply, error)
+	DescribeCoinPriceByRange(context.Context, *DescribeCoinPriceByRangeRequest) (*DescribeCoinPriceByRangeReply, error)
+	DescribeCoinPriceByTimestamp(context.Context, *DescribeCoinPriceByTimestampRequest) (*DescribeCoinPriceByTimestampReply, error)
 	DescribeCexCoins(context.Context, *DescribeCexCoinsRequest) (*DescribeCexCoinsReply, error)
 	DescribeAllExtraDetail(context.Context, *DescribeAllExtraDetailRequest) (*DescribeAllExtraDetailReply, error)
 	DescribeMarketExtraDetail(context.Context, *DescribeMarketExtraDetailRequest) (*DescribeMarketExtraDetailReply, error)
@@ -366,6 +747,32 @@ type MarketServer interface {
 	DescribeCoinsByFields(context.Context, *DescribeCoinsByFieldsRequest) (*DescribeCoinsByFieldsReply, error)
 	DescribeTokensByFields(context.Context, *DescribeTokensByFieldsRequest) (*DescribeTokensByFieldsReply, error)
 	DescribePriceByCoinAddress(context.Context, *DescribePriceByCoinAddressRequest) (*DescribePriceByCoinAddressReply, error)
+	DescribeCoinIDByTokens(context.Context, *DescribeCoinIDByTokensRequest) (*DescribeCoinIDByTokensReply, error)
+	CreateCoinGuide(context.Context, *CreateCoinGuideRequest) (*CreateCoinGuideReply, error)
+	DeleteCoinGuide(context.Context, *DeleteCoinGuideRequest) (*DeleteCoinGuideReply, error)
+	ModifyCoinGuide(context.Context, *ModifyCoinGuideRequest) (*ModifyCoinGuideReply, error)
+	DescribeWhiteTokens(context.Context, *DescribeWhiteTokensRequest) (*DescribeWhiteTokensReply, error)
+	CreateChain(context.Context, *CreateChainRequest) (*CreateChainReply, error)
+	ModifyChain(context.Context, *ModifyChainRequest) (*NoneReply, error)
+	DeleteChain(context.Context, *DeleteChainRequest) (*NoneReply, error)
+	CreateChainRelation(context.Context, *CreateChainRelationRequest) (*NoneReply, error)
+	DeleteChainRelation(context.Context, *DeleteChainRelationRequest) (*NoneReply, error)
+	CheckCoins(context.Context, *CheckCoinsRequest) (*CheckCoinsReply, error)
+	DescribeDex(context.Context, *DescribeDexRequest) (*DescribeDexReply, error)
+	DescribePairs(context.Context, *DescribePairsRequest) (*DescribePairsReply, error)
+	DescribePair(context.Context, *DescribePairRequest) (*DescribePairReply, error)
+	DescribePairTrends(context.Context, *DescribePairTrendsRequest) (*DescribePairTrendsReply, error)
+	DescribePairTrendsV2(context.Context, *DescribePairTrendsV2Request) (*DescribePairTrendsV2Reply, error)
+	SearchCoinAndPair(context.Context, *SearchCoinAndPairRequest) (*SearchCoinAndPairReply, error)
+	AddCollection(context.Context, *AddCollectionRequest) (*AddCollectionReply, error)
+	RemoveCollection(context.Context, *RemoveCollectionRequest) (*RemoveCollectionReply, error)
+	DescribeCollections(context.Context, *DescribeCollectionsRequest) (*DescribeCollectionsReply, error)
+	CreateDex(context.Context, *CreateDexRequest) (*CreateDexReply, error)
+	ModifyDex(context.Context, *ModifyDexRequest) (*NoneReply, error)
+	DeleteDex(context.Context, *DeleteDexRequest) (*NoneReply, error)
+	DescribeRate(context.Context, *DescribeRateRequest) (*DescribeRateReply, error)
+	DescribePairGuides(context.Context, *DescribePairGuidesRequest) (*DescribePairGuidesReply, error)
+	DescribeCoinsByChain(context.Context, *DescribeCoinsByChainRequest) (*DescribeCoinsByChainReply, error)
 	mustEmbedUnimplementedMarketServer()
 }
 
@@ -373,6 +780,33 @@ type MarketServer interface {
 type UnimplementedMarketServer struct {
 }
 
+func (UnimplementedMarketServer) DescribeHotCoins(context.Context, *DescribeHotCoinsRequest) (*DescribeHotCoinsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeHotCoins not implemented")
+}
+func (UnimplementedMarketServer) DescribeHotCoinsV2(context.Context, *DescribeHotCoinsRequest) (*DescribeHotCoinsV2Reply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeHotCoinsV2 not implemented")
+}
+func (UnimplementedMarketServer) DescribeChainsSupport(context.Context, *DescribeChainsSupportRequest) (*DescribeChainsSupportReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeChainsSupport not implemented")
+}
+func (UnimplementedMarketServer) DescribeAlerts(context.Context, *DescribeAlertsRequest) (*DescribeAlertsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeAlerts not implemented")
+}
+func (UnimplementedMarketServer) CreateAlert(context.Context, *CreateAlertRequest) (*CreateAlertReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateAlert not implemented")
+}
+func (UnimplementedMarketServer) ModifyAlert(context.Context, *ModifyAlertRequest) (*ModifyAlertReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ModifyAlert not implemented")
+}
+func (UnimplementedMarketServer) RemoveAlert(context.Context, *RemoveAlertRequest) (*RemoveAlertReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveAlert not implemented")
+}
+func (UnimplementedMarketServer) DescribeCollectionGuideList(context.Context, *DescribeCollectionGuideListRequest) (*DescribeCollectionGuideListReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeCollectionGuideList not implemented")
+}
+func (UnimplementedMarketServer) DescribeCollectionGuides(context.Context, *DescribeCollectionGuidesRequest) (*DescribeCollectionGuidesReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeCollectionGuides not implemented")
+}
 func (UnimplementedMarketServer) DescribeCoinSwaps(context.Context, *DescribeCoinSwapsRequest) (*DescribeCoinSwapsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DescribeCoinSwaps not implemented")
 }
@@ -384,6 +818,12 @@ func (UnimplementedMarketServer) DescribeCoinSwapStats(context.Context, *Describ
 }
 func (UnimplementedMarketServer) DescribeCoinPriceChart(context.Context, *DescribeCoinPriceChartRequest) (*DescribeCoinPriceChartReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DescribeCoinPriceChart not implemented")
+}
+func (UnimplementedMarketServer) DescribeCoinPriceByRange(context.Context, *DescribeCoinPriceByRangeRequest) (*DescribeCoinPriceByRangeReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeCoinPriceByRange not implemented")
+}
+func (UnimplementedMarketServer) DescribeCoinPriceByTimestamp(context.Context, *DescribeCoinPriceByTimestampRequest) (*DescribeCoinPriceByTimestampReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeCoinPriceByTimestamp not implemented")
 }
 func (UnimplementedMarketServer) DescribeCexCoins(context.Context, *DescribeCexCoinsRequest) (*DescribeCexCoinsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DescribeCexCoins not implemented")
@@ -463,6 +903,84 @@ func (UnimplementedMarketServer) DescribeTokensByFields(context.Context, *Descri
 func (UnimplementedMarketServer) DescribePriceByCoinAddress(context.Context, *DescribePriceByCoinAddressRequest) (*DescribePriceByCoinAddressReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DescribePriceByCoinAddress not implemented")
 }
+func (UnimplementedMarketServer) DescribeCoinIDByTokens(context.Context, *DescribeCoinIDByTokensRequest) (*DescribeCoinIDByTokensReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeCoinIDByTokens not implemented")
+}
+func (UnimplementedMarketServer) CreateCoinGuide(context.Context, *CreateCoinGuideRequest) (*CreateCoinGuideReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateCoinGuide not implemented")
+}
+func (UnimplementedMarketServer) DeleteCoinGuide(context.Context, *DeleteCoinGuideRequest) (*DeleteCoinGuideReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteCoinGuide not implemented")
+}
+func (UnimplementedMarketServer) ModifyCoinGuide(context.Context, *ModifyCoinGuideRequest) (*ModifyCoinGuideReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ModifyCoinGuide not implemented")
+}
+func (UnimplementedMarketServer) DescribeWhiteTokens(context.Context, *DescribeWhiteTokensRequest) (*DescribeWhiteTokensReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeWhiteTokens not implemented")
+}
+func (UnimplementedMarketServer) CreateChain(context.Context, *CreateChainRequest) (*CreateChainReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateChain not implemented")
+}
+func (UnimplementedMarketServer) ModifyChain(context.Context, *ModifyChainRequest) (*NoneReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ModifyChain not implemented")
+}
+func (UnimplementedMarketServer) DeleteChain(context.Context, *DeleteChainRequest) (*NoneReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteChain not implemented")
+}
+func (UnimplementedMarketServer) CreateChainRelation(context.Context, *CreateChainRelationRequest) (*NoneReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateChainRelation not implemented")
+}
+func (UnimplementedMarketServer) DeleteChainRelation(context.Context, *DeleteChainRelationRequest) (*NoneReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteChainRelation not implemented")
+}
+func (UnimplementedMarketServer) CheckCoins(context.Context, *CheckCoinsRequest) (*CheckCoinsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckCoins not implemented")
+}
+func (UnimplementedMarketServer) DescribeDex(context.Context, *DescribeDexRequest) (*DescribeDexReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeDex not implemented")
+}
+func (UnimplementedMarketServer) DescribePairs(context.Context, *DescribePairsRequest) (*DescribePairsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribePairs not implemented")
+}
+func (UnimplementedMarketServer) DescribePair(context.Context, *DescribePairRequest) (*DescribePairReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribePair not implemented")
+}
+func (UnimplementedMarketServer) DescribePairTrends(context.Context, *DescribePairTrendsRequest) (*DescribePairTrendsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribePairTrends not implemented")
+}
+func (UnimplementedMarketServer) DescribePairTrendsV2(context.Context, *DescribePairTrendsV2Request) (*DescribePairTrendsV2Reply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribePairTrendsV2 not implemented")
+}
+func (UnimplementedMarketServer) SearchCoinAndPair(context.Context, *SearchCoinAndPairRequest) (*SearchCoinAndPairReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchCoinAndPair not implemented")
+}
+func (UnimplementedMarketServer) AddCollection(context.Context, *AddCollectionRequest) (*AddCollectionReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddCollection not implemented")
+}
+func (UnimplementedMarketServer) RemoveCollection(context.Context, *RemoveCollectionRequest) (*RemoveCollectionReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveCollection not implemented")
+}
+func (UnimplementedMarketServer) DescribeCollections(context.Context, *DescribeCollectionsRequest) (*DescribeCollectionsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeCollections not implemented")
+}
+func (UnimplementedMarketServer) CreateDex(context.Context, *CreateDexRequest) (*CreateDexReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateDex not implemented")
+}
+func (UnimplementedMarketServer) ModifyDex(context.Context, *ModifyDexRequest) (*NoneReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ModifyDex not implemented")
+}
+func (UnimplementedMarketServer) DeleteDex(context.Context, *DeleteDexRequest) (*NoneReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteDex not implemented")
+}
+func (UnimplementedMarketServer) DescribeRate(context.Context, *DescribeRateRequest) (*DescribeRateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeRate not implemented")
+}
+func (UnimplementedMarketServer) DescribePairGuides(context.Context, *DescribePairGuidesRequest) (*DescribePairGuidesReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribePairGuides not implemented")
+}
+func (UnimplementedMarketServer) DescribeCoinsByChain(context.Context, *DescribeCoinsByChainRequest) (*DescribeCoinsByChainReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeCoinsByChain not implemented")
+}
 func (UnimplementedMarketServer) mustEmbedUnimplementedMarketServer() {}
 
 // UnsafeMarketServer may be embedded to opt out of forward compatibility for this service.
@@ -474,6 +992,168 @@ type UnsafeMarketServer interface {
 
 func RegisterMarketServer(s grpc.ServiceRegistrar, srv MarketServer) {
 	s.RegisterService(&Market_ServiceDesc, srv)
+}
+
+func _Market_DescribeHotCoins_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeHotCoinsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).DescribeHotCoins(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/DescribeHotCoins",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).DescribeHotCoins(ctx, req.(*DescribeHotCoinsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_DescribeHotCoinsV2_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeHotCoinsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).DescribeHotCoinsV2(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/DescribeHotCoinsV2",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).DescribeHotCoinsV2(ctx, req.(*DescribeHotCoinsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_DescribeChainsSupport_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeChainsSupportRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).DescribeChainsSupport(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/DescribeChainsSupport",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).DescribeChainsSupport(ctx, req.(*DescribeChainsSupportRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_DescribeAlerts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeAlertsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).DescribeAlerts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/DescribeAlerts",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).DescribeAlerts(ctx, req.(*DescribeAlertsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_CreateAlert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateAlertRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).CreateAlert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/CreateAlert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).CreateAlert(ctx, req.(*CreateAlertRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_ModifyAlert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ModifyAlertRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).ModifyAlert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/ModifyAlert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).ModifyAlert(ctx, req.(*ModifyAlertRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_RemoveAlert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveAlertRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).RemoveAlert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/RemoveAlert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).RemoveAlert(ctx, req.(*RemoveAlertRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_DescribeCollectionGuideList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeCollectionGuideListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).DescribeCollectionGuideList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/DescribeCollectionGuideList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).DescribeCollectionGuideList(ctx, req.(*DescribeCollectionGuideListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_DescribeCollectionGuides_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeCollectionGuidesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).DescribeCollectionGuides(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/DescribeCollectionGuides",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).DescribeCollectionGuides(ctx, req.(*DescribeCollectionGuidesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Market_DescribeCoinSwaps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -544,6 +1224,42 @@ func _Market_DescribeCoinPriceChart_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MarketServer).DescribeCoinPriceChart(ctx, req.(*DescribeCoinPriceChartRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_DescribeCoinPriceByRange_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeCoinPriceByRangeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).DescribeCoinPriceByRange(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/DescribeCoinPriceByRange",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).DescribeCoinPriceByRange(ctx, req.(*DescribeCoinPriceByRangeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_DescribeCoinPriceByTimestamp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeCoinPriceByTimestampRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).DescribeCoinPriceByTimestamp(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/DescribeCoinPriceByTimestamp",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).DescribeCoinPriceByTimestamp(ctx, req.(*DescribeCoinPriceByTimestampRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1016,6 +1732,474 @@ func _Market_DescribePriceByCoinAddress_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Market_DescribeCoinIDByTokens_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeCoinIDByTokensRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).DescribeCoinIDByTokens(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/DescribeCoinIDByTokens",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).DescribeCoinIDByTokens(ctx, req.(*DescribeCoinIDByTokensRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_CreateCoinGuide_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCoinGuideRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).CreateCoinGuide(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/CreateCoinGuide",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).CreateCoinGuide(ctx, req.(*CreateCoinGuideRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_DeleteCoinGuide_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCoinGuideRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).DeleteCoinGuide(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/DeleteCoinGuide",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).DeleteCoinGuide(ctx, req.(*DeleteCoinGuideRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_ModifyCoinGuide_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ModifyCoinGuideRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).ModifyCoinGuide(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/ModifyCoinGuide",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).ModifyCoinGuide(ctx, req.(*ModifyCoinGuideRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_DescribeWhiteTokens_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeWhiteTokensRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).DescribeWhiteTokens(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/DescribeWhiteTokens",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).DescribeWhiteTokens(ctx, req.(*DescribeWhiteTokensRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_CreateChain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateChainRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).CreateChain(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/CreateChain",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).CreateChain(ctx, req.(*CreateChainRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_ModifyChain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ModifyChainRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).ModifyChain(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/ModifyChain",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).ModifyChain(ctx, req.(*ModifyChainRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_DeleteChain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteChainRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).DeleteChain(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/DeleteChain",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).DeleteChain(ctx, req.(*DeleteChainRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_CreateChainRelation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateChainRelationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).CreateChainRelation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/CreateChainRelation",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).CreateChainRelation(ctx, req.(*CreateChainRelationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_DeleteChainRelation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteChainRelationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).DeleteChainRelation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/DeleteChainRelation",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).DeleteChainRelation(ctx, req.(*DeleteChainRelationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_CheckCoins_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckCoinsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).CheckCoins(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/CheckCoins",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).CheckCoins(ctx, req.(*CheckCoinsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_DescribeDex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeDexRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).DescribeDex(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/DescribeDex",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).DescribeDex(ctx, req.(*DescribeDexRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_DescribePairs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribePairsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).DescribePairs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/DescribePairs",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).DescribePairs(ctx, req.(*DescribePairsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_DescribePair_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribePairRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).DescribePair(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/DescribePair",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).DescribePair(ctx, req.(*DescribePairRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_DescribePairTrends_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribePairTrendsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).DescribePairTrends(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/DescribePairTrends",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).DescribePairTrends(ctx, req.(*DescribePairTrendsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_DescribePairTrendsV2_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribePairTrendsV2Request)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).DescribePairTrendsV2(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/DescribePairTrendsV2",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).DescribePairTrendsV2(ctx, req.(*DescribePairTrendsV2Request))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_SearchCoinAndPair_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchCoinAndPairRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).SearchCoinAndPair(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/SearchCoinAndPair",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).SearchCoinAndPair(ctx, req.(*SearchCoinAndPairRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_AddCollection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddCollectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).AddCollection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/AddCollection",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).AddCollection(ctx, req.(*AddCollectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_RemoveCollection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveCollectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).RemoveCollection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/RemoveCollection",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).RemoveCollection(ctx, req.(*RemoveCollectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_DescribeCollections_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeCollectionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).DescribeCollections(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/DescribeCollections",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).DescribeCollections(ctx, req.(*DescribeCollectionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_CreateDex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateDexRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).CreateDex(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/CreateDex",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).CreateDex(ctx, req.(*CreateDexRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_ModifyDex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ModifyDexRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).ModifyDex(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/ModifyDex",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).ModifyDex(ctx, req.(*ModifyDexRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_DeleteDex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteDexRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).DeleteDex(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/DeleteDex",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).DeleteDex(ctx, req.(*DeleteDexRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_DescribeRate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeRateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).DescribeRate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/DescribeRate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).DescribeRate(ctx, req.(*DescribeRateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_DescribePairGuides_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribePairGuidesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).DescribePairGuides(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/DescribePairGuides",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).DescribePairGuides(ctx, req.(*DescribePairGuidesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Market_DescribeCoinsByChain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeCoinsByChainRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).DescribeCoinsByChain(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.market.v1.Market/DescribeCoinsByChain",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).DescribeCoinsByChain(ctx, req.(*DescribeCoinsByChainRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Market_ServiceDesc is the grpc.ServiceDesc for Market service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1023,6 +2207,42 @@ var Market_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "api.market.v1.Market",
 	HandlerType: (*MarketServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "DescribeHotCoins",
+			Handler:    _Market_DescribeHotCoins_Handler,
+		},
+		{
+			MethodName: "DescribeHotCoinsV2",
+			Handler:    _Market_DescribeHotCoinsV2_Handler,
+		},
+		{
+			MethodName: "DescribeChainsSupport",
+			Handler:    _Market_DescribeChainsSupport_Handler,
+		},
+		{
+			MethodName: "DescribeAlerts",
+			Handler:    _Market_DescribeAlerts_Handler,
+		},
+		{
+			MethodName: "CreateAlert",
+			Handler:    _Market_CreateAlert_Handler,
+		},
+		{
+			MethodName: "ModifyAlert",
+			Handler:    _Market_ModifyAlert_Handler,
+		},
+		{
+			MethodName: "RemoveAlert",
+			Handler:    _Market_RemoveAlert_Handler,
+		},
+		{
+			MethodName: "DescribeCollectionGuideList",
+			Handler:    _Market_DescribeCollectionGuideList_Handler,
+		},
+		{
+			MethodName: "DescribeCollectionGuides",
+			Handler:    _Market_DescribeCollectionGuides_Handler,
+		},
 		{
 			MethodName: "DescribeCoinSwaps",
 			Handler:    _Market_DescribeCoinSwaps_Handler,
@@ -1038,6 +2258,14 @@ var Market_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DescribeCoinPriceChart",
 			Handler:    _Market_DescribeCoinPriceChart_Handler,
+		},
+		{
+			MethodName: "DescribeCoinPriceByRange",
+			Handler:    _Market_DescribeCoinPriceByRange_Handler,
+		},
+		{
+			MethodName: "DescribeCoinPriceByTimestamp",
+			Handler:    _Market_DescribeCoinPriceByTimestamp_Handler,
 		},
 		{
 			MethodName: "DescribeCexCoins",
@@ -1142,6 +2370,110 @@ var Market_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DescribePriceByCoinAddress",
 			Handler:    _Market_DescribePriceByCoinAddress_Handler,
+		},
+		{
+			MethodName: "DescribeCoinIDByTokens",
+			Handler:    _Market_DescribeCoinIDByTokens_Handler,
+		},
+		{
+			MethodName: "CreateCoinGuide",
+			Handler:    _Market_CreateCoinGuide_Handler,
+		},
+		{
+			MethodName: "DeleteCoinGuide",
+			Handler:    _Market_DeleteCoinGuide_Handler,
+		},
+		{
+			MethodName: "ModifyCoinGuide",
+			Handler:    _Market_ModifyCoinGuide_Handler,
+		},
+		{
+			MethodName: "DescribeWhiteTokens",
+			Handler:    _Market_DescribeWhiteTokens_Handler,
+		},
+		{
+			MethodName: "CreateChain",
+			Handler:    _Market_CreateChain_Handler,
+		},
+		{
+			MethodName: "ModifyChain",
+			Handler:    _Market_ModifyChain_Handler,
+		},
+		{
+			MethodName: "DeleteChain",
+			Handler:    _Market_DeleteChain_Handler,
+		},
+		{
+			MethodName: "CreateChainRelation",
+			Handler:    _Market_CreateChainRelation_Handler,
+		},
+		{
+			MethodName: "DeleteChainRelation",
+			Handler:    _Market_DeleteChainRelation_Handler,
+		},
+		{
+			MethodName: "CheckCoins",
+			Handler:    _Market_CheckCoins_Handler,
+		},
+		{
+			MethodName: "DescribeDex",
+			Handler:    _Market_DescribeDex_Handler,
+		},
+		{
+			MethodName: "DescribePairs",
+			Handler:    _Market_DescribePairs_Handler,
+		},
+		{
+			MethodName: "DescribePair",
+			Handler:    _Market_DescribePair_Handler,
+		},
+		{
+			MethodName: "DescribePairTrends",
+			Handler:    _Market_DescribePairTrends_Handler,
+		},
+		{
+			MethodName: "DescribePairTrendsV2",
+			Handler:    _Market_DescribePairTrendsV2_Handler,
+		},
+		{
+			MethodName: "SearchCoinAndPair",
+			Handler:    _Market_SearchCoinAndPair_Handler,
+		},
+		{
+			MethodName: "AddCollection",
+			Handler:    _Market_AddCollection_Handler,
+		},
+		{
+			MethodName: "RemoveCollection",
+			Handler:    _Market_RemoveCollection_Handler,
+		},
+		{
+			MethodName: "DescribeCollections",
+			Handler:    _Market_DescribeCollections_Handler,
+		},
+		{
+			MethodName: "CreateDex",
+			Handler:    _Market_CreateDex_Handler,
+		},
+		{
+			MethodName: "ModifyDex",
+			Handler:    _Market_ModifyDex_Handler,
+		},
+		{
+			MethodName: "DeleteDex",
+			Handler:    _Market_DeleteDex_Handler,
+		},
+		{
+			MethodName: "DescribeRate",
+			Handler:    _Market_DescribeRate_Handler,
+		},
+		{
+			MethodName: "DescribePairGuides",
+			Handler:    _Market_DescribePairGuides_Handler,
+		},
+		{
+			MethodName: "DescribeCoinsByChain",
+			Handler:    _Market_DescribeCoinsByChain_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

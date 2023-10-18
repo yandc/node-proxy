@@ -188,13 +188,7 @@ func testRefreshLogoURI() {
 func testAutoUpdateTokenList() {
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
 	//tokenlist.AutoUpdatePrice()
-	fmt.Println("cgIds=", cgIds)
-	ids := strings.Split(cgIds, ",")
-	if len(ids) == 0 {
-		fmt.Println("ids length is nil.")
-		return
-	}
-	tokenlist.AutoUpdateCGTokenList(ids)
+	tokenlist.UpdateTokenListByMarket()
 }
 
 func testCommRPC() {

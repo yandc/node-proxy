@@ -35,6 +35,3477 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on AddCollectionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *AddCollectionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AddCollectionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AddCollectionRequestMultiError, or nil if none found.
+func (m *AddCollectionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AddCollectionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if utf8.RuneCountInString(m.GetUserID()) < 1 {
+		err := AddCollectionRequestValidationError{
+			field:  "UserID",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetCoinIDs()) < 1 {
+		err := AddCollectionRequestValidationError{
+			field:  "CoinIDs",
+			reason: "value must contain at least 1 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := _AddCollectionRequest_Type_InLookup[m.GetType()]; !ok {
+		err := AddCollectionRequestValidationError{
+			field:  "Type",
+			reason: "value must be in list [1 2]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return AddCollectionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AddCollectionRequestMultiError is an error wrapping multiple validation
+// errors returned by AddCollectionRequest.ValidateAll() if the designated
+// constraints aren't met.
+type AddCollectionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AddCollectionRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AddCollectionRequestMultiError) AllErrors() []error { return m }
+
+// AddCollectionRequestValidationError is the validation error returned by
+// AddCollectionRequest.Validate if the designated constraints aren't met.
+type AddCollectionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AddCollectionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AddCollectionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AddCollectionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AddCollectionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AddCollectionRequestValidationError) ErrorName() string {
+	return "AddCollectionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AddCollectionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAddCollectionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AddCollectionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AddCollectionRequestValidationError{}
+
+var _AddCollectionRequest_Type_InLookup = map[int32]struct{}{
+	1: {},
+	2: {},
+}
+
+// Validate checks the field values on AddCollectionReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *AddCollectionReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AddCollectionReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AddCollectionReplyMultiError, or nil if none found.
+func (m *AddCollectionReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AddCollectionReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Code
+
+	// no validation rules for Message
+
+	// no validation rules for EventId
+
+	if len(errors) > 0 {
+		return AddCollectionReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// AddCollectionReplyMultiError is an error wrapping multiple validation errors
+// returned by AddCollectionReply.ValidateAll() if the designated constraints
+// aren't met.
+type AddCollectionReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AddCollectionReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AddCollectionReplyMultiError) AllErrors() []error { return m }
+
+// AddCollectionReplyValidationError is the validation error returned by
+// AddCollectionReply.Validate if the designated constraints aren't met.
+type AddCollectionReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AddCollectionReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AddCollectionReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AddCollectionReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AddCollectionReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AddCollectionReplyValidationError) ErrorName() string {
+	return "AddCollectionReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AddCollectionReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAddCollectionReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AddCollectionReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AddCollectionReplyValidationError{}
+
+// Validate checks the field values on RemoveCollectionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RemoveCollectionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RemoveCollectionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RemoveCollectionRequestMultiError, or nil if none found.
+func (m *RemoveCollectionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RemoveCollectionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if utf8.RuneCountInString(m.GetUserID()) < 1 {
+		err := RemoveCollectionRequestValidationError{
+			field:  "UserID",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetCoinID()) < 1 {
+		err := RemoveCollectionRequestValidationError{
+			field:  "CoinID",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return RemoveCollectionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RemoveCollectionRequestMultiError is an error wrapping multiple validation
+// errors returned by RemoveCollectionRequest.ValidateAll() if the designated
+// constraints aren't met.
+type RemoveCollectionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RemoveCollectionRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RemoveCollectionRequestMultiError) AllErrors() []error { return m }
+
+// RemoveCollectionRequestValidationError is the validation error returned by
+// RemoveCollectionRequest.Validate if the designated constraints aren't met.
+type RemoveCollectionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RemoveCollectionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RemoveCollectionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RemoveCollectionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RemoveCollectionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RemoveCollectionRequestValidationError) ErrorName() string {
+	return "RemoveCollectionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RemoveCollectionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRemoveCollectionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RemoveCollectionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RemoveCollectionRequestValidationError{}
+
+// Validate checks the field values on RemoveCollectionReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RemoveCollectionReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RemoveCollectionReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RemoveCollectionReplyMultiError, or nil if none found.
+func (m *RemoveCollectionReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RemoveCollectionReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Code
+
+	// no validation rules for Message
+
+	// no validation rules for EventId
+
+	if len(errors) > 0 {
+		return RemoveCollectionReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// RemoveCollectionReplyMultiError is an error wrapping multiple validation
+// errors returned by RemoveCollectionReply.ValidateAll() if the designated
+// constraints aren't met.
+type RemoveCollectionReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RemoveCollectionReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RemoveCollectionReplyMultiError) AllErrors() []error { return m }
+
+// RemoveCollectionReplyValidationError is the validation error returned by
+// RemoveCollectionReply.Validate if the designated constraints aren't met.
+type RemoveCollectionReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RemoveCollectionReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RemoveCollectionReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RemoveCollectionReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RemoveCollectionReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RemoveCollectionReplyValidationError) ErrorName() string {
+	return "RemoveCollectionReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RemoveCollectionReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRemoveCollectionReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RemoveCollectionReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RemoveCollectionReplyValidationError{}
+
+// Validate checks the field values on DescribeCollectionsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeCollectionsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeCollectionsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribeCollectionsRequestMultiError, or nil if none found.
+func (m *DescribeCollectionsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeCollectionsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if utf8.RuneCountInString(m.GetUserID()) < 1 {
+		err := DescribeCollectionsRequestValidationError{
+			field:  "UserID",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := _DescribeCollectionsRequest_Type_InLookup[m.GetType()]; !ok {
+		err := DescribeCollectionsRequestValidationError{
+			field:  "Type",
+			reason: "value must be in list [1 2]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetCurrency()) < 1 {
+		err := DescribeCollectionsRequestValidationError{
+			field:  "Currency",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetPage() <= 0 {
+		err := DescribeCollectionsRequestValidationError{
+			field:  "Page",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if val := m.GetPageSize(); val <= 0 || val > 100 {
+		err := DescribeCollectionsRequestValidationError{
+			field:  "PageSize",
+			reason: "value must be inside range (0, 100]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for SortField
+
+	if _, ok := _DescribeCollectionsRequest_SortType_InLookup[m.GetSortType()]; !ok {
+		err := DescribeCollectionsRequestValidationError{
+			field:  "SortType",
+			reason: "value must be in list [ asc desc]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return DescribeCollectionsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeCollectionsRequestMultiError is an error wrapping multiple
+// validation errors returned by DescribeCollectionsRequest.ValidateAll() if
+// the designated constraints aren't met.
+type DescribeCollectionsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeCollectionsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeCollectionsRequestMultiError) AllErrors() []error { return m }
+
+// DescribeCollectionsRequestValidationError is the validation error returned
+// by DescribeCollectionsRequest.Validate if the designated constraints aren't met.
+type DescribeCollectionsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeCollectionsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeCollectionsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeCollectionsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeCollectionsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeCollectionsRequestValidationError) ErrorName() string {
+	return "DescribeCollectionsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeCollectionsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeCollectionsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeCollectionsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeCollectionsRequestValidationError{}
+
+var _DescribeCollectionsRequest_Type_InLookup = map[int32]struct{}{
+	1: {},
+	2: {},
+}
+
+var _DescribeCollectionsRequest_SortType_InLookup = map[string]struct{}{
+	"":     {},
+	"asc":  {},
+	"desc": {},
+}
+
+// Validate checks the field values on DescribeCollectionsReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeCollectionsReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeCollectionsReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribeCollectionsReplyMultiError, or nil if none found.
+func (m *DescribeCollectionsReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeCollectionsReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Total
+
+	if _, ok := _DescribeCollectionsReply_Type_InLookup[m.GetType()]; !ok {
+		err := DescribeCollectionsReplyValidationError{
+			field:  "Type",
+			reason: "value must be in list [1 2]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetCoins() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DescribeCollectionsReplyValidationError{
+						field:  fmt.Sprintf("Coins[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DescribeCollectionsReplyValidationError{
+						field:  fmt.Sprintf("Coins[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DescribeCollectionsReplyValidationError{
+					field:  fmt.Sprintf("Coins[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetPairs() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DescribeCollectionsReplyValidationError{
+						field:  fmt.Sprintf("Pairs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DescribeCollectionsReplyValidationError{
+						field:  fmt.Sprintf("Pairs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DescribeCollectionsReplyValidationError{
+					field:  fmt.Sprintf("Pairs[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DescribeCollectionsReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeCollectionsReplyMultiError is an error wrapping multiple validation
+// errors returned by DescribeCollectionsReply.ValidateAll() if the designated
+// constraints aren't met.
+type DescribeCollectionsReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeCollectionsReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeCollectionsReplyMultiError) AllErrors() []error { return m }
+
+// DescribeCollectionsReplyValidationError is the validation error returned by
+// DescribeCollectionsReply.Validate if the designated constraints aren't met.
+type DescribeCollectionsReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeCollectionsReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeCollectionsReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeCollectionsReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeCollectionsReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeCollectionsReplyValidationError) ErrorName() string {
+	return "DescribeCollectionsReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeCollectionsReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeCollectionsReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeCollectionsReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeCollectionsReplyValidationError{}
+
+var _DescribeCollectionsReply_Type_InLookup = map[int32]struct{}{
+	1: {},
+	2: {},
+}
+
+// Validate checks the field values on SearchCoinAndPairRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SearchCoinAndPairRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SearchCoinAndPairRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SearchCoinAndPairRequestMultiError, or nil if none found.
+func (m *SearchCoinAndPairRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SearchCoinAndPairRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if utf8.RuneCountInString(m.GetKeyword()) < 1 {
+		err := SearchCoinAndPairRequestValidationError{
+			field:  "Keyword",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if val := m.GetPageSize(); val <= 0 || val > 100 {
+		err := SearchCoinAndPairRequestValidationError{
+			field:  "PageSize",
+			reason: "value must be inside range (0, 100]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return SearchCoinAndPairRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SearchCoinAndPairRequestMultiError is an error wrapping multiple validation
+// errors returned by SearchCoinAndPairRequest.ValidateAll() if the designated
+// constraints aren't met.
+type SearchCoinAndPairRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SearchCoinAndPairRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SearchCoinAndPairRequestMultiError) AllErrors() []error { return m }
+
+// SearchCoinAndPairRequestValidationError is the validation error returned by
+// SearchCoinAndPairRequest.Validate if the designated constraints aren't met.
+type SearchCoinAndPairRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SearchCoinAndPairRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SearchCoinAndPairRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SearchCoinAndPairRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SearchCoinAndPairRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SearchCoinAndPairRequestValidationError) ErrorName() string {
+	return "SearchCoinAndPairRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SearchCoinAndPairRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSearchCoinAndPairRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SearchCoinAndPairRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SearchCoinAndPairRequestValidationError{}
+
+// Validate checks the field values on SearchCoinAndPairReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SearchCoinAndPairReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SearchCoinAndPairReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SearchCoinAndPairReplyMultiError, or nil if none found.
+func (m *SearchCoinAndPairReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SearchCoinAndPairReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetCoins() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SearchCoinAndPairReplyValidationError{
+						field:  fmt.Sprintf("Coins[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SearchCoinAndPairReplyValidationError{
+						field:  fmt.Sprintf("Coins[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SearchCoinAndPairReplyValidationError{
+					field:  fmt.Sprintf("Coins[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return SearchCoinAndPairReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// SearchCoinAndPairReplyMultiError is an error wrapping multiple validation
+// errors returned by SearchCoinAndPairReply.ValidateAll() if the designated
+// constraints aren't met.
+type SearchCoinAndPairReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SearchCoinAndPairReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SearchCoinAndPairReplyMultiError) AllErrors() []error { return m }
+
+// SearchCoinAndPairReplyValidationError is the validation error returned by
+// SearchCoinAndPairReply.Validate if the designated constraints aren't met.
+type SearchCoinAndPairReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SearchCoinAndPairReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SearchCoinAndPairReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SearchCoinAndPairReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SearchCoinAndPairReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SearchCoinAndPairReplyValidationError) ErrorName() string {
+	return "SearchCoinAndPairReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SearchCoinAndPairReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSearchCoinAndPairReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SearchCoinAndPairReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SearchCoinAndPairReplyValidationError{}
+
+// Validate checks the field values on CoinAndPair with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *CoinAndPair) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CoinAndPair with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in CoinAndPairMultiError, or
+// nil if none found.
+func (m *CoinAndPair) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CoinAndPair) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CoinID
+
+	// no validation rules for Name
+
+	// no validation rules for Symbol
+
+	// no validation rules for Image
+
+	// no validation rules for Type
+
+	// no validation rules for ChainIcon
+
+	// no validation rules for DexIcon
+
+	// no validation rules for Price
+
+	// no validation rules for PriceDelta
+
+	// no validation rules for Liquidity
+
+	// no validation rules for Volume
+
+	// no validation rules for CreatedAt
+
+	// no validation rules for PairAddress
+
+	if all {
+		switch v := interface{}(m.GetBaseToken()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CoinAndPairValidationError{
+					field:  "BaseToken",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CoinAndPairValidationError{
+					field:  "BaseToken",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetBaseToken()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CoinAndPairValidationError{
+				field:  "BaseToken",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetQuoteToken()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CoinAndPairValidationError{
+					field:  "QuoteToken",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CoinAndPairValidationError{
+					field:  "QuoteToken",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetQuoteToken()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CoinAndPairValidationError{
+				field:  "QuoteToken",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Chain
+
+	// no validation rules for DexID
+
+	if len(errors) > 0 {
+		return CoinAndPairMultiError(errors)
+	}
+
+	return nil
+}
+
+// CoinAndPairMultiError is an error wrapping multiple validation errors
+// returned by CoinAndPair.ValidateAll() if the designated constraints aren't met.
+type CoinAndPairMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CoinAndPairMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CoinAndPairMultiError) AllErrors() []error { return m }
+
+// CoinAndPairValidationError is the validation error returned by
+// CoinAndPair.Validate if the designated constraints aren't met.
+type CoinAndPairValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CoinAndPairValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CoinAndPairValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CoinAndPairValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CoinAndPairValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CoinAndPairValidationError) ErrorName() string { return "CoinAndPairValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CoinAndPairValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCoinAndPair.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CoinAndPairValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CoinAndPairValidationError{}
+
+// Validate checks the field values on DescribeDexRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeDexRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeDexRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribeDexRequestMultiError, or nil if none found.
+func (m *DescribeDexRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeDexRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if m.Chain != nil {
+		// no validation rules for Chain
+	}
+
+	if len(errors) > 0 {
+		return DescribeDexRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeDexRequestMultiError is an error wrapping multiple validation errors
+// returned by DescribeDexRequest.ValidateAll() if the designated constraints
+// aren't met.
+type DescribeDexRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeDexRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeDexRequestMultiError) AllErrors() []error { return m }
+
+// DescribeDexRequestValidationError is the validation error returned by
+// DescribeDexRequest.Validate if the designated constraints aren't met.
+type DescribeDexRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeDexRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeDexRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeDexRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeDexRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeDexRequestValidationError) ErrorName() string {
+	return "DescribeDexRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeDexRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeDexRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeDexRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeDexRequestValidationError{}
+
+// Validate checks the field values on DescribeDexReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *DescribeDexReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeDexReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribeDexReplyMultiError, or nil if none found.
+func (m *DescribeDexReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeDexReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetDexes() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DescribeDexReplyValidationError{
+						field:  fmt.Sprintf("Dexes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DescribeDexReplyValidationError{
+						field:  fmt.Sprintf("Dexes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DescribeDexReplyValidationError{
+					field:  fmt.Sprintf("Dexes[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DescribeDexReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeDexReplyMultiError is an error wrapping multiple validation errors
+// returned by DescribeDexReply.ValidateAll() if the designated constraints
+// aren't met.
+type DescribeDexReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeDexReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeDexReplyMultiError) AllErrors() []error { return m }
+
+// DescribeDexReplyValidationError is the validation error returned by
+// DescribeDexReply.Validate if the designated constraints aren't met.
+type DescribeDexReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeDexReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeDexReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeDexReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeDexReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeDexReplyValidationError) ErrorName() string { return "DescribeDexReplyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e DescribeDexReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeDexReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeDexReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeDexReplyValidationError{}
+
+// Validate checks the field values on DescribeHotCoinsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeHotCoinsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeHotCoinsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribeHotCoinsRequestMultiError, or nil if none found.
+func (m *DescribeHotCoinsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeHotCoinsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	// no validation rules for Limit
+
+	if utf8.RuneCountInString(m.GetCurrency()) < 1 {
+		err := DescribeHotCoinsRequestValidationError{
+			field:  "Currency",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return DescribeHotCoinsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeHotCoinsRequestMultiError is an error wrapping multiple validation
+// errors returned by DescribeHotCoinsRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DescribeHotCoinsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeHotCoinsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeHotCoinsRequestMultiError) AllErrors() []error { return m }
+
+// DescribeHotCoinsRequestValidationError is the validation error returned by
+// DescribeHotCoinsRequest.Validate if the designated constraints aren't met.
+type DescribeHotCoinsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeHotCoinsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeHotCoinsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeHotCoinsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeHotCoinsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeHotCoinsRequestValidationError) ErrorName() string {
+	return "DescribeHotCoinsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeHotCoinsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeHotCoinsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeHotCoinsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeHotCoinsRequestValidationError{}
+
+// Validate checks the field values on DescribeHotCoinsReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeHotCoinsReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeHotCoinsReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribeHotCoinsReplyMultiError, or nil if none found.
+func (m *DescribeHotCoinsReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeHotCoinsReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetCoins() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DescribeHotCoinsReplyValidationError{
+						field:  fmt.Sprintf("Coins[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DescribeHotCoinsReplyValidationError{
+						field:  fmt.Sprintf("Coins[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DescribeHotCoinsReplyValidationError{
+					field:  fmt.Sprintf("Coins[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DescribeHotCoinsReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeHotCoinsReplyMultiError is an error wrapping multiple validation
+// errors returned by DescribeHotCoinsReply.ValidateAll() if the designated
+// constraints aren't met.
+type DescribeHotCoinsReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeHotCoinsReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeHotCoinsReplyMultiError) AllErrors() []error { return m }
+
+// DescribeHotCoinsReplyValidationError is the validation error returned by
+// DescribeHotCoinsReply.Validate if the designated constraints aren't met.
+type DescribeHotCoinsReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeHotCoinsReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeHotCoinsReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeHotCoinsReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeHotCoinsReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeHotCoinsReplyValidationError) ErrorName() string {
+	return "DescribeHotCoinsReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeHotCoinsReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeHotCoinsReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeHotCoinsReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeHotCoinsReplyValidationError{}
+
+// Validate checks the field values on DescribeHotCoinsV2Reply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeHotCoinsV2Reply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeHotCoinsV2Reply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribeHotCoinsV2ReplyMultiError, or nil if none found.
+func (m *DescribeHotCoinsV2Reply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeHotCoinsV2Reply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetCoins() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DescribeHotCoinsV2ReplyValidationError{
+						field:  fmt.Sprintf("Coins[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DescribeHotCoinsV2ReplyValidationError{
+						field:  fmt.Sprintf("Coins[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DescribeHotCoinsV2ReplyValidationError{
+					field:  fmt.Sprintf("Coins[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DescribeHotCoinsV2ReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeHotCoinsV2ReplyMultiError is an error wrapping multiple validation
+// errors returned by DescribeHotCoinsV2Reply.ValidateAll() if the designated
+// constraints aren't met.
+type DescribeHotCoinsV2ReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeHotCoinsV2ReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeHotCoinsV2ReplyMultiError) AllErrors() []error { return m }
+
+// DescribeHotCoinsV2ReplyValidationError is the validation error returned by
+// DescribeHotCoinsV2Reply.Validate if the designated constraints aren't met.
+type DescribeHotCoinsV2ReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeHotCoinsV2ReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeHotCoinsV2ReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeHotCoinsV2ReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeHotCoinsV2ReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeHotCoinsV2ReplyValidationError) ErrorName() string {
+	return "DescribeHotCoinsV2ReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeHotCoinsV2ReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeHotCoinsV2Reply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeHotCoinsV2ReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeHotCoinsV2ReplyValidationError{}
+
+// Validate checks the field values on DescribeChainsSupportRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeChainsSupportRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeChainsSupportRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribeChainsSupportRequestMultiError, or nil if none found.
+func (m *DescribeChainsSupportRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeChainsSupportRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if _, ok := _DescribeChainsSupportRequest_Type_InLookup[m.GetType()]; !ok {
+		err := DescribeChainsSupportRequestValidationError{
+			field:  "Type",
+			reason: "value must be in list [1 2]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return DescribeChainsSupportRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeChainsSupportRequestMultiError is an error wrapping multiple
+// validation errors returned by DescribeChainsSupportRequest.ValidateAll() if
+// the designated constraints aren't met.
+type DescribeChainsSupportRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeChainsSupportRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeChainsSupportRequestMultiError) AllErrors() []error { return m }
+
+// DescribeChainsSupportRequestValidationError is the validation error returned
+// by DescribeChainsSupportRequest.Validate if the designated constraints
+// aren't met.
+type DescribeChainsSupportRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeChainsSupportRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeChainsSupportRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeChainsSupportRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeChainsSupportRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeChainsSupportRequestValidationError) ErrorName() string {
+	return "DescribeChainsSupportRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeChainsSupportRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeChainsSupportRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeChainsSupportRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeChainsSupportRequestValidationError{}
+
+var _DescribeChainsSupportRequest_Type_InLookup = map[int32]struct{}{
+	1: {},
+	2: {},
+}
+
+// Validate checks the field values on DescribeChainsSupportReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeChainsSupportReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeChainsSupportReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribeChainsSupportReplyMultiError, or nil if none found.
+func (m *DescribeChainsSupportReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeChainsSupportReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetChains() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DescribeChainsSupportReplyValidationError{
+						field:  fmt.Sprintf("Chains[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DescribeChainsSupportReplyValidationError{
+						field:  fmt.Sprintf("Chains[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DescribeChainsSupportReplyValidationError{
+					field:  fmt.Sprintf("Chains[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DescribeChainsSupportReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeChainsSupportReplyMultiError is an error wrapping multiple
+// validation errors returned by DescribeChainsSupportReply.ValidateAll() if
+// the designated constraints aren't met.
+type DescribeChainsSupportReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeChainsSupportReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeChainsSupportReplyMultiError) AllErrors() []error { return m }
+
+// DescribeChainsSupportReplyValidationError is the validation error returned
+// by DescribeChainsSupportReply.Validate if the designated constraints aren't met.
+type DescribeChainsSupportReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeChainsSupportReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeChainsSupportReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeChainsSupportReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeChainsSupportReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeChainsSupportReplyValidationError) ErrorName() string {
+	return "DescribeChainsSupportReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeChainsSupportReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeChainsSupportReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeChainsSupportReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeChainsSupportReplyValidationError{}
+
+// Validate checks the field values on ModifyAlertRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ModifyAlertRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ModifyAlertRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ModifyAlertRequestMultiError, or nil if none found.
+func (m *ModifyAlertRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ModifyAlertRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	// no validation rules for AlertID
+
+	if _, ok := _ModifyAlertRequest_AlertType_InLookup[m.GetAlertType()]; !ok {
+		err := ModifyAlertRequestValidationError{
+			field:  "AlertType",
+			reason: "value must be in list [1 2 3]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetCurrency()) < 1 {
+		err := ModifyAlertRequestValidationError{
+			field:  "Currency",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Value
+
+	if _, ok := _ModifyAlertRequest_Frequency_InLookup[m.GetFrequency()]; !ok {
+		err := ModifyAlertRequestValidationError{
+			field:  "Frequency",
+			reason: "value must be in list [1 2]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return ModifyAlertRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ModifyAlertRequestMultiError is an error wrapping multiple validation errors
+// returned by ModifyAlertRequest.ValidateAll() if the designated constraints
+// aren't met.
+type ModifyAlertRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ModifyAlertRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ModifyAlertRequestMultiError) AllErrors() []error { return m }
+
+// ModifyAlertRequestValidationError is the validation error returned by
+// ModifyAlertRequest.Validate if the designated constraints aren't met.
+type ModifyAlertRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ModifyAlertRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ModifyAlertRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ModifyAlertRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ModifyAlertRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ModifyAlertRequestValidationError) ErrorName() string {
+	return "ModifyAlertRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ModifyAlertRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sModifyAlertRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ModifyAlertRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ModifyAlertRequestValidationError{}
+
+var _ModifyAlertRequest_AlertType_InLookup = map[int32]struct{}{
+	1: {},
+	2: {},
+	3: {},
+}
+
+var _ModifyAlertRequest_Frequency_InLookup = map[int32]struct{}{
+	1: {},
+	2: {},
+}
+
+// Validate checks the field values on ModifyAlertReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ModifyAlertReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ModifyAlertReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ModifyAlertReplyMultiError, or nil if none found.
+func (m *ModifyAlertReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ModifyAlertReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Code
+
+	// no validation rules for Message
+
+	// no validation rules for EventId
+
+	if len(errors) > 0 {
+		return ModifyAlertReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// ModifyAlertReplyMultiError is an error wrapping multiple validation errors
+// returned by ModifyAlertReply.ValidateAll() if the designated constraints
+// aren't met.
+type ModifyAlertReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ModifyAlertReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ModifyAlertReplyMultiError) AllErrors() []error { return m }
+
+// ModifyAlertReplyValidationError is the validation error returned by
+// ModifyAlertReply.Validate if the designated constraints aren't met.
+type ModifyAlertReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ModifyAlertReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ModifyAlertReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ModifyAlertReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ModifyAlertReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ModifyAlertReplyValidationError) ErrorName() string { return "ModifyAlertReplyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ModifyAlertReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sModifyAlertReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ModifyAlertReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ModifyAlertReplyValidationError{}
+
+// Validate checks the field values on DescribeAlertsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeAlertsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeAlertsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribeAlertsRequestMultiError, or nil if none found.
+func (m *DescribeAlertsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeAlertsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if utf8.RuneCountInString(m.GetUserID()) < 1 {
+		err := DescribeAlertsRequestValidationError{
+			field:  "UserID",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return DescribeAlertsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeAlertsRequestMultiError is an error wrapping multiple validation
+// errors returned by DescribeAlertsRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DescribeAlertsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeAlertsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeAlertsRequestMultiError) AllErrors() []error { return m }
+
+// DescribeAlertsRequestValidationError is the validation error returned by
+// DescribeAlertsRequest.Validate if the designated constraints aren't met.
+type DescribeAlertsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeAlertsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeAlertsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeAlertsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeAlertsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeAlertsRequestValidationError) ErrorName() string {
+	return "DescribeAlertsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeAlertsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeAlertsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeAlertsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeAlertsRequestValidationError{}
+
+// Validate checks the field values on DescribeAlertsReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeAlertsReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeAlertsReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribeAlertsReplyMultiError, or nil if none found.
+func (m *DescribeAlertsReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeAlertsReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetCoinAlerts() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DescribeAlertsReplyValidationError{
+						field:  fmt.Sprintf("CoinAlerts[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DescribeAlertsReplyValidationError{
+						field:  fmt.Sprintf("CoinAlerts[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DescribeAlertsReplyValidationError{
+					field:  fmt.Sprintf("CoinAlerts[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DescribeAlertsReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeAlertsReplyMultiError is an error wrapping multiple validation
+// errors returned by DescribeAlertsReply.ValidateAll() if the designated
+// constraints aren't met.
+type DescribeAlertsReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeAlertsReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeAlertsReplyMultiError) AllErrors() []error { return m }
+
+// DescribeAlertsReplyValidationError is the validation error returned by
+// DescribeAlertsReply.Validate if the designated constraints aren't met.
+type DescribeAlertsReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeAlertsReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeAlertsReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeAlertsReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeAlertsReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeAlertsReplyValidationError) ErrorName() string {
+	return "DescribeAlertsReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeAlertsReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeAlertsReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeAlertsReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeAlertsReplyValidationError{}
+
+// Validate checks the field values on CreateAlertRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateAlertRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateAlertRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateAlertRequestMultiError, or nil if none found.
+func (m *CreateAlertRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateAlertRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	// no validation rules for AlertID
+
+	if utf8.RuneCountInString(m.GetUserID()) < 1 {
+		err := CreateAlertRequestValidationError{
+			field:  "UserID",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetCoinID()) < 1 {
+		err := CreateAlertRequestValidationError{
+			field:  "CoinID",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := _CreateAlertRequest_AlertType_InLookup[m.GetAlertType()]; !ok {
+		err := CreateAlertRequestValidationError{
+			field:  "AlertType",
+			reason: "value must be in list [1 2 3]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetCurrency()) < 1 {
+		err := CreateAlertRequestValidationError{
+			field:  "Currency",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Value
+
+	if _, ok := _CreateAlertRequest_Frequency_InLookup[m.GetFrequency()]; !ok {
+		err := CreateAlertRequestValidationError{
+			field:  "Frequency",
+			reason: "value must be in list [1 2]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := _CreateAlertRequest_Type_InLookup[m.GetType()]; !ok {
+		err := CreateAlertRequestValidationError{
+			field:  "Type",
+			reason: "value must be in list [1 2]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return CreateAlertRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateAlertRequestMultiError is an error wrapping multiple validation errors
+// returned by CreateAlertRequest.ValidateAll() if the designated constraints
+// aren't met.
+type CreateAlertRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateAlertRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateAlertRequestMultiError) AllErrors() []error { return m }
+
+// CreateAlertRequestValidationError is the validation error returned by
+// CreateAlertRequest.Validate if the designated constraints aren't met.
+type CreateAlertRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateAlertRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateAlertRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateAlertRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateAlertRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateAlertRequestValidationError) ErrorName() string {
+	return "CreateAlertRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateAlertRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateAlertRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateAlertRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateAlertRequestValidationError{}
+
+var _CreateAlertRequest_AlertType_InLookup = map[int32]struct{}{
+	1: {},
+	2: {},
+	3: {},
+}
+
+var _CreateAlertRequest_Frequency_InLookup = map[int32]struct{}{
+	1: {},
+	2: {},
+}
+
+var _CreateAlertRequest_Type_InLookup = map[int32]struct{}{
+	1: {},
+	2: {},
+}
+
+// Validate checks the field values on CreateAlertReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *CreateAlertReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateAlertReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateAlertReplyMultiError, or nil if none found.
+func (m *CreateAlertReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateAlertReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Code
+
+	// no validation rules for Message
+
+	// no validation rules for EventId
+
+	if len(errors) > 0 {
+		return CreateAlertReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateAlertReplyMultiError is an error wrapping multiple validation errors
+// returned by CreateAlertReply.ValidateAll() if the designated constraints
+// aren't met.
+type CreateAlertReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateAlertReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateAlertReplyMultiError) AllErrors() []error { return m }
+
+// CreateAlertReplyValidationError is the validation error returned by
+// CreateAlertReply.Validate if the designated constraints aren't met.
+type CreateAlertReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateAlertReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateAlertReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateAlertReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateAlertReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateAlertReplyValidationError) ErrorName() string { return "CreateAlertReplyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CreateAlertReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateAlertReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateAlertReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateAlertReplyValidationError{}
+
+// Validate checks the field values on RemoveAlertRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RemoveAlertRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RemoveAlertRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RemoveAlertRequestMultiError, or nil if none found.
+func (m *RemoveAlertRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RemoveAlertRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	// no validation rules for AlertID
+
+	if len(errors) > 0 {
+		return RemoveAlertRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RemoveAlertRequestMultiError is an error wrapping multiple validation errors
+// returned by RemoveAlertRequest.ValidateAll() if the designated constraints
+// aren't met.
+type RemoveAlertRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RemoveAlertRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RemoveAlertRequestMultiError) AllErrors() []error { return m }
+
+// RemoveAlertRequestValidationError is the validation error returned by
+// RemoveAlertRequest.Validate if the designated constraints aren't met.
+type RemoveAlertRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RemoveAlertRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RemoveAlertRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RemoveAlertRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RemoveAlertRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RemoveAlertRequestValidationError) ErrorName() string {
+	return "RemoveAlertRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RemoveAlertRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRemoveAlertRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RemoveAlertRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RemoveAlertRequestValidationError{}
+
+// Validate checks the field values on RemoveAlertReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *RemoveAlertReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RemoveAlertReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RemoveAlertReplyMultiError, or nil if none found.
+func (m *RemoveAlertReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RemoveAlertReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Code
+
+	// no validation rules for Message
+
+	// no validation rules for EventId
+
+	if len(errors) > 0 {
+		return RemoveAlertReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// RemoveAlertReplyMultiError is an error wrapping multiple validation errors
+// returned by RemoveAlertReply.ValidateAll() if the designated constraints
+// aren't met.
+type RemoveAlertReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RemoveAlertReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RemoveAlertReplyMultiError) AllErrors() []error { return m }
+
+// RemoveAlertReplyValidationError is the validation error returned by
+// RemoveAlertReply.Validate if the designated constraints aren't met.
+type RemoveAlertReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RemoveAlertReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RemoveAlertReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RemoveAlertReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RemoveAlertReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RemoveAlertReplyValidationError) ErrorName() string { return "RemoveAlertReplyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e RemoveAlertReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRemoveAlertReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RemoveAlertReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RemoveAlertReplyValidationError{}
+
+// Validate checks the field values on DescribeCollectionGuideListRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *DescribeCollectionGuideListRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeCollectionGuideListRequest
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// DescribeCollectionGuideListRequestMultiError, or nil if none found.
+func (m *DescribeCollectionGuideListRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeCollectionGuideListRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if _, ok := _DescribeCollectionGuideListRequest_CoinType_InLookup[m.GetCoinType()]; !ok {
+		err := DescribeCollectionGuideListRequestValidationError{
+			field:  "CoinType",
+			reason: "value must be in list [1 2]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return DescribeCollectionGuideListRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeCollectionGuideListRequestMultiError is an error wrapping multiple
+// validation errors returned by
+// DescribeCollectionGuideListRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DescribeCollectionGuideListRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeCollectionGuideListRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeCollectionGuideListRequestMultiError) AllErrors() []error { return m }
+
+// DescribeCollectionGuideListRequestValidationError is the validation error
+// returned by DescribeCollectionGuideListRequest.Validate if the designated
+// constraints aren't met.
+type DescribeCollectionGuideListRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeCollectionGuideListRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeCollectionGuideListRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeCollectionGuideListRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeCollectionGuideListRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeCollectionGuideListRequestValidationError) ErrorName() string {
+	return "DescribeCollectionGuideListRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeCollectionGuideListRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeCollectionGuideListRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeCollectionGuideListRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeCollectionGuideListRequestValidationError{}
+
+var _DescribeCollectionGuideListRequest_CoinType_InLookup = map[int32]struct{}{
+	1: {},
+	2: {},
+}
+
+// Validate checks the field values on DescribeCollectionGuideListReply with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *DescribeCollectionGuideListReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeCollectionGuideListReply with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// DescribeCollectionGuideListReplyMultiError, or nil if none found.
+func (m *DescribeCollectionGuideListReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeCollectionGuideListReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetGuideList() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DescribeCollectionGuideListReplyValidationError{
+						field:  fmt.Sprintf("GuideList[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DescribeCollectionGuideListReplyValidationError{
+						field:  fmt.Sprintf("GuideList[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DescribeCollectionGuideListReplyValidationError{
+					field:  fmt.Sprintf("GuideList[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DescribeCollectionGuideListReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeCollectionGuideListReplyMultiError is an error wrapping multiple
+// validation errors returned by
+// DescribeCollectionGuideListReply.ValidateAll() if the designated
+// constraints aren't met.
+type DescribeCollectionGuideListReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeCollectionGuideListReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeCollectionGuideListReplyMultiError) AllErrors() []error { return m }
+
+// DescribeCollectionGuideListReplyValidationError is the validation error
+// returned by DescribeCollectionGuideListReply.Validate if the designated
+// constraints aren't met.
+type DescribeCollectionGuideListReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeCollectionGuideListReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeCollectionGuideListReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeCollectionGuideListReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeCollectionGuideListReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeCollectionGuideListReplyValidationError) ErrorName() string {
+	return "DescribeCollectionGuideListReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeCollectionGuideListReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeCollectionGuideListReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeCollectionGuideListReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeCollectionGuideListReplyValidationError{}
+
 // Validate checks the field values on ModifyColumnRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -511,16 +3982,7 @@ func (m *CreateColumnRequest) validate(all bool) error {
 
 	// no validation rules for Name
 
-	if _, ok := _CreateColumnRequest_Type_InLookup[m.GetType()]; !ok {
-		err := CreateColumnRequestValidationError{
-			field:  "Type",
-			reason: "value must be in list [1 2]",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Type
 
 	// no validation rules for Weight
 
@@ -607,11 +4069,6 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CreateColumnRequestValidationError{}
-
-var _CreateColumnRequest_Type_InLookup = map[int32]struct{}{
-	1: {},
-	2: {},
-}
 
 // Validate checks the field values on CreateColumnReply with the rules defined
 // in the proto definition for this message. If any rules are violated, the
@@ -2178,18 +5635,13 @@ func (m *DescribeCexCoinsRequest) validate(all bool) error {
 
 	// no validation rules for ColumnID
 
-	if len(m.GetTokens()) > 1000 {
-		err := DescribeCexCoinsRequestValidationError{
-			field:  "Tokens",
-			reason: "value must contain no more than 1000 item(s)",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Chain
 
-	for idx, item := range m.GetTokens() {
+	// no validation rules for Range
+
+	// no validation rules for RangeWithTime
+
+	for idx, item := range m.GetSort() {
 		_, _ = idx, item
 
 		if all {
@@ -2197,7 +5649,7 @@ func (m *DescribeCexCoinsRequest) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, DescribeCexCoinsRequestValidationError{
-						field:  fmt.Sprintf("Tokens[%v]", idx),
+						field:  fmt.Sprintf("Sort[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -2205,7 +5657,7 @@ func (m *DescribeCexCoinsRequest) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, DescribeCexCoinsRequestValidationError{
-						field:  fmt.Sprintf("Tokens[%v]", idx),
+						field:  fmt.Sprintf("Sort[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -2214,7 +5666,7 @@ func (m *DescribeCexCoinsRequest) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return DescribeCexCoinsRequestValidationError{
-					field:  fmt.Sprintf("Tokens[%v]", idx),
+					field:  fmt.Sprintf("Sort[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -3569,6 +7021,518 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DescribeCoinPriceChartReplyValidationError{}
+
+// Validate checks the field values on DescribeCoinPriceByRangeRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeCoinPriceByRangeRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeCoinPriceByRangeRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// DescribeCoinPriceByRangeRequestMultiError, or nil if none found.
+func (m *DescribeCoinPriceByRangeRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeCoinPriceByRangeRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	// no validation rules for CoinID
+
+	if utf8.RuneCountInString(m.GetCurrency()) < 1 {
+		err := DescribeCoinPriceByRangeRequestValidationError{
+			field:  "Currency",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for From
+
+	// no validation rules for To
+
+	// no validation rules for Chain
+
+	// no validation rules for TokenAddress
+
+	if len(errors) > 0 {
+		return DescribeCoinPriceByRangeRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeCoinPriceByRangeRequestMultiError is an error wrapping multiple
+// validation errors returned by DescribeCoinPriceByRangeRequest.ValidateAll()
+// if the designated constraints aren't met.
+type DescribeCoinPriceByRangeRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeCoinPriceByRangeRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeCoinPriceByRangeRequestMultiError) AllErrors() []error { return m }
+
+// DescribeCoinPriceByRangeRequestValidationError is the validation error
+// returned by DescribeCoinPriceByRangeRequest.Validate if the designated
+// constraints aren't met.
+type DescribeCoinPriceByRangeRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeCoinPriceByRangeRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeCoinPriceByRangeRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeCoinPriceByRangeRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeCoinPriceByRangeRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeCoinPriceByRangeRequestValidationError) ErrorName() string {
+	return "DescribeCoinPriceByRangeRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeCoinPriceByRangeRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeCoinPriceByRangeRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeCoinPriceByRangeRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeCoinPriceByRangeRequestValidationError{}
+
+// Validate checks the field values on DescribeCoinPriceByRangeReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeCoinPriceByRangeReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeCoinPriceByRangeReply with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// DescribeCoinPriceByRangeReplyMultiError, or nil if none found.
+func (m *DescribeCoinPriceByRangeReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeCoinPriceByRangeReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetPrices() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DescribeCoinPriceByRangeReplyValidationError{
+						field:  fmt.Sprintf("Prices[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DescribeCoinPriceByRangeReplyValidationError{
+						field:  fmt.Sprintf("Prices[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DescribeCoinPriceByRangeReplyValidationError{
+					field:  fmt.Sprintf("Prices[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DescribeCoinPriceByRangeReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeCoinPriceByRangeReplyMultiError is an error wrapping multiple
+// validation errors returned by DescribeCoinPriceByRangeReply.ValidateAll()
+// if the designated constraints aren't met.
+type DescribeCoinPriceByRangeReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeCoinPriceByRangeReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeCoinPriceByRangeReplyMultiError) AllErrors() []error { return m }
+
+// DescribeCoinPriceByRangeReplyValidationError is the validation error
+// returned by DescribeCoinPriceByRangeReply.Validate if the designated
+// constraints aren't met.
+type DescribeCoinPriceByRangeReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeCoinPriceByRangeReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeCoinPriceByRangeReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeCoinPriceByRangeReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeCoinPriceByRangeReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeCoinPriceByRangeReplyValidationError) ErrorName() string {
+	return "DescribeCoinPriceByRangeReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeCoinPriceByRangeReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeCoinPriceByRangeReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeCoinPriceByRangeReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeCoinPriceByRangeReplyValidationError{}
+
+// Validate checks the field values on DescribeCoinPriceByTimestampRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *DescribeCoinPriceByTimestampRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeCoinPriceByTimestampRequest
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// DescribeCoinPriceByTimestampRequestMultiError, or nil if none found.
+func (m *DescribeCoinPriceByTimestampRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeCoinPriceByTimestampRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	// no validation rules for CoinID
+
+	// no validation rules for Timestamp
+
+	// no validation rules for Chain
+
+	// no validation rules for TokenAddress
+
+	if len(errors) > 0 {
+		return DescribeCoinPriceByTimestampRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeCoinPriceByTimestampRequestMultiError is an error wrapping multiple
+// validation errors returned by
+// DescribeCoinPriceByTimestampRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DescribeCoinPriceByTimestampRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeCoinPriceByTimestampRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeCoinPriceByTimestampRequestMultiError) AllErrors() []error { return m }
+
+// DescribeCoinPriceByTimestampRequestValidationError is the validation error
+// returned by DescribeCoinPriceByTimestampRequest.Validate if the designated
+// constraints aren't met.
+type DescribeCoinPriceByTimestampRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeCoinPriceByTimestampRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeCoinPriceByTimestampRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeCoinPriceByTimestampRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeCoinPriceByTimestampRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeCoinPriceByTimestampRequestValidationError) ErrorName() string {
+	return "DescribeCoinPriceByTimestampRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeCoinPriceByTimestampRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeCoinPriceByTimestampRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeCoinPriceByTimestampRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeCoinPriceByTimestampRequestValidationError{}
+
+// Validate checks the field values on DescribeCoinPriceByTimestampReply with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *DescribeCoinPriceByTimestampReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeCoinPriceByTimestampReply
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// DescribeCoinPriceByTimestampReplyMultiError, or nil if none found.
+func (m *DescribeCoinPriceByTimestampReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeCoinPriceByTimestampReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetPrice()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DescribeCoinPriceByTimestampReplyValidationError{
+					field:  "Price",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DescribeCoinPriceByTimestampReplyValidationError{
+					field:  "Price",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPrice()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DescribeCoinPriceByTimestampReplyValidationError{
+				field:  "Price",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return DescribeCoinPriceByTimestampReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeCoinPriceByTimestampReplyMultiError is an error wrapping multiple
+// validation errors returned by
+// DescribeCoinPriceByTimestampReply.ValidateAll() if the designated
+// constraints aren't met.
+type DescribeCoinPriceByTimestampReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeCoinPriceByTimestampReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeCoinPriceByTimestampReplyMultiError) AllErrors() []error { return m }
+
+// DescribeCoinPriceByTimestampReplyValidationError is the validation error
+// returned by DescribeCoinPriceByTimestampReply.Validate if the designated
+// constraints aren't met.
+type DescribeCoinPriceByTimestampReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeCoinPriceByTimestampReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeCoinPriceByTimestampReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeCoinPriceByTimestampReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeCoinPriceByTimestampReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeCoinPriceByTimestampReplyValidationError) ErrorName() string {
+	return "DescribeCoinPriceByTimestampReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeCoinPriceByTimestampReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeCoinPriceByTimestampReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeCoinPriceByTimestampReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeCoinPriceByTimestampReplyValidationError{}
 
 // Validate checks the field values on DescribeCoinSwapsRequest with the rules
 // defined in the proto definition for this message. If any rules are
@@ -5623,6 +9587,12 @@ func (m *DescribeDeFiCoinsRequest) validate(all bool) error {
 	// no validation rules for CoinID
 
 	// no validation rules for ColumnID
+
+	// no validation rules for Chain
+
+	// no validation rules for Range
+
+	// no validation rules for RangeWithTime
 
 	if len(errors) > 0 {
 		return DescribeDeFiCoinsRequestMultiError(errors)
@@ -7963,6 +11933,293 @@ var _ interface {
 	ErrorName() string
 } = DescribePriceByCoinAddressReplyValidationError{}
 
+// Validate checks the field values on DescribeCoinIDByTokensRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeCoinIDByTokensRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeCoinIDByTokensRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// DescribeCoinIDByTokensRequestMultiError, or nil if none found.
+func (m *DescribeCoinIDByTokensRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeCoinIDByTokensRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if l := len(m.GetTokens()); l < 1 || l > 1000 {
+		err := DescribeCoinIDByTokensRequestValidationError{
+			field:  "Tokens",
+			reason: "value must contain between 1 and 1000 items, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetTokens() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DescribeCoinIDByTokensRequestValidationError{
+						field:  fmt.Sprintf("Tokens[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DescribeCoinIDByTokensRequestValidationError{
+						field:  fmt.Sprintf("Tokens[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DescribeCoinIDByTokensRequestValidationError{
+					field:  fmt.Sprintf("Tokens[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DescribeCoinIDByTokensRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeCoinIDByTokensRequestMultiError is an error wrapping multiple
+// validation errors returned by DescribeCoinIDByTokensRequest.ValidateAll()
+// if the designated constraints aren't met.
+type DescribeCoinIDByTokensRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeCoinIDByTokensRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeCoinIDByTokensRequestMultiError) AllErrors() []error { return m }
+
+// DescribeCoinIDByTokensRequestValidationError is the validation error
+// returned by DescribeCoinIDByTokensRequest.Validate if the designated
+// constraints aren't met.
+type DescribeCoinIDByTokensRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeCoinIDByTokensRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeCoinIDByTokensRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeCoinIDByTokensRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeCoinIDByTokensRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeCoinIDByTokensRequestValidationError) ErrorName() string {
+	return "DescribeCoinIDByTokensRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeCoinIDByTokensRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeCoinIDByTokensRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeCoinIDByTokensRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeCoinIDByTokensRequestValidationError{}
+
+// Validate checks the field values on DescribeCoinIDByTokensReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeCoinIDByTokensReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeCoinIDByTokensReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribeCoinIDByTokensReplyMultiError, or nil if none found.
+func (m *DescribeCoinIDByTokensReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeCoinIDByTokensReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetCoins() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DescribeCoinIDByTokensReplyValidationError{
+						field:  fmt.Sprintf("Coins[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DescribeCoinIDByTokensReplyValidationError{
+						field:  fmt.Sprintf("Coins[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DescribeCoinIDByTokensReplyValidationError{
+					field:  fmt.Sprintf("Coins[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DescribeCoinIDByTokensReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeCoinIDByTokensReplyMultiError is an error wrapping multiple
+// validation errors returned by DescribeCoinIDByTokensReply.ValidateAll() if
+// the designated constraints aren't met.
+type DescribeCoinIDByTokensReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeCoinIDByTokensReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeCoinIDByTokensReplyMultiError) AllErrors() []error { return m }
+
+// DescribeCoinIDByTokensReplyValidationError is the validation error returned
+// by DescribeCoinIDByTokensReply.Validate if the designated constraints
+// aren't met.
+type DescribeCoinIDByTokensReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeCoinIDByTokensReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeCoinIDByTokensReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeCoinIDByTokensReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeCoinIDByTokensReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeCoinIDByTokensReplyValidationError) ErrorName() string {
+	return "DescribeCoinIDByTokensReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeCoinIDByTokensReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeCoinIDByTokensReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeCoinIDByTokensReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeCoinIDByTokensReplyValidationError{}
+
 // Validate checks the field values on Currency with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -8186,6 +12443,6287 @@ var _ interface {
 	ErrorName() string
 } = TokensValidationError{}
 
+// Validate checks the field values on CreateCoinGuideRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateCoinGuideRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateCoinGuideRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateCoinGuideRequestMultiError, or nil if none found.
+func (m *CreateCoinGuideRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateCoinGuideRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if utf8.RuneCountInString(m.GetCoinID()) < 1 {
+		err := CreateCoinGuideRequestValidationError{
+			field:  "CoinID",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetWeight() < 0 {
+		err := CreateCoinGuideRequestValidationError{
+			field:  "Weight",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return CreateCoinGuideRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateCoinGuideRequestMultiError is an error wrapping multiple validation
+// errors returned by CreateCoinGuideRequest.ValidateAll() if the designated
+// constraints aren't met.
+type CreateCoinGuideRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateCoinGuideRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateCoinGuideRequestMultiError) AllErrors() []error { return m }
+
+// CreateCoinGuideRequestValidationError is the validation error returned by
+// CreateCoinGuideRequest.Validate if the designated constraints aren't met.
+type CreateCoinGuideRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateCoinGuideRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateCoinGuideRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateCoinGuideRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateCoinGuideRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateCoinGuideRequestValidationError) ErrorName() string {
+	return "CreateCoinGuideRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateCoinGuideRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateCoinGuideRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateCoinGuideRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateCoinGuideRequestValidationError{}
+
+// Validate checks the field values on CreateCoinGuideReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateCoinGuideReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateCoinGuideReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateCoinGuideReplyMultiError, or nil if none found.
+func (m *CreateCoinGuideReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateCoinGuideReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return CreateCoinGuideReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateCoinGuideReplyMultiError is an error wrapping multiple validation
+// errors returned by CreateCoinGuideReply.ValidateAll() if the designated
+// constraints aren't met.
+type CreateCoinGuideReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateCoinGuideReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateCoinGuideReplyMultiError) AllErrors() []error { return m }
+
+// CreateCoinGuideReplyValidationError is the validation error returned by
+// CreateCoinGuideReply.Validate if the designated constraints aren't met.
+type CreateCoinGuideReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateCoinGuideReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateCoinGuideReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateCoinGuideReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateCoinGuideReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateCoinGuideReplyValidationError) ErrorName() string {
+	return "CreateCoinGuideReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateCoinGuideReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateCoinGuideReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateCoinGuideReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateCoinGuideReplyValidationError{}
+
+// Validate checks the field values on ModifyCoinGuideRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ModifyCoinGuideRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ModifyCoinGuideRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ModifyCoinGuideRequestMultiError, or nil if none found.
+func (m *ModifyCoinGuideRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ModifyCoinGuideRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if utf8.RuneCountInString(m.GetCoinID()) < 1 {
+		err := ModifyCoinGuideRequestValidationError{
+			field:  "CoinID",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetWeight() < 0 {
+		err := ModifyCoinGuideRequestValidationError{
+			field:  "Weight",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return ModifyCoinGuideRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ModifyCoinGuideRequestMultiError is an error wrapping multiple validation
+// errors returned by ModifyCoinGuideRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ModifyCoinGuideRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ModifyCoinGuideRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ModifyCoinGuideRequestMultiError) AllErrors() []error { return m }
+
+// ModifyCoinGuideRequestValidationError is the validation error returned by
+// ModifyCoinGuideRequest.Validate if the designated constraints aren't met.
+type ModifyCoinGuideRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ModifyCoinGuideRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ModifyCoinGuideRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ModifyCoinGuideRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ModifyCoinGuideRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ModifyCoinGuideRequestValidationError) ErrorName() string {
+	return "ModifyCoinGuideRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ModifyCoinGuideRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sModifyCoinGuideRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ModifyCoinGuideRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ModifyCoinGuideRequestValidationError{}
+
+// Validate checks the field values on ModifyCoinGuideReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ModifyCoinGuideReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ModifyCoinGuideReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ModifyCoinGuideReplyMultiError, or nil if none found.
+func (m *ModifyCoinGuideReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ModifyCoinGuideReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return ModifyCoinGuideReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// ModifyCoinGuideReplyMultiError is an error wrapping multiple validation
+// errors returned by ModifyCoinGuideReply.ValidateAll() if the designated
+// constraints aren't met.
+type ModifyCoinGuideReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ModifyCoinGuideReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ModifyCoinGuideReplyMultiError) AllErrors() []error { return m }
+
+// ModifyCoinGuideReplyValidationError is the validation error returned by
+// ModifyCoinGuideReply.Validate if the designated constraints aren't met.
+type ModifyCoinGuideReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ModifyCoinGuideReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ModifyCoinGuideReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ModifyCoinGuideReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ModifyCoinGuideReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ModifyCoinGuideReplyValidationError) ErrorName() string {
+	return "ModifyCoinGuideReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ModifyCoinGuideReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sModifyCoinGuideReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ModifyCoinGuideReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ModifyCoinGuideReplyValidationError{}
+
+// Validate checks the field values on DeleteCoinGuideRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteCoinGuideRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteCoinGuideRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteCoinGuideRequestMultiError, or nil if none found.
+func (m *DeleteCoinGuideRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteCoinGuideRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if utf8.RuneCountInString(m.GetCoinID()) < 1 {
+		err := DeleteCoinGuideRequestValidationError{
+			field:  "CoinID",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return DeleteCoinGuideRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteCoinGuideRequestMultiError is an error wrapping multiple validation
+// errors returned by DeleteCoinGuideRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteCoinGuideRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteCoinGuideRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteCoinGuideRequestMultiError) AllErrors() []error { return m }
+
+// DeleteCoinGuideRequestValidationError is the validation error returned by
+// DeleteCoinGuideRequest.Validate if the designated constraints aren't met.
+type DeleteCoinGuideRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteCoinGuideRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteCoinGuideRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteCoinGuideRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteCoinGuideRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteCoinGuideRequestValidationError) ErrorName() string {
+	return "DeleteCoinGuideRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteCoinGuideRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteCoinGuideRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteCoinGuideRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteCoinGuideRequestValidationError{}
+
+// Validate checks the field values on DeleteCoinGuideReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteCoinGuideReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteCoinGuideReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteCoinGuideReplyMultiError, or nil if none found.
+func (m *DeleteCoinGuideReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteCoinGuideReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return DeleteCoinGuideReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteCoinGuideReplyMultiError is an error wrapping multiple validation
+// errors returned by DeleteCoinGuideReply.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteCoinGuideReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteCoinGuideReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteCoinGuideReplyMultiError) AllErrors() []error { return m }
+
+// DeleteCoinGuideReplyValidationError is the validation error returned by
+// DeleteCoinGuideReply.Validate if the designated constraints aren't met.
+type DeleteCoinGuideReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteCoinGuideReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteCoinGuideReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteCoinGuideReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteCoinGuideReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteCoinGuideReplyValidationError) ErrorName() string {
+	return "DeleteCoinGuideReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteCoinGuideReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteCoinGuideReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteCoinGuideReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteCoinGuideReplyValidationError{}
+
+// Validate checks the field values on DescribeWhiteTokensRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeWhiteTokensRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeWhiteTokensRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribeWhiteTokensRequestMultiError, or nil if none found.
+func (m *DescribeWhiteTokensRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeWhiteTokensRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if utf8.RuneCountInString(m.GetChain()) < 1 {
+		err := DescribeWhiteTokensRequestValidationError{
+			field:  "Chain",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetLimit() < 0 {
+		err := DescribeWhiteTokensRequestValidationError{
+			field:  "Limit",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetCurrency()) < 1 {
+		err := DescribeWhiteTokensRequestValidationError{
+			field:  "Currency",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return DescribeWhiteTokensRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeWhiteTokensRequestMultiError is an error wrapping multiple
+// validation errors returned by DescribeWhiteTokensRequest.ValidateAll() if
+// the designated constraints aren't met.
+type DescribeWhiteTokensRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeWhiteTokensRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeWhiteTokensRequestMultiError) AllErrors() []error { return m }
+
+// DescribeWhiteTokensRequestValidationError is the validation error returned
+// by DescribeWhiteTokensRequest.Validate if the designated constraints aren't met.
+type DescribeWhiteTokensRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeWhiteTokensRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeWhiteTokensRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeWhiteTokensRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeWhiteTokensRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeWhiteTokensRequestValidationError) ErrorName() string {
+	return "DescribeWhiteTokensRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeWhiteTokensRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeWhiteTokensRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeWhiteTokensRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeWhiteTokensRequestValidationError{}
+
+// Validate checks the field values on DescribeWhiteTokensReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeWhiteTokensReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeWhiteTokensReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribeWhiteTokensReplyMultiError, or nil if none found.
+func (m *DescribeWhiteTokensReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeWhiteTokensReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetCoins() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DescribeWhiteTokensReplyValidationError{
+						field:  fmt.Sprintf("Coins[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DescribeWhiteTokensReplyValidationError{
+						field:  fmt.Sprintf("Coins[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DescribeWhiteTokensReplyValidationError{
+					field:  fmt.Sprintf("Coins[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DescribeWhiteTokensReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeWhiteTokensReplyMultiError is an error wrapping multiple validation
+// errors returned by DescribeWhiteTokensReply.ValidateAll() if the designated
+// constraints aren't met.
+type DescribeWhiteTokensReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeWhiteTokensReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeWhiteTokensReplyMultiError) AllErrors() []error { return m }
+
+// DescribeWhiteTokensReplyValidationError is the validation error returned by
+// DescribeWhiteTokensReply.Validate if the designated constraints aren't met.
+type DescribeWhiteTokensReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeWhiteTokensReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeWhiteTokensReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeWhiteTokensReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeWhiteTokensReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeWhiteTokensReplyValidationError) ErrorName() string {
+	return "DescribeWhiteTokensReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeWhiteTokensReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeWhiteTokensReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeWhiteTokensReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeWhiteTokensReplyValidationError{}
+
+// Validate checks the field values on CreateChainRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateChainRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateChainRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateChainRequestMultiError, or nil if none found.
+func (m *CreateChainRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateChainRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if utf8.RuneCountInString(m.GetChain()) < 1 {
+		err := CreateChainRequestValidationError{
+			field:  "Chain",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetName()) < 1 {
+		err := CreateChainRequestValidationError{
+			field:  "Name",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetWeight() < 0 {
+		err := CreateChainRequestValidationError{
+			field:  "Weight",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Icon
+
+	if len(errors) > 0 {
+		return CreateChainRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateChainRequestMultiError is an error wrapping multiple validation errors
+// returned by CreateChainRequest.ValidateAll() if the designated constraints
+// aren't met.
+type CreateChainRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateChainRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateChainRequestMultiError) AllErrors() []error { return m }
+
+// CreateChainRequestValidationError is the validation error returned by
+// CreateChainRequest.Validate if the designated constraints aren't met.
+type CreateChainRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateChainRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateChainRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateChainRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateChainRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateChainRequestValidationError) ErrorName() string {
+	return "CreateChainRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateChainRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateChainRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateChainRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateChainRequestValidationError{}
+
+// Validate checks the field values on CreateChainReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *CreateChainReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateChainReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateChainReplyMultiError, or nil if none found.
+func (m *CreateChainReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateChainReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return CreateChainReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateChainReplyMultiError is an error wrapping multiple validation errors
+// returned by CreateChainReply.ValidateAll() if the designated constraints
+// aren't met.
+type CreateChainReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateChainReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateChainReplyMultiError) AllErrors() []error { return m }
+
+// CreateChainReplyValidationError is the validation error returned by
+// CreateChainReply.Validate if the designated constraints aren't met.
+type CreateChainReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateChainReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateChainReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateChainReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateChainReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateChainReplyValidationError) ErrorName() string { return "CreateChainReplyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CreateChainReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateChainReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateChainReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateChainReplyValidationError{}
+
+// Validate checks the field values on ModifyChainRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ModifyChainRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ModifyChainRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ModifyChainRequestMultiError, or nil if none found.
+func (m *ModifyChainRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ModifyChainRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if m.GetId() <= 0 {
+		err := ModifyChainRequestValidationError{
+			field:  "Id",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetName()) < 1 {
+		err := ModifyChainRequestValidationError{
+			field:  "Name",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetWeight() < 0 {
+		err := ModifyChainRequestValidationError{
+			field:  "Weight",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Icon
+
+	if len(errors) > 0 {
+		return ModifyChainRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ModifyChainRequestMultiError is an error wrapping multiple validation errors
+// returned by ModifyChainRequest.ValidateAll() if the designated constraints
+// aren't met.
+type ModifyChainRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ModifyChainRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ModifyChainRequestMultiError) AllErrors() []error { return m }
+
+// ModifyChainRequestValidationError is the validation error returned by
+// ModifyChainRequest.Validate if the designated constraints aren't met.
+type ModifyChainRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ModifyChainRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ModifyChainRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ModifyChainRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ModifyChainRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ModifyChainRequestValidationError) ErrorName() string {
+	return "ModifyChainRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ModifyChainRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sModifyChainRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ModifyChainRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ModifyChainRequestValidationError{}
+
+// Validate checks the field values on DeleteChainRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteChainRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteChainRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteChainRequestMultiError, or nil if none found.
+func (m *DeleteChainRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteChainRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return DeleteChainRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteChainRequestMultiError is an error wrapping multiple validation errors
+// returned by DeleteChainRequest.ValidateAll() if the designated constraints
+// aren't met.
+type DeleteChainRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteChainRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteChainRequestMultiError) AllErrors() []error { return m }
+
+// DeleteChainRequestValidationError is the validation error returned by
+// DeleteChainRequest.Validate if the designated constraints aren't met.
+type DeleteChainRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteChainRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteChainRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteChainRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteChainRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteChainRequestValidationError) ErrorName() string {
+	return "DeleteChainRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteChainRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteChainRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteChainRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteChainRequestValidationError{}
+
+// Validate checks the field values on CreateChainRelationRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateChainRelationRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateChainRelationRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateChainRelationRequestMultiError, or nil if none found.
+func (m *CreateChainRelationRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateChainRelationRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if utf8.RuneCountInString(m.GetChain()) < 1 {
+		err := CreateChainRelationRequestValidationError{
+			field:  "Chain",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetTrdChain()) < 1 {
+		err := CreateChainRelationRequestValidationError{
+			field:  "TrdChain",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := _CreateChainRelationRequest_TrdType_InLookup[m.GetTrdType()]; !ok {
+		err := CreateChainRelationRequestValidationError{
+			field:  "TrdType",
+			reason: "value must be in list [1 2 3]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return CreateChainRelationRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateChainRelationRequestMultiError is an error wrapping multiple
+// validation errors returned by CreateChainRelationRequest.ValidateAll() if
+// the designated constraints aren't met.
+type CreateChainRelationRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateChainRelationRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateChainRelationRequestMultiError) AllErrors() []error { return m }
+
+// CreateChainRelationRequestValidationError is the validation error returned
+// by CreateChainRelationRequest.Validate if the designated constraints aren't met.
+type CreateChainRelationRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateChainRelationRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateChainRelationRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateChainRelationRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateChainRelationRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateChainRelationRequestValidationError) ErrorName() string {
+	return "CreateChainRelationRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateChainRelationRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateChainRelationRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateChainRelationRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateChainRelationRequestValidationError{}
+
+var _CreateChainRelationRequest_TrdType_InLookup = map[int32]struct{}{
+	1: {},
+	2: {},
+	3: {},
+}
+
+// Validate checks the field values on DeleteChainRelationRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteChainRelationRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteChainRelationRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteChainRelationRequestMultiError, or nil if none found.
+func (m *DeleteChainRelationRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteChainRelationRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if m.GetId() <= 0 {
+		err := DeleteChainRelationRequestValidationError{
+			field:  "Id",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return DeleteChainRelationRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteChainRelationRequestMultiError is an error wrapping multiple
+// validation errors returned by DeleteChainRelationRequest.ValidateAll() if
+// the designated constraints aren't met.
+type DeleteChainRelationRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteChainRelationRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteChainRelationRequestMultiError) AllErrors() []error { return m }
+
+// DeleteChainRelationRequestValidationError is the validation error returned
+// by DeleteChainRelationRequest.Validate if the designated constraints aren't met.
+type DeleteChainRelationRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteChainRelationRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteChainRelationRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteChainRelationRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteChainRelationRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteChainRelationRequestValidationError) ErrorName() string {
+	return "DeleteChainRelationRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteChainRelationRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteChainRelationRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteChainRelationRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteChainRelationRequestValidationError{}
+
+// Validate checks the field values on DescribeCollectionGuidesRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeCollectionGuidesRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeCollectionGuidesRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// DescribeCollectionGuidesRequestMultiError, or nil if none found.
+func (m *DescribeCollectionGuidesRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeCollectionGuidesRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if val := m.GetPageSize(); val <= 0 || val > 50 {
+		err := DescribeCollectionGuidesRequestValidationError{
+			field:  "PageSize",
+			reason: "value must be inside range (0, 50]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return DescribeCollectionGuidesRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeCollectionGuidesRequestMultiError is an error wrapping multiple
+// validation errors returned by DescribeCollectionGuidesRequest.ValidateAll()
+// if the designated constraints aren't met.
+type DescribeCollectionGuidesRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeCollectionGuidesRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeCollectionGuidesRequestMultiError) AllErrors() []error { return m }
+
+// DescribeCollectionGuidesRequestValidationError is the validation error
+// returned by DescribeCollectionGuidesRequest.Validate if the designated
+// constraints aren't met.
+type DescribeCollectionGuidesRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeCollectionGuidesRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeCollectionGuidesRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeCollectionGuidesRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeCollectionGuidesRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeCollectionGuidesRequestValidationError) ErrorName() string {
+	return "DescribeCollectionGuidesRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeCollectionGuidesRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeCollectionGuidesRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeCollectionGuidesRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeCollectionGuidesRequestValidationError{}
+
+// Validate checks the field values on DescribeCollectionGuidesReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeCollectionGuidesReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeCollectionGuidesReply with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// DescribeCollectionGuidesReplyMultiError, or nil if none found.
+func (m *DescribeCollectionGuidesReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeCollectionGuidesReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetCoins() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DescribeCollectionGuidesReplyValidationError{
+						field:  fmt.Sprintf("Coins[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DescribeCollectionGuidesReplyValidationError{
+						field:  fmt.Sprintf("Coins[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DescribeCollectionGuidesReplyValidationError{
+					field:  fmt.Sprintf("Coins[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DescribeCollectionGuidesReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeCollectionGuidesReplyMultiError is an error wrapping multiple
+// validation errors returned by DescribeCollectionGuidesReply.ValidateAll()
+// if the designated constraints aren't met.
+type DescribeCollectionGuidesReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeCollectionGuidesReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeCollectionGuidesReplyMultiError) AllErrors() []error { return m }
+
+// DescribeCollectionGuidesReplyValidationError is the validation error
+// returned by DescribeCollectionGuidesReply.Validate if the designated
+// constraints aren't met.
+type DescribeCollectionGuidesReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeCollectionGuidesReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeCollectionGuidesReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeCollectionGuidesReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeCollectionGuidesReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeCollectionGuidesReplyValidationError) ErrorName() string {
+	return "DescribeCollectionGuidesReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeCollectionGuidesReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeCollectionGuidesReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeCollectionGuidesReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeCollectionGuidesReplyValidationError{}
+
+// Validate checks the field values on CheckCoinsRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *CheckCoinsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CheckCoinsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CheckCoinsRequestMultiError, or nil if none found.
+func (m *CheckCoinsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CheckCoinsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if l := len(m.GetCoinIDs()); l < 1 || l > 100 {
+		err := CheckCoinsRequestValidationError{
+			field:  "CoinIDs",
+			reason: "value must contain between 1 and 100 items, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return CheckCoinsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CheckCoinsRequestMultiError is an error wrapping multiple validation errors
+// returned by CheckCoinsRequest.ValidateAll() if the designated constraints
+// aren't met.
+type CheckCoinsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CheckCoinsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CheckCoinsRequestMultiError) AllErrors() []error { return m }
+
+// CheckCoinsRequestValidationError is the validation error returned by
+// CheckCoinsRequest.Validate if the designated constraints aren't met.
+type CheckCoinsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CheckCoinsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CheckCoinsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CheckCoinsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CheckCoinsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CheckCoinsRequestValidationError) ErrorName() string {
+	return "CheckCoinsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CheckCoinsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCheckCoinsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CheckCoinsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CheckCoinsRequestValidationError{}
+
+// Validate checks the field values on CheckCoinsReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *CheckCoinsReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CheckCoinsReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CheckCoinsReplyMultiError, or nil if none found.
+func (m *CheckCoinsReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CheckCoinsReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetCoins() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CheckCoinsReplyValidationError{
+						field:  fmt.Sprintf("Coins[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CheckCoinsReplyValidationError{
+						field:  fmt.Sprintf("Coins[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CheckCoinsReplyValidationError{
+					field:  fmt.Sprintf("Coins[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return CheckCoinsReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// CheckCoinsReplyMultiError is an error wrapping multiple validation errors
+// returned by CheckCoinsReply.ValidateAll() if the designated constraints
+// aren't met.
+type CheckCoinsReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CheckCoinsReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CheckCoinsReplyMultiError) AllErrors() []error { return m }
+
+// CheckCoinsReplyValidationError is the validation error returned by
+// CheckCoinsReply.Validate if the designated constraints aren't met.
+type CheckCoinsReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CheckCoinsReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CheckCoinsReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CheckCoinsReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CheckCoinsReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CheckCoinsReplyValidationError) ErrorName() string { return "CheckCoinsReplyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CheckCoinsReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCheckCoinsReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CheckCoinsReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CheckCoinsReplyValidationError{}
+
+// Validate checks the field values on CoinSimple with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *CoinSimple) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CoinSimple with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in CoinSimpleMultiError, or
+// nil if none found.
+func (m *CoinSimple) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CoinSimple) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CoinID
+
+	// no validation rules for Name
+
+	// no validation rules for Symbol
+
+	// no validation rules for Image
+
+	if len(errors) > 0 {
+		return CoinSimpleMultiError(errors)
+	}
+
+	return nil
+}
+
+// CoinSimpleMultiError is an error wrapping multiple validation errors
+// returned by CoinSimple.ValidateAll() if the designated constraints aren't met.
+type CoinSimpleMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CoinSimpleMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CoinSimpleMultiError) AllErrors() []error { return m }
+
+// CoinSimpleValidationError is the validation error returned by
+// CoinSimple.Validate if the designated constraints aren't met.
+type CoinSimpleValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CoinSimpleValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CoinSimpleValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CoinSimpleValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CoinSimpleValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CoinSimpleValidationError) ErrorName() string { return "CoinSimpleValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CoinSimpleValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCoinSimple.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CoinSimpleValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CoinSimpleValidationError{}
+
+// Validate checks the field values on PairSimple with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *PairSimple) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PairSimple with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in PairSimpleMultiError, or
+// nil if none found.
+func (m *PairSimple) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PairSimple) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Chain
+
+	// no validation rules for Address
+
+	// no validation rules for DexID
+
+	// no validation rules for DexIcon
+
+	// no validation rules for BaseToken
+
+	// no validation rules for QuoteToken
+
+	if len(errors) > 0 {
+		return PairSimpleMultiError(errors)
+	}
+
+	return nil
+}
+
+// PairSimpleMultiError is an error wrapping multiple validation errors
+// returned by PairSimple.ValidateAll() if the designated constraints aren't met.
+type PairSimpleMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PairSimpleMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PairSimpleMultiError) AllErrors() []error { return m }
+
+// PairSimpleValidationError is the validation error returned by
+// PairSimple.Validate if the designated constraints aren't met.
+type PairSimpleValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PairSimpleValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PairSimpleValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PairSimpleValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PairSimpleValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PairSimpleValidationError) ErrorName() string { return "PairSimpleValidationError" }
+
+// Error satisfies the builtin error interface
+func (e PairSimpleValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPairSimple.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PairSimpleValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PairSimpleValidationError{}
+
+// Validate checks the field values on NoneReply with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *NoneReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on NoneReply with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in NoneReplyMultiError, or nil
+// if none found.
+func (m *NoneReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *NoneReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return NoneReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// NoneReplyMultiError is an error wrapping multiple validation errors returned
+// by NoneReply.ValidateAll() if the designated constraints aren't met.
+type NoneReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m NoneReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m NoneReplyMultiError) AllErrors() []error { return m }
+
+// NoneReplyValidationError is the validation error returned by
+// NoneReply.Validate if the designated constraints aren't met.
+type NoneReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e NoneReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e NoneReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e NoneReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e NoneReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e NoneReplyValidationError) ErrorName() string { return "NoneReplyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e NoneReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sNoneReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = NoneReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = NoneReplyValidationError{}
+
+// Validate checks the field values on DescribePairsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribePairsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribePairsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribePairsRequestMultiError, or nil if none found.
+func (m *DescribePairsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribePairsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	// no validation rules for Chain
+
+	// no validation rules for Address
+
+	if _, ok := _DescribePairsRequest_Currency_InLookup[m.GetCurrency()]; !ok {
+		err := DescribePairsRequestValidationError{
+			field:  "Currency",
+			reason: "value must be in list [usd cny]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for DexID
+
+	// no validation rules for UserID
+
+	if m.GetPage() <= 0 {
+		err := DescribePairsRequestValidationError{
+			field:  "Page",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if val := m.GetPageSize(); val <= 0 || val > 100 {
+		err := DescribePairsRequestValidationError{
+			field:  "PageSize",
+			reason: "value must be inside range (0, 100]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := _DescribePairsRequest_SortField_InLookup[m.GetSortField()]; !ok {
+		err := DescribePairsRequestValidationError{
+			field:  "SortField",
+			reason: "value must be in list [ price_delta.5m price_delta.1h price_delta.6h price_delta.24h volume_24h orders_24h fdv liquidity price]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := _DescribePairsRequest_SortType_InLookup[m.GetSortType()]; !ok {
+		err := DescribePairsRequestValidationError{
+			field:  "SortType",
+			reason: "value must be in list [ asc desc]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return DescribePairsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribePairsRequestMultiError is an error wrapping multiple validation
+// errors returned by DescribePairsRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DescribePairsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribePairsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribePairsRequestMultiError) AllErrors() []error { return m }
+
+// DescribePairsRequestValidationError is the validation error returned by
+// DescribePairsRequest.Validate if the designated constraints aren't met.
+type DescribePairsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribePairsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribePairsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribePairsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribePairsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribePairsRequestValidationError) ErrorName() string {
+	return "DescribePairsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribePairsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribePairsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribePairsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribePairsRequestValidationError{}
+
+var _DescribePairsRequest_Currency_InLookup = map[string]struct{}{
+	"usd": {},
+	"cny": {},
+}
+
+var _DescribePairsRequest_SortField_InLookup = map[string]struct{}{
+	"":                {},
+	"price_delta.5m":  {},
+	"price_delta.1h":  {},
+	"price_delta.6h":  {},
+	"price_delta.24h": {},
+	"volume_24h":      {},
+	"orders_24h":      {},
+	"fdv":             {},
+	"liquidity":       {},
+	"price":           {},
+}
+
+var _DescribePairsRequest_SortType_InLookup = map[string]struct{}{
+	"":     {},
+	"asc":  {},
+	"desc": {},
+}
+
+// Validate checks the field values on DescribePairsReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribePairsReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribePairsReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribePairsReplyMultiError, or nil if none found.
+func (m *DescribePairsReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribePairsReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetPairs() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DescribePairsReplyValidationError{
+						field:  fmt.Sprintf("Pairs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DescribePairsReplyValidationError{
+						field:  fmt.Sprintf("Pairs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DescribePairsReplyValidationError{
+					field:  fmt.Sprintf("Pairs[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for Total
+
+	if len(errors) > 0 {
+		return DescribePairsReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribePairsReplyMultiError is an error wrapping multiple validation errors
+// returned by DescribePairsReply.ValidateAll() if the designated constraints
+// aren't met.
+type DescribePairsReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribePairsReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribePairsReplyMultiError) AllErrors() []error { return m }
+
+// DescribePairsReplyValidationError is the validation error returned by
+// DescribePairsReply.Validate if the designated constraints aren't met.
+type DescribePairsReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribePairsReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribePairsReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribePairsReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribePairsReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribePairsReplyValidationError) ErrorName() string {
+	return "DescribePairsReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribePairsReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribePairsReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribePairsReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribePairsReplyValidationError{}
+
+// Validate checks the field values on Pair with the rules defined in the proto
+// definition for this message. If any rules are violated, the first error
+// encountered is returned, or nil if there are no violations.
+func (m *Pair) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Pair with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in PairMultiError, or nil if none found.
+func (m *Pair) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Pair) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Address
+
+	// no validation rules for Chain
+
+	// no validation rules for DexID
+
+	// no validation rules for DexIcon
+
+	// no validation rules for BaseToken
+
+	// no validation rules for QuoteToken
+
+	// no validation rules for Stat5M
+
+	// no validation rules for Stat1H
+
+	// no validation rules for Stat6H
+
+	// no validation rules for Stat24H
+
+	// no validation rules for Fdv
+
+	// no validation rules for Liquidity
+
+	// no validation rules for Price
+
+	// no validation rules for IsFocus
+
+	if len(errors) > 0 {
+		return PairMultiError(errors)
+	}
+
+	return nil
+}
+
+// PairMultiError is an error wrapping multiple validation errors returned by
+// Pair.ValidateAll() if the designated constraints aren't met.
+type PairMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PairMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PairMultiError) AllErrors() []error { return m }
+
+// PairValidationError is the validation error returned by Pair.Validate if the
+// designated constraints aren't met.
+type PairValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PairValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PairValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PairValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PairValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PairValidationError) ErrorName() string { return "PairValidationError" }
+
+// Error satisfies the builtin error interface
+func (e PairValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPair.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PairValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PairValidationError{}
+
+// Validate checks the field values on DescribePairRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribePairRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribePairRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribePairRequestMultiError, or nil if none found.
+func (m *DescribePairRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribePairRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if utf8.RuneCountInString(m.GetChain()) < 1 {
+		err := DescribePairRequestValidationError{
+			field:  "Chain",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetAddress()) < 1 {
+		err := DescribePairRequestValidationError{
+			field:  "Address",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := _DescribePairRequest_Currency_InLookup[m.GetCurrency()]; !ok {
+		err := DescribePairRequestValidationError{
+			field:  "Currency",
+			reason: "value must be in list [usd cny]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for UserID
+
+	if len(errors) > 0 {
+		return DescribePairRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribePairRequestMultiError is an error wrapping multiple validation
+// errors returned by DescribePairRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DescribePairRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribePairRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribePairRequestMultiError) AllErrors() []error { return m }
+
+// DescribePairRequestValidationError is the validation error returned by
+// DescribePairRequest.Validate if the designated constraints aren't met.
+type DescribePairRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribePairRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribePairRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribePairRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribePairRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribePairRequestValidationError) ErrorName() string {
+	return "DescribePairRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribePairRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribePairRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribePairRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribePairRequestValidationError{}
+
+var _DescribePairRequest_Currency_InLookup = map[string]struct{}{
+	"usd": {},
+	"cny": {},
+}
+
+// Validate checks the field values on DescribePairReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *DescribePairReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribePairReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribePairReplyMultiError, or nil if none found.
+func (m *DescribePairReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribePairReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetPair()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DescribePairReplyValidationError{
+					field:  "Pair",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DescribePairReplyValidationError{
+					field:  "Pair",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPair()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DescribePairReplyValidationError{
+				field:  "Pair",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return DescribePairReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribePairReplyMultiError is an error wrapping multiple validation errors
+// returned by DescribePairReply.ValidateAll() if the designated constraints
+// aren't met.
+type DescribePairReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribePairReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribePairReplyMultiError) AllErrors() []error { return m }
+
+// DescribePairReplyValidationError is the validation error returned by
+// DescribePairReply.Validate if the designated constraints aren't met.
+type DescribePairReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribePairReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribePairReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribePairReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribePairReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribePairReplyValidationError) ErrorName() string {
+	return "DescribePairReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribePairReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribePairReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribePairReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribePairReplyValidationError{}
+
+// Validate checks the field values on DescribePairTrendsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribePairTrendsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribePairTrendsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribePairTrendsRequestMultiError, or nil if none found.
+func (m *DescribePairTrendsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribePairTrendsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if val := m.GetLimit(); val < 0 || val > 100 {
+		err := DescribePairTrendsRequestValidationError{
+			field:  "Limit",
+			reason: "value must be inside range [0, 100]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := _DescribePairTrendsRequest_Type_InLookup[m.GetType()]; !ok {
+		err := DescribePairTrendsRequestValidationError{
+			field:  "Type",
+			reason: "value must be in list [1 2]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := _DescribePairTrendsRequest_Currency_InLookup[m.GetCurrency()]; !ok {
+		err := DescribePairTrendsRequestValidationError{
+			field:  "Currency",
+			reason: "value must be in list [usd cny]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for UserID
+
+	if len(errors) > 0 {
+		return DescribePairTrendsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribePairTrendsRequestMultiError is an error wrapping multiple validation
+// errors returned by DescribePairTrendsRequest.ValidateAll() if the
+// designated constraints aren't met.
+type DescribePairTrendsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribePairTrendsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribePairTrendsRequestMultiError) AllErrors() []error { return m }
+
+// DescribePairTrendsRequestValidationError is the validation error returned by
+// DescribePairTrendsRequest.Validate if the designated constraints aren't met.
+type DescribePairTrendsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribePairTrendsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribePairTrendsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribePairTrendsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribePairTrendsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribePairTrendsRequestValidationError) ErrorName() string {
+	return "DescribePairTrendsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribePairTrendsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribePairTrendsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribePairTrendsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribePairTrendsRequestValidationError{}
+
+var _DescribePairTrendsRequest_Type_InLookup = map[int32]struct{}{
+	1: {},
+	2: {},
+}
+
+var _DescribePairTrendsRequest_Currency_InLookup = map[string]struct{}{
+	"usd": {},
+	"cny": {},
+}
+
+// Validate checks the field values on DescribePairTrendsReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribePairTrendsReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribePairTrendsReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribePairTrendsReplyMultiError, or nil if none found.
+func (m *DescribePairTrendsReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribePairTrendsReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetPairs() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DescribePairTrendsReplyValidationError{
+						field:  fmt.Sprintf("Pairs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DescribePairTrendsReplyValidationError{
+						field:  fmt.Sprintf("Pairs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DescribePairTrendsReplyValidationError{
+					field:  fmt.Sprintf("Pairs[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DescribePairTrendsReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribePairTrendsReplyMultiError is an error wrapping multiple validation
+// errors returned by DescribePairTrendsReply.ValidateAll() if the designated
+// constraints aren't met.
+type DescribePairTrendsReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribePairTrendsReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribePairTrendsReplyMultiError) AllErrors() []error { return m }
+
+// DescribePairTrendsReplyValidationError is the validation error returned by
+// DescribePairTrendsReply.Validate if the designated constraints aren't met.
+type DescribePairTrendsReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribePairTrendsReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribePairTrendsReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribePairTrendsReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribePairTrendsReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribePairTrendsReplyValidationError) ErrorName() string {
+	return "DescribePairTrendsReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribePairTrendsReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribePairTrendsReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribePairTrendsReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribePairTrendsReplyValidationError{}
+
+// Validate checks the field values on DescribePairTrendsV2Request with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribePairTrendsV2Request) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribePairTrendsV2Request with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribePairTrendsV2RequestMultiError, or nil if none found.
+func (m *DescribePairTrendsV2Request) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribePairTrendsV2Request) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if val := m.GetLimit(); val < 0 || val > 100 {
+		err := DescribePairTrendsV2RequestValidationError{
+			field:  "Limit",
+			reason: "value must be inside range [0, 100]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := _DescribePairTrendsV2Request_Currency_InLookup[m.GetCurrency()]; !ok {
+		err := DescribePairTrendsV2RequestValidationError{
+			field:  "Currency",
+			reason: "value must be in list [usd cny]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for UserID
+
+	if len(errors) > 0 {
+		return DescribePairTrendsV2RequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribePairTrendsV2RequestMultiError is an error wrapping multiple
+// validation errors returned by DescribePairTrendsV2Request.ValidateAll() if
+// the designated constraints aren't met.
+type DescribePairTrendsV2RequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribePairTrendsV2RequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribePairTrendsV2RequestMultiError) AllErrors() []error { return m }
+
+// DescribePairTrendsV2RequestValidationError is the validation error returned
+// by DescribePairTrendsV2Request.Validate if the designated constraints
+// aren't met.
+type DescribePairTrendsV2RequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribePairTrendsV2RequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribePairTrendsV2RequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribePairTrendsV2RequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribePairTrendsV2RequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribePairTrendsV2RequestValidationError) ErrorName() string {
+	return "DescribePairTrendsV2RequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribePairTrendsV2RequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribePairTrendsV2Request.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribePairTrendsV2RequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribePairTrendsV2RequestValidationError{}
+
+var _DescribePairTrendsV2Request_Currency_InLookup = map[string]struct{}{
+	"usd": {},
+	"cny": {},
+}
+
+// Validate checks the field values on DescribePairTrendsV2Reply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribePairTrendsV2Reply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribePairTrendsV2Reply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribePairTrendsV2ReplyMultiError, or nil if none found.
+func (m *DescribePairTrendsV2Reply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribePairTrendsV2Reply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetPairs() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DescribePairTrendsV2ReplyValidationError{
+						field:  fmt.Sprintf("Pairs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DescribePairTrendsV2ReplyValidationError{
+						field:  fmt.Sprintf("Pairs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DescribePairTrendsV2ReplyValidationError{
+					field:  fmt.Sprintf("Pairs[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DescribePairTrendsV2ReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribePairTrendsV2ReplyMultiError is an error wrapping multiple validation
+// errors returned by DescribePairTrendsV2Reply.ValidateAll() if the
+// designated constraints aren't met.
+type DescribePairTrendsV2ReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribePairTrendsV2ReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribePairTrendsV2ReplyMultiError) AllErrors() []error { return m }
+
+// DescribePairTrendsV2ReplyValidationError is the validation error returned by
+// DescribePairTrendsV2Reply.Validate if the designated constraints aren't met.
+type DescribePairTrendsV2ReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribePairTrendsV2ReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribePairTrendsV2ReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribePairTrendsV2ReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribePairTrendsV2ReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribePairTrendsV2ReplyValidationError) ErrorName() string {
+	return "DescribePairTrendsV2ReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribePairTrendsV2ReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribePairTrendsV2Reply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribePairTrendsV2ReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribePairTrendsV2ReplyValidationError{}
+
+// Validate checks the field values on CreateDexRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *CreateDexRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateDexRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateDexRequestMultiError, or nil if none found.
+func (m *CreateDexRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateDexRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if utf8.RuneCountInString(m.GetDexID()) < 1 {
+		err := CreateDexRequestValidationError{
+			field:  "DexID",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetName()) < 1 {
+		err := CreateDexRequestValidationError{
+			field:  "Name",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetWeight() < 0 {
+		err := CreateDexRequestValidationError{
+			field:  "Weight",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Icon
+
+	if len(errors) > 0 {
+		return CreateDexRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateDexRequestMultiError is an error wrapping multiple validation errors
+// returned by CreateDexRequest.ValidateAll() if the designated constraints
+// aren't met.
+type CreateDexRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateDexRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateDexRequestMultiError) AllErrors() []error { return m }
+
+// CreateDexRequestValidationError is the validation error returned by
+// CreateDexRequest.Validate if the designated constraints aren't met.
+type CreateDexRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateDexRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateDexRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateDexRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateDexRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateDexRequestValidationError) ErrorName() string { return "CreateDexRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CreateDexRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateDexRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateDexRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateDexRequestValidationError{}
+
+// Validate checks the field values on CreateDexReply with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *CreateDexReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateDexReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in CreateDexReplyMultiError,
+// or nil if none found.
+func (m *CreateDexReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateDexReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return CreateDexReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateDexReplyMultiError is an error wrapping multiple validation errors
+// returned by CreateDexReply.ValidateAll() if the designated constraints
+// aren't met.
+type CreateDexReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateDexReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateDexReplyMultiError) AllErrors() []error { return m }
+
+// CreateDexReplyValidationError is the validation error returned by
+// CreateDexReply.Validate if the designated constraints aren't met.
+type CreateDexReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateDexReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateDexReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateDexReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateDexReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateDexReplyValidationError) ErrorName() string { return "CreateDexReplyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CreateDexReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateDexReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateDexReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateDexReplyValidationError{}
+
+// Validate checks the field values on ModifyDexRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ModifyDexRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ModifyDexRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ModifyDexRequestMultiError, or nil if none found.
+func (m *ModifyDexRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ModifyDexRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if m.GetId() <= 0 {
+		err := ModifyDexRequestValidationError{
+			field:  "Id",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetName()) < 1 {
+		err := ModifyDexRequestValidationError{
+			field:  "Name",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetWeight() < 0 {
+		err := ModifyDexRequestValidationError{
+			field:  "Weight",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Icon
+
+	if len(errors) > 0 {
+		return ModifyDexRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ModifyDexRequestMultiError is an error wrapping multiple validation errors
+// returned by ModifyDexRequest.ValidateAll() if the designated constraints
+// aren't met.
+type ModifyDexRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ModifyDexRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ModifyDexRequestMultiError) AllErrors() []error { return m }
+
+// ModifyDexRequestValidationError is the validation error returned by
+// ModifyDexRequest.Validate if the designated constraints aren't met.
+type ModifyDexRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ModifyDexRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ModifyDexRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ModifyDexRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ModifyDexRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ModifyDexRequestValidationError) ErrorName() string { return "ModifyDexRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ModifyDexRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sModifyDexRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ModifyDexRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ModifyDexRequestValidationError{}
+
+// Validate checks the field values on DeleteDexRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *DeleteDexRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteDexRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteDexRequestMultiError, or nil if none found.
+func (m *DeleteDexRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteDexRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return DeleteDexRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteDexRequestMultiError is an error wrapping multiple validation errors
+// returned by DeleteDexRequest.ValidateAll() if the designated constraints
+// aren't met.
+type DeleteDexRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteDexRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteDexRequestMultiError) AllErrors() []error { return m }
+
+// DeleteDexRequestValidationError is the validation error returned by
+// DeleteDexRequest.Validate if the designated constraints aren't met.
+type DeleteDexRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteDexRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteDexRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteDexRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteDexRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteDexRequestValidationError) ErrorName() string { return "DeleteDexRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e DeleteDexRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteDexRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteDexRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteDexRequestValidationError{}
+
+// Validate checks the field values on DescribeRateRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeRateRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeRateRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribeRateRequestMultiError, or nil if none found.
+func (m *DescribeRateRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeRateRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if _, ok := _DescribeRateRequest_Currency_InLookup[m.GetCurrency()]; !ok {
+		err := DescribeRateRequestValidationError{
+			field:  "Currency",
+			reason: "value must be in list [cny usd]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return DescribeRateRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeRateRequestMultiError is an error wrapping multiple validation
+// errors returned by DescribeRateRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DescribeRateRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeRateRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeRateRequestMultiError) AllErrors() []error { return m }
+
+// DescribeRateRequestValidationError is the validation error returned by
+// DescribeRateRequest.Validate if the designated constraints aren't met.
+type DescribeRateRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeRateRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeRateRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeRateRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeRateRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeRateRequestValidationError) ErrorName() string {
+	return "DescribeRateRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeRateRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeRateRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeRateRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeRateRequestValidationError{}
+
+var _DescribeRateRequest_Currency_InLookup = map[string]struct{}{
+	"cny": {},
+	"usd": {},
+}
+
+// Validate checks the field values on DescribeRateReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *DescribeRateReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeRateReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribeRateReplyMultiError, or nil if none found.
+func (m *DescribeRateReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeRateReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Rate
+
+	if len(errors) > 0 {
+		return DescribeRateReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeRateReplyMultiError is an error wrapping multiple validation errors
+// returned by DescribeRateReply.ValidateAll() if the designated constraints
+// aren't met.
+type DescribeRateReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeRateReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeRateReplyMultiError) AllErrors() []error { return m }
+
+// DescribeRateReplyValidationError is the validation error returned by
+// DescribeRateReply.Validate if the designated constraints aren't met.
+type DescribeRateReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeRateReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeRateReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeRateReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeRateReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeRateReplyValidationError) ErrorName() string {
+	return "DescribeRateReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeRateReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeRateReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeRateReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeRateReplyValidationError{}
+
+// Validate checks the field values on DescribePairGuidesRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribePairGuidesRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribePairGuidesRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribePairGuidesRequestMultiError, or nil if none found.
+func (m *DescribePairGuidesRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribePairGuidesRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	if val := m.GetPageSize(); val <= 0 || val > 50 {
+		err := DescribePairGuidesRequestValidationError{
+			field:  "PageSize",
+			reason: "value must be inside range (0, 50]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return DescribePairGuidesRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribePairGuidesRequestMultiError is an error wrapping multiple validation
+// errors returned by DescribePairGuidesRequest.ValidateAll() if the
+// designated constraints aren't met.
+type DescribePairGuidesRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribePairGuidesRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribePairGuidesRequestMultiError) AllErrors() []error { return m }
+
+// DescribePairGuidesRequestValidationError is the validation error returned by
+// DescribePairGuidesRequest.Validate if the designated constraints aren't met.
+type DescribePairGuidesRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribePairGuidesRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribePairGuidesRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribePairGuidesRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribePairGuidesRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribePairGuidesRequestValidationError) ErrorName() string {
+	return "DescribePairGuidesRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribePairGuidesRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribePairGuidesRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribePairGuidesRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribePairGuidesRequestValidationError{}
+
+// Validate checks the field values on DescribePairGuidesReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribePairGuidesReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribePairGuidesReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribePairGuidesReplyMultiError, or nil if none found.
+func (m *DescribePairGuidesReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribePairGuidesReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetPairs() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DescribePairGuidesReplyValidationError{
+						field:  fmt.Sprintf("Pairs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DescribePairGuidesReplyValidationError{
+						field:  fmt.Sprintf("Pairs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DescribePairGuidesReplyValidationError{
+					field:  fmt.Sprintf("Pairs[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DescribePairGuidesReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribePairGuidesReplyMultiError is an error wrapping multiple validation
+// errors returned by DescribePairGuidesReply.ValidateAll() if the designated
+// constraints aren't met.
+type DescribePairGuidesReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribePairGuidesReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribePairGuidesReplyMultiError) AllErrors() []error { return m }
+
+// DescribePairGuidesReplyValidationError is the validation error returned by
+// DescribePairGuidesReply.Validate if the designated constraints aren't met.
+type DescribePairGuidesReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribePairGuidesReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribePairGuidesReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribePairGuidesReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribePairGuidesReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribePairGuidesReplyValidationError) ErrorName() string {
+	return "DescribePairGuidesReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribePairGuidesReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribePairGuidesReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribePairGuidesReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribePairGuidesReplyValidationError{}
+
+// Validate checks the field values on DescribeCoinsByChainRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeCoinsByChainRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeCoinsByChainRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribeCoinsByChainRequestMultiError, or nil if none found.
+func (m *DescribeCoinsByChainRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeCoinsByChainRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EventId
+
+	// no validation rules for Chain
+
+	if m.GetPage() <= 0 {
+		err := DescribeCoinsByChainRequestValidationError{
+			field:  "Page",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if val := m.GetPageSize(); val <= 0 || val > 500 {
+		err := DescribeCoinsByChainRequestValidationError{
+			field:  "PageSize",
+			reason: "value must be inside range (0, 500]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return DescribeCoinsByChainRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeCoinsByChainRequestMultiError is an error wrapping multiple
+// validation errors returned by DescribeCoinsByChainRequest.ValidateAll() if
+// the designated constraints aren't met.
+type DescribeCoinsByChainRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeCoinsByChainRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeCoinsByChainRequestMultiError) AllErrors() []error { return m }
+
+// DescribeCoinsByChainRequestValidationError is the validation error returned
+// by DescribeCoinsByChainRequest.Validate if the designated constraints
+// aren't met.
+type DescribeCoinsByChainRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeCoinsByChainRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeCoinsByChainRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeCoinsByChainRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeCoinsByChainRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeCoinsByChainRequestValidationError) ErrorName() string {
+	return "DescribeCoinsByChainRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeCoinsByChainRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeCoinsByChainRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeCoinsByChainRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeCoinsByChainRequestValidationError{}
+
+// Validate checks the field values on DescribeCoinsByChainReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeCoinsByChainReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeCoinsByChainReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribeCoinsByChainReplyMultiError, or nil if none found.
+func (m *DescribeCoinsByChainReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeCoinsByChainReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetCoins() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DescribeCoinsByChainReplyValidationError{
+						field:  fmt.Sprintf("Coins[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DescribeCoinsByChainReplyValidationError{
+						field:  fmt.Sprintf("Coins[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DescribeCoinsByChainReplyValidationError{
+					field:  fmt.Sprintf("Coins[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DescribeCoinsByChainReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeCoinsByChainReplyMultiError is an error wrapping multiple validation
+// errors returned by DescribeCoinsByChainReply.ValidateAll() if the
+// designated constraints aren't met.
+type DescribeCoinsByChainReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeCoinsByChainReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeCoinsByChainReplyMultiError) AllErrors() []error { return m }
+
+// DescribeCoinsByChainReplyValidationError is the validation error returned by
+// DescribeCoinsByChainReply.Validate if the designated constraints aren't met.
+type DescribeCoinsByChainReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeCoinsByChainReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeCoinsByChainReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeCoinsByChainReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeCoinsByChainReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeCoinsByChainReplyValidationError) ErrorName() string {
+	return "DescribeCoinsByChainReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeCoinsByChainReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeCoinsByChainReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeCoinsByChainReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeCoinsByChainReplyValidationError{}
+
+// Validate checks the field values on DescribeCollectionsReply_Coin with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeCollectionsReply_Coin) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeCollectionsReply_Coin with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// DescribeCollectionsReply_CoinMultiError, or nil if none found.
+func (m *DescribeCollectionsReply_Coin) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeCollectionsReply_Coin) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Rank
+
+	// no validation rules for CoinID
+
+	// no validation rules for Price
+
+	// no validation rules for Delta1H
+
+	// no validation rules for Delta24H
+
+	// no validation rules for Delta7D
+
+	// no validation rules for Delta30D
+
+	// no validation rules for Delta1Y
+
+	// no validation rules for Volume24H
+
+	// no validation rules for MarketCap
+
+	// no validation rules for FullyDilutedValuation
+
+	// no validation rules for TotalSupply
+
+	// no validation rules for MaxSupply
+
+	// no validation rules for CirculatingSupply
+
+	// no validation rules for High24
+
+	// no validation rules for Low24
+
+	// no validation rules for Sparkline7D
+
+	// no validation rules for UpdatedAt
+
+	// no validation rules for Image
+
+	// no validation rules for Name
+
+	// no validation rules for Symbol
+
+	// no validation rules for IsFocus
+
+	if len(errors) > 0 {
+		return DescribeCollectionsReply_CoinMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeCollectionsReply_CoinMultiError is an error wrapping multiple
+// validation errors returned by DescribeCollectionsReply_Coin.ValidateAll()
+// if the designated constraints aren't met.
+type DescribeCollectionsReply_CoinMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeCollectionsReply_CoinMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeCollectionsReply_CoinMultiError) AllErrors() []error { return m }
+
+// DescribeCollectionsReply_CoinValidationError is the validation error
+// returned by DescribeCollectionsReply_Coin.Validate if the designated
+// constraints aren't met.
+type DescribeCollectionsReply_CoinValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeCollectionsReply_CoinValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeCollectionsReply_CoinValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeCollectionsReply_CoinValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeCollectionsReply_CoinValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeCollectionsReply_CoinValidationError) ErrorName() string {
+	return "DescribeCollectionsReply_CoinValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeCollectionsReply_CoinValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeCollectionsReply_Coin.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeCollectionsReply_CoinValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeCollectionsReply_CoinValidationError{}
+
+// Validate checks the field values on DescribeCollectionsReply_Pair with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeCollectionsReply_Pair) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeCollectionsReply_Pair with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// DescribeCollectionsReply_PairMultiError, or nil if none found.
+func (m *DescribeCollectionsReply_Pair) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeCollectionsReply_Pair) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Address
+
+	// no validation rules for Chain
+
+	// no validation rules for DexID
+
+	// no validation rules for DexIcon
+
+	// no validation rules for BaseToken
+
+	// no validation rules for QuoteToken
+
+	// no validation rules for Stat5M
+
+	// no validation rules for Stat1H
+
+	// no validation rules for Stat6H
+
+	// no validation rules for Stat24H
+
+	// no validation rules for Fdv
+
+	// no validation rules for Liquidity
+
+	// no validation rules for Price
+
+	// no validation rules for IsFocus
+
+	// no validation rules for CreatedAt
+
+	if len(errors) > 0 {
+		return DescribeCollectionsReply_PairMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeCollectionsReply_PairMultiError is an error wrapping multiple
+// validation errors returned by DescribeCollectionsReply_Pair.ValidateAll()
+// if the designated constraints aren't met.
+type DescribeCollectionsReply_PairMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeCollectionsReply_PairMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeCollectionsReply_PairMultiError) AllErrors() []error { return m }
+
+// DescribeCollectionsReply_PairValidationError is the validation error
+// returned by DescribeCollectionsReply_Pair.Validate if the designated
+// constraints aren't met.
+type DescribeCollectionsReply_PairValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeCollectionsReply_PairValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeCollectionsReply_PairValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeCollectionsReply_PairValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeCollectionsReply_PairValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeCollectionsReply_PairValidationError) ErrorName() string {
+	return "DescribeCollectionsReply_PairValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeCollectionsReply_PairValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeCollectionsReply_Pair.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeCollectionsReply_PairValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeCollectionsReply_PairValidationError{}
+
+// Validate checks the field values on CoinAndPair_Token with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *CoinAndPair_Token) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CoinAndPair_Token with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CoinAndPair_TokenMultiError, or nil if none found.
+func (m *CoinAndPair_Token) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CoinAndPair_Token) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Name
+
+	// no validation rules for Symbol
+
+	// no validation rules for Address
+
+	if len(errors) > 0 {
+		return CoinAndPair_TokenMultiError(errors)
+	}
+
+	return nil
+}
+
+// CoinAndPair_TokenMultiError is an error wrapping multiple validation errors
+// returned by CoinAndPair_Token.ValidateAll() if the designated constraints
+// aren't met.
+type CoinAndPair_TokenMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CoinAndPair_TokenMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CoinAndPair_TokenMultiError) AllErrors() []error { return m }
+
+// CoinAndPair_TokenValidationError is the validation error returned by
+// CoinAndPair_Token.Validate if the designated constraints aren't met.
+type CoinAndPair_TokenValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CoinAndPair_TokenValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CoinAndPair_TokenValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CoinAndPair_TokenValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CoinAndPair_TokenValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CoinAndPair_TokenValidationError) ErrorName() string {
+	return "CoinAndPair_TokenValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CoinAndPair_TokenValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCoinAndPair_Token.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CoinAndPair_TokenValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CoinAndPair_TokenValidationError{}
+
+// Validate checks the field values on DescribeDexReply_Dex with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeDexReply_Dex) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeDexReply_Dex with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribeDexReply_DexMultiError, or nil if none found.
+func (m *DescribeDexReply_Dex) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeDexReply_Dex) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for DexID
+
+	// no validation rules for Name
+
+	// no validation rules for Weight
+
+	// no validation rules for Image
+
+	if len(errors) > 0 {
+		return DescribeDexReply_DexMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeDexReply_DexMultiError is an error wrapping multiple validation
+// errors returned by DescribeDexReply_Dex.ValidateAll() if the designated
+// constraints aren't met.
+type DescribeDexReply_DexMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeDexReply_DexMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeDexReply_DexMultiError) AllErrors() []error { return m }
+
+// DescribeDexReply_DexValidationError is the validation error returned by
+// DescribeDexReply_Dex.Validate if the designated constraints aren't met.
+type DescribeDexReply_DexValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeDexReply_DexValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeDexReply_DexValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeDexReply_DexValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeDexReply_DexValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeDexReply_DexValidationError) ErrorName() string {
+	return "DescribeDexReply_DexValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeDexReply_DexValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeDexReply_Dex.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeDexReply_DexValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeDexReply_DexValidationError{}
+
+// Validate checks the field values on DescribeHotCoinsReply_HotCoin with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeHotCoinsReply_HotCoin) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeHotCoinsReply_HotCoin with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// DescribeHotCoinsReply_HotCoinMultiError, or nil if none found.
+func (m *DescribeHotCoinsReply_HotCoin) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeHotCoinsReply_HotCoin) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CoinID
+
+	// no validation rules for Name
+
+	// no validation rules for Symbol
+
+	// no validation rules for Image
+
+	// no validation rules for PriceDelta
+
+	// no validation rules for Price
+
+	if len(errors) > 0 {
+		return DescribeHotCoinsReply_HotCoinMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeHotCoinsReply_HotCoinMultiError is an error wrapping multiple
+// validation errors returned by DescribeHotCoinsReply_HotCoin.ValidateAll()
+// if the designated constraints aren't met.
+type DescribeHotCoinsReply_HotCoinMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeHotCoinsReply_HotCoinMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeHotCoinsReply_HotCoinMultiError) AllErrors() []error { return m }
+
+// DescribeHotCoinsReply_HotCoinValidationError is the validation error
+// returned by DescribeHotCoinsReply_HotCoin.Validate if the designated
+// constraints aren't met.
+type DescribeHotCoinsReply_HotCoinValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeHotCoinsReply_HotCoinValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeHotCoinsReply_HotCoinValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeHotCoinsReply_HotCoinValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeHotCoinsReply_HotCoinValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeHotCoinsReply_HotCoinValidationError) ErrorName() string {
+	return "DescribeHotCoinsReply_HotCoinValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeHotCoinsReply_HotCoinValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeHotCoinsReply_HotCoin.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeHotCoinsReply_HotCoinValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeHotCoinsReply_HotCoinValidationError{}
+
+// Validate checks the field values on DescribeHotCoinsV2Reply_HotCoin with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeHotCoinsV2Reply_HotCoin) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeHotCoinsV2Reply_HotCoin with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// DescribeHotCoinsV2Reply_HotCoinMultiError, or nil if none found.
+func (m *DescribeHotCoinsV2Reply_HotCoin) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeHotCoinsV2Reply_HotCoin) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CoinID
+
+	// no validation rules for Name
+
+	// no validation rules for Symbol
+
+	// no validation rules for Image
+
+	// no validation rules for Delta24H
+
+	// no validation rules for Price
+
+	// no validation rules for Volume24H
+
+	// no validation rules for MarketCap
+
+	// no validation rules for Sparkline7D
+
+	if len(errors) > 0 {
+		return DescribeHotCoinsV2Reply_HotCoinMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeHotCoinsV2Reply_HotCoinMultiError is an error wrapping multiple
+// validation errors returned by DescribeHotCoinsV2Reply_HotCoin.ValidateAll()
+// if the designated constraints aren't met.
+type DescribeHotCoinsV2Reply_HotCoinMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeHotCoinsV2Reply_HotCoinMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeHotCoinsV2Reply_HotCoinMultiError) AllErrors() []error { return m }
+
+// DescribeHotCoinsV2Reply_HotCoinValidationError is the validation error
+// returned by DescribeHotCoinsV2Reply_HotCoin.Validate if the designated
+// constraints aren't met.
+type DescribeHotCoinsV2Reply_HotCoinValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeHotCoinsV2Reply_HotCoinValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeHotCoinsV2Reply_HotCoinValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeHotCoinsV2Reply_HotCoinValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeHotCoinsV2Reply_HotCoinValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeHotCoinsV2Reply_HotCoinValidationError) ErrorName() string {
+	return "DescribeHotCoinsV2Reply_HotCoinValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeHotCoinsV2Reply_HotCoinValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeHotCoinsV2Reply_HotCoin.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeHotCoinsV2Reply_HotCoinValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeHotCoinsV2Reply_HotCoinValidationError{}
+
+// Validate checks the field values on DescribeChainsSupportReply_Chain with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *DescribeChainsSupportReply_Chain) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeChainsSupportReply_Chain with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// DescribeChainsSupportReply_ChainMultiError, or nil if none found.
+func (m *DescribeChainsSupportReply_Chain) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeChainsSupportReply_Chain) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Chain
+
+	// no validation rules for Name
+
+	// no validation rules for Icon
+
+	if len(errors) > 0 {
+		return DescribeChainsSupportReply_ChainMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeChainsSupportReply_ChainMultiError is an error wrapping multiple
+// validation errors returned by
+// DescribeChainsSupportReply_Chain.ValidateAll() if the designated
+// constraints aren't met.
+type DescribeChainsSupportReply_ChainMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeChainsSupportReply_ChainMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeChainsSupportReply_ChainMultiError) AllErrors() []error { return m }
+
+// DescribeChainsSupportReply_ChainValidationError is the validation error
+// returned by DescribeChainsSupportReply_Chain.Validate if the designated
+// constraints aren't met.
+type DescribeChainsSupportReply_ChainValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeChainsSupportReply_ChainValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeChainsSupportReply_ChainValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeChainsSupportReply_ChainValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeChainsSupportReply_ChainValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeChainsSupportReply_ChainValidationError) ErrorName() string {
+	return "DescribeChainsSupportReply_ChainValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeChainsSupportReply_ChainValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeChainsSupportReply_Chain.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeChainsSupportReply_ChainValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeChainsSupportReply_ChainValidationError{}
+
+// Validate checks the field values on DescribeAlertsReply_CoinAlerts with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeAlertsReply_CoinAlerts) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeAlertsReply_CoinAlerts with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// DescribeAlertsReply_CoinAlertsMultiError, or nil if none found.
+func (m *DescribeAlertsReply_CoinAlerts) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeAlertsReply_CoinAlerts) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CoinID
+
+	for idx, item := range m.GetAlerts() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DescribeAlertsReply_CoinAlertsValidationError{
+						field:  fmt.Sprintf("Alerts[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DescribeAlertsReply_CoinAlertsValidationError{
+						field:  fmt.Sprintf("Alerts[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DescribeAlertsReply_CoinAlertsValidationError{
+					field:  fmt.Sprintf("Alerts[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for Type
+
+	if len(errors) > 0 {
+		return DescribeAlertsReply_CoinAlertsMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeAlertsReply_CoinAlertsMultiError is an error wrapping multiple
+// validation errors returned by DescribeAlertsReply_CoinAlerts.ValidateAll()
+// if the designated constraints aren't met.
+type DescribeAlertsReply_CoinAlertsMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeAlertsReply_CoinAlertsMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeAlertsReply_CoinAlertsMultiError) AllErrors() []error { return m }
+
+// DescribeAlertsReply_CoinAlertsValidationError is the validation error
+// returned by DescribeAlertsReply_CoinAlerts.Validate if the designated
+// constraints aren't met.
+type DescribeAlertsReply_CoinAlertsValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeAlertsReply_CoinAlertsValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeAlertsReply_CoinAlertsValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeAlertsReply_CoinAlertsValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeAlertsReply_CoinAlertsValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeAlertsReply_CoinAlertsValidationError) ErrorName() string {
+	return "DescribeAlertsReply_CoinAlertsValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeAlertsReply_CoinAlertsValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeAlertsReply_CoinAlerts.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeAlertsReply_CoinAlertsValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeAlertsReply_CoinAlertsValidationError{}
+
+// Validate checks the field values on DescribeAlertsReply_CoinAlerts_Alerts
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the first error encountered is returned, or nil if
+// there are no violations.
+func (m *DescribeAlertsReply_CoinAlerts_Alerts) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeAlertsReply_CoinAlerts_Alerts
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// DescribeAlertsReply_CoinAlerts_AlertsMultiError, or nil if none found.
+func (m *DescribeAlertsReply_CoinAlerts_Alerts) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeAlertsReply_CoinAlerts_Alerts) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for AlertID
+
+	if _, ok := _DescribeAlertsReply_CoinAlerts_Alerts_AlertType_InLookup[m.GetAlertType()]; !ok {
+		err := DescribeAlertsReply_CoinAlerts_AlertsValidationError{
+			field:  "AlertType",
+			reason: "value must be in list [1 2 3]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Value
+
+	if _, ok := _DescribeAlertsReply_CoinAlerts_Alerts_Frequency_InLookup[m.GetFrequency()]; !ok {
+		err := DescribeAlertsReply_CoinAlerts_AlertsValidationError{
+			field:  "Frequency",
+			reason: "value must be in list [1 2]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetCurrency()) < 1 {
+		err := DescribeAlertsReply_CoinAlerts_AlertsValidationError{
+			field:  "Currency",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := _DescribeAlertsReply_CoinAlerts_Alerts_Type_InLookup[m.GetType()]; !ok {
+		err := DescribeAlertsReply_CoinAlerts_AlertsValidationError{
+			field:  "Type",
+			reason: "value must be in list [1 2]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return DescribeAlertsReply_CoinAlerts_AlertsMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeAlertsReply_CoinAlerts_AlertsMultiError is an error wrapping
+// multiple validation errors returned by
+// DescribeAlertsReply_CoinAlerts_Alerts.ValidateAll() if the designated
+// constraints aren't met.
+type DescribeAlertsReply_CoinAlerts_AlertsMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeAlertsReply_CoinAlerts_AlertsMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeAlertsReply_CoinAlerts_AlertsMultiError) AllErrors() []error { return m }
+
+// DescribeAlertsReply_CoinAlerts_AlertsValidationError is the validation error
+// returned by DescribeAlertsReply_CoinAlerts_Alerts.Validate if the
+// designated constraints aren't met.
+type DescribeAlertsReply_CoinAlerts_AlertsValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeAlertsReply_CoinAlerts_AlertsValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeAlertsReply_CoinAlerts_AlertsValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeAlertsReply_CoinAlerts_AlertsValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeAlertsReply_CoinAlerts_AlertsValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeAlertsReply_CoinAlerts_AlertsValidationError) ErrorName() string {
+	return "DescribeAlertsReply_CoinAlerts_AlertsValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeAlertsReply_CoinAlerts_AlertsValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeAlertsReply_CoinAlerts_Alerts.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeAlertsReply_CoinAlerts_AlertsValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeAlertsReply_CoinAlerts_AlertsValidationError{}
+
+var _DescribeAlertsReply_CoinAlerts_Alerts_AlertType_InLookup = map[int32]struct{}{
+	1: {},
+	2: {},
+	3: {},
+}
+
+var _DescribeAlertsReply_CoinAlerts_Alerts_Frequency_InLookup = map[int32]struct{}{
+	1: {},
+	2: {},
+}
+
+var _DescribeAlertsReply_CoinAlerts_Alerts_Type_InLookup = map[int32]struct{}{
+	1: {},
+	2: {},
+}
+
+// Validate checks the field values on DescribeCollectionGuideListReply_Guide
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the first error encountered is returned, or nil if
+// there are no violations.
+func (m *DescribeCollectionGuideListReply_Guide) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// DescribeCollectionGuideListReply_Guide with the rules defined in the proto
+// definition for this message. If any rules are violated, the result is a
+// list of violation errors wrapped in
+// DescribeCollectionGuideListReply_GuideMultiError, or nil if none found.
+func (m *DescribeCollectionGuideListReply_Guide) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeCollectionGuideListReply_Guide) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CoinID
+
+	// no validation rules for Weight
+
+	if len(errors) > 0 {
+		return DescribeCollectionGuideListReply_GuideMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeCollectionGuideListReply_GuideMultiError is an error wrapping
+// multiple validation errors returned by
+// DescribeCollectionGuideListReply_Guide.ValidateAll() if the designated
+// constraints aren't met.
+type DescribeCollectionGuideListReply_GuideMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeCollectionGuideListReply_GuideMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeCollectionGuideListReply_GuideMultiError) AllErrors() []error { return m }
+
+// DescribeCollectionGuideListReply_GuideValidationError is the validation
+// error returned by DescribeCollectionGuideListReply_Guide.Validate if the
+// designated constraints aren't met.
+type DescribeCollectionGuideListReply_GuideValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeCollectionGuideListReply_GuideValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeCollectionGuideListReply_GuideValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeCollectionGuideListReply_GuideValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeCollectionGuideListReply_GuideValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeCollectionGuideListReply_GuideValidationError) ErrorName() string {
+	return "DescribeCollectionGuideListReply_GuideValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeCollectionGuideListReply_GuideValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeCollectionGuideListReply_Guide.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeCollectionGuideListReply_GuideValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeCollectionGuideListReply_GuideValidationError{}
+
 // Validate checks the field values on DescribeColumnListReply_Column with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -8299,6 +18837,122 @@ var _ interface {
 	ErrorName() string
 } = DescribeColumnListReply_ColumnValidationError{}
 
+// Validate checks the field values on DescribeCexCoinsRequest_Sort with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeCexCoinsRequest_Sort) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeCexCoinsRequest_Sort with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribeCexCoinsRequest_SortMultiError, or nil if none found.
+func (m *DescribeCexCoinsRequest_Sort) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeCexCoinsRequest_Sort) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if _, ok := DescribeCexCoinsRequest_SortFieldEnum_name[int32(m.GetSortField())]; !ok {
+		err := DescribeCexCoinsRequest_SortValidationError{
+			field:  "SortField",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for SortType
+
+	if len(errors) > 0 {
+		return DescribeCexCoinsRequest_SortMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeCexCoinsRequest_SortMultiError is an error wrapping multiple
+// validation errors returned by DescribeCexCoinsRequest_Sort.ValidateAll() if
+// the designated constraints aren't met.
+type DescribeCexCoinsRequest_SortMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeCexCoinsRequest_SortMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeCexCoinsRequest_SortMultiError) AllErrors() []error { return m }
+
+// DescribeCexCoinsRequest_SortValidationError is the validation error returned
+// by DescribeCexCoinsRequest_Sort.Validate if the designated constraints
+// aren't met.
+type DescribeCexCoinsRequest_SortValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeCexCoinsRequest_SortValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeCexCoinsRequest_SortValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeCexCoinsRequest_SortValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeCexCoinsRequest_SortValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeCexCoinsRequest_SortValidationError) ErrorName() string {
+	return "DescribeCexCoinsRequest_SortValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeCexCoinsRequest_SortValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeCexCoinsRequest_Sort.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeCexCoinsRequest_SortValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeCexCoinsRequest_SortValidationError{}
+
 // Validate checks the field values on DescribeCexCoinsReply_Coin with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -8356,6 +19010,12 @@ func (m *DescribeCexCoinsReply_Coin) validate(all bool) error {
 	// no validation rules for Sparkline7D
 
 	// no validation rules for UpdatedAt
+
+	// no validation rules for Image
+
+	// no validation rules for Name
+
+	// no validation rules for Symbol
 
 	if len(errors) > 0 {
 		return DescribeCexCoinsReply_CoinMultiError(errors)
@@ -8464,6 +19124,8 @@ func (m *DescribeMarketExtraDetailReply_ChainAddress) validate(all bool) error {
 	// no validation rules for Chain
 
 	// no validation rules for Address
+
+	// no validation rules for Icon
 
 	if len(errors) > 0 {
 		return DescribeMarketExtraDetailReply_ChainAddressMultiError(errors)
@@ -8989,6 +19651,115 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DescribeCoinPriceChartReply_VolumeChartValidationError{}
+
+// Validate checks the field values on DescribeCoinPriceByRangeReply_Price with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *DescribeCoinPriceByRangeReply_Price) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeCoinPriceByRangeReply_Price
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// DescribeCoinPriceByRangeReply_PriceMultiError, or nil if none found.
+func (m *DescribeCoinPriceByRangeReply_Price) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeCoinPriceByRangeReply_Price) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Timestamp
+
+	// no validation rules for Price
+
+	if len(errors) > 0 {
+		return DescribeCoinPriceByRangeReply_PriceMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeCoinPriceByRangeReply_PriceMultiError is an error wrapping multiple
+// validation errors returned by
+// DescribeCoinPriceByRangeReply_Price.ValidateAll() if the designated
+// constraints aren't met.
+type DescribeCoinPriceByRangeReply_PriceMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeCoinPriceByRangeReply_PriceMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeCoinPriceByRangeReply_PriceMultiError) AllErrors() []error { return m }
+
+// DescribeCoinPriceByRangeReply_PriceValidationError is the validation error
+// returned by DescribeCoinPriceByRangeReply_Price.Validate if the designated
+// constraints aren't met.
+type DescribeCoinPriceByRangeReply_PriceValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeCoinPriceByRangeReply_PriceValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeCoinPriceByRangeReply_PriceValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeCoinPriceByRangeReply_PriceValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeCoinPriceByRangeReply_PriceValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeCoinPriceByRangeReply_PriceValidationError) ErrorName() string {
+	return "DescribeCoinPriceByRangeReply_PriceValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeCoinPriceByRangeReply_PriceValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeCoinPriceByRangeReply_Price.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeCoinPriceByRangeReply_PriceValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeCoinPriceByRangeReply_PriceValidationError{}
 
 // Validate checks the field values on DescribeCoinSwapsReply_CoinSwapsDetail
 // with the rules defined in the proto definition for this message. If any
@@ -10068,230 +20839,6 @@ var _ interface {
 	ErrorName() string
 } = DescribeDeFiCoinsReply_DeFiCoinValidationError{}
 
-// Validate checks the field values on DescribeCoinSimplesReply_CoinSimple with
-// the rules defined in the proto definition for this message. If any rules
-// are violated, the first error encountered is returned, or nil if there are
-// no violations.
-func (m *DescribeCoinSimplesReply_CoinSimple) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on DescribeCoinSimplesReply_CoinSimple
-// with the rules defined in the proto definition for this message. If any
-// rules are violated, the result is a list of violation errors wrapped in
-// DescribeCoinSimplesReply_CoinSimpleMultiError, or nil if none found.
-func (m *DescribeCoinSimplesReply_CoinSimple) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *DescribeCoinSimplesReply_CoinSimple) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for CoinID
-
-	// no validation rules for Name
-
-	// no validation rules for Symbol
-
-	// no validation rules for Image
-
-	if len(errors) > 0 {
-		return DescribeCoinSimplesReply_CoinSimpleMultiError(errors)
-	}
-
-	return nil
-}
-
-// DescribeCoinSimplesReply_CoinSimpleMultiError is an error wrapping multiple
-// validation errors returned by
-// DescribeCoinSimplesReply_CoinSimple.ValidateAll() if the designated
-// constraints aren't met.
-type DescribeCoinSimplesReply_CoinSimpleMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m DescribeCoinSimplesReply_CoinSimpleMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m DescribeCoinSimplesReply_CoinSimpleMultiError) AllErrors() []error { return m }
-
-// DescribeCoinSimplesReply_CoinSimpleValidationError is the validation error
-// returned by DescribeCoinSimplesReply_CoinSimple.Validate if the designated
-// constraints aren't met.
-type DescribeCoinSimplesReply_CoinSimpleValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e DescribeCoinSimplesReply_CoinSimpleValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e DescribeCoinSimplesReply_CoinSimpleValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e DescribeCoinSimplesReply_CoinSimpleValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e DescribeCoinSimplesReply_CoinSimpleValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e DescribeCoinSimplesReply_CoinSimpleValidationError) ErrorName() string {
-	return "DescribeCoinSimplesReply_CoinSimpleValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e DescribeCoinSimplesReply_CoinSimpleValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sDescribeCoinSimplesReply_CoinSimple.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = DescribeCoinSimplesReply_CoinSimpleValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = DescribeCoinSimplesReply_CoinSimpleValidationError{}
-
-// Validate checks the field values on SearchCoinsReply_CoinSimple with the
-// rules defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *SearchCoinsReply_CoinSimple) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on SearchCoinsReply_CoinSimple with the
-// rules defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// SearchCoinsReply_CoinSimpleMultiError, or nil if none found.
-func (m *SearchCoinsReply_CoinSimple) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *SearchCoinsReply_CoinSimple) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for CoinID
-
-	// no validation rules for Name
-
-	// no validation rules for Symbol
-
-	// no validation rules for Image
-
-	if len(errors) > 0 {
-		return SearchCoinsReply_CoinSimpleMultiError(errors)
-	}
-
-	return nil
-}
-
-// SearchCoinsReply_CoinSimpleMultiError is an error wrapping multiple
-// validation errors returned by SearchCoinsReply_CoinSimple.ValidateAll() if
-// the designated constraints aren't met.
-type SearchCoinsReply_CoinSimpleMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m SearchCoinsReply_CoinSimpleMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m SearchCoinsReply_CoinSimpleMultiError) AllErrors() []error { return m }
-
-// SearchCoinsReply_CoinSimpleValidationError is the validation error returned
-// by SearchCoinsReply_CoinSimple.Validate if the designated constraints
-// aren't met.
-type SearchCoinsReply_CoinSimpleValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e SearchCoinsReply_CoinSimpleValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e SearchCoinsReply_CoinSimpleValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e SearchCoinsReply_CoinSimpleValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e SearchCoinsReply_CoinSimpleValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e SearchCoinsReply_CoinSimpleValidationError) ErrorName() string {
-	return "SearchCoinsReply_CoinSimpleValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e SearchCoinsReply_CoinSimpleValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sSearchCoinsReply_CoinSimple.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = SearchCoinsReply_CoinSimpleValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = SearchCoinsReply_CoinSimpleValidationError{}
-
 // Validate checks the field values on DescribeTokensReply_Token with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -10854,6 +21401,8 @@ func (m *DescribePriceByCoinAddressReply_Tokens) validate(all bool) error {
 
 	// no validation rules for CoinID
 
+	// no validation rules for DecimalPlace
+
 	if len(errors) > 0 {
 		return DescribePriceByCoinAddressReply_TokensMultiError(errors)
 	}
@@ -11075,3 +21624,709 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DescribePriceByCoinAddressReply_CoinCurrencyValidationError{}
+
+// Validate checks the field values on DescribeCoinIDByTokensReply_Coin with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *DescribeCoinIDByTokensReply_Coin) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeCoinIDByTokensReply_Coin with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// DescribeCoinIDByTokensReply_CoinMultiError, or nil if none found.
+func (m *DescribeCoinIDByTokensReply_Coin) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeCoinIDByTokensReply_Coin) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CoinID
+
+	// no validation rules for Chain
+
+	// no validation rules for Address
+
+	if len(errors) > 0 {
+		return DescribeCoinIDByTokensReply_CoinMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeCoinIDByTokensReply_CoinMultiError is an error wrapping multiple
+// validation errors returned by
+// DescribeCoinIDByTokensReply_Coin.ValidateAll() if the designated
+// constraints aren't met.
+type DescribeCoinIDByTokensReply_CoinMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeCoinIDByTokensReply_CoinMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeCoinIDByTokensReply_CoinMultiError) AllErrors() []error { return m }
+
+// DescribeCoinIDByTokensReply_CoinValidationError is the validation error
+// returned by DescribeCoinIDByTokensReply_Coin.Validate if the designated
+// constraints aren't met.
+type DescribeCoinIDByTokensReply_CoinValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeCoinIDByTokensReply_CoinValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeCoinIDByTokensReply_CoinValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeCoinIDByTokensReply_CoinValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeCoinIDByTokensReply_CoinValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeCoinIDByTokensReply_CoinValidationError) ErrorName() string {
+	return "DescribeCoinIDByTokensReply_CoinValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeCoinIDByTokensReply_CoinValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeCoinIDByTokensReply_Coin.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeCoinIDByTokensReply_CoinValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeCoinIDByTokensReply_CoinValidationError{}
+
+// Validate checks the field values on DescribeWhiteTokensReply_Coin with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeWhiteTokensReply_Coin) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeWhiteTokensReply_Coin with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// DescribeWhiteTokensReply_CoinMultiError, or nil if none found.
+func (m *DescribeWhiteTokensReply_Coin) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeWhiteTokensReply_Coin) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CoinID
+
+	// no validation rules for Address
+
+	// no validation rules for Symbol
+
+	// no validation rules for Icon
+
+	// no validation rules for Price
+
+	if len(errors) > 0 {
+		return DescribeWhiteTokensReply_CoinMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeWhiteTokensReply_CoinMultiError is an error wrapping multiple
+// validation errors returned by DescribeWhiteTokensReply_Coin.ValidateAll()
+// if the designated constraints aren't met.
+type DescribeWhiteTokensReply_CoinMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeWhiteTokensReply_CoinMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeWhiteTokensReply_CoinMultiError) AllErrors() []error { return m }
+
+// DescribeWhiteTokensReply_CoinValidationError is the validation error
+// returned by DescribeWhiteTokensReply_Coin.Validate if the designated
+// constraints aren't met.
+type DescribeWhiteTokensReply_CoinValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeWhiteTokensReply_CoinValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeWhiteTokensReply_CoinValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeWhiteTokensReply_CoinValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeWhiteTokensReply_CoinValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeWhiteTokensReply_CoinValidationError) ErrorName() string {
+	return "DescribeWhiteTokensReply_CoinValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeWhiteTokensReply_CoinValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeWhiteTokensReply_Coin.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeWhiteTokensReply_CoinValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeWhiteTokensReply_CoinValidationError{}
+
+// Validate checks the field values on CheckCoinsReply_Coin with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CheckCoinsReply_Coin) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CheckCoinsReply_Coin with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CheckCoinsReply_CoinMultiError, or nil if none found.
+func (m *CheckCoinsReply_Coin) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CheckCoinsReply_Coin) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CoinID
+
+	// no validation rules for IsCex
+
+	// no validation rules for IsDex
+
+	if len(errors) > 0 {
+		return CheckCoinsReply_CoinMultiError(errors)
+	}
+
+	return nil
+}
+
+// CheckCoinsReply_CoinMultiError is an error wrapping multiple validation
+// errors returned by CheckCoinsReply_Coin.ValidateAll() if the designated
+// constraints aren't met.
+type CheckCoinsReply_CoinMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CheckCoinsReply_CoinMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CheckCoinsReply_CoinMultiError) AllErrors() []error { return m }
+
+// CheckCoinsReply_CoinValidationError is the validation error returned by
+// CheckCoinsReply_Coin.Validate if the designated constraints aren't met.
+type CheckCoinsReply_CoinValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CheckCoinsReply_CoinValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CheckCoinsReply_CoinValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CheckCoinsReply_CoinValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CheckCoinsReply_CoinValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CheckCoinsReply_CoinValidationError) ErrorName() string {
+	return "CheckCoinsReply_CoinValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CheckCoinsReply_CoinValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCheckCoinsReply_Coin.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CheckCoinsReply_CoinValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CheckCoinsReply_CoinValidationError{}
+
+// Validate checks the field values on DescribePairReply_Pair with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribePairReply_Pair) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribePairReply_Pair with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DescribePairReply_PairMultiError, or nil if none found.
+func (m *DescribePairReply_Pair) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribePairReply_Pair) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Address
+
+	// no validation rules for Chain
+
+	// no validation rules for DexID
+
+	// no validation rules for DexIcon
+
+	// no validation rules for BaseToken
+
+	// no validation rules for QuoteToken
+
+	// no validation rules for Stat5M
+
+	// no validation rules for Stat1H
+
+	// no validation rules for Stat6H
+
+	// no validation rules for Stat24H
+
+	// no validation rules for Fdv
+
+	// no validation rules for Liquidity
+
+	// no validation rules for Price
+
+	// no validation rules for IsFocus
+
+	// no validation rules for DexScreenerChain
+
+	// no validation rules for CreatedAt
+
+	if len(errors) > 0 {
+		return DescribePairReply_PairMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribePairReply_PairMultiError is an error wrapping multiple validation
+// errors returned by DescribePairReply_Pair.ValidateAll() if the designated
+// constraints aren't met.
+type DescribePairReply_PairMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribePairReply_PairMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribePairReply_PairMultiError) AllErrors() []error { return m }
+
+// DescribePairReply_PairValidationError is the validation error returned by
+// DescribePairReply_Pair.Validate if the designated constraints aren't met.
+type DescribePairReply_PairValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribePairReply_PairValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribePairReply_PairValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribePairReply_PairValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribePairReply_PairValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribePairReply_PairValidationError) ErrorName() string {
+	return "DescribePairReply_PairValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribePairReply_PairValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribePairReply_Pair.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribePairReply_PairValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribePairReply_PairValidationError{}
+
+// Validate checks the field values on DescribePairTrendsReply_PairTrend with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *DescribePairTrendsReply_PairTrend) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribePairTrendsReply_PairTrend
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// DescribePairTrendsReply_PairTrendMultiError, or nil if none found.
+func (m *DescribePairTrendsReply_PairTrend) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribePairTrendsReply_PairTrend) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Address
+
+	// no validation rules for Chain
+
+	// no validation rules for DexIcon
+
+	// no validation rules for BaseToken
+
+	// no validation rules for QuoteToken
+
+	// no validation rules for Price
+
+	// no validation rules for PriceDelta
+
+	// no validation rules for DexID
+
+	// no validation rules for IsFocus
+
+	if len(errors) > 0 {
+		return DescribePairTrendsReply_PairTrendMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribePairTrendsReply_PairTrendMultiError is an error wrapping multiple
+// validation errors returned by
+// DescribePairTrendsReply_PairTrend.ValidateAll() if the designated
+// constraints aren't met.
+type DescribePairTrendsReply_PairTrendMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribePairTrendsReply_PairTrendMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribePairTrendsReply_PairTrendMultiError) AllErrors() []error { return m }
+
+// DescribePairTrendsReply_PairTrendValidationError is the validation error
+// returned by DescribePairTrendsReply_PairTrend.Validate if the designated
+// constraints aren't met.
+type DescribePairTrendsReply_PairTrendValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribePairTrendsReply_PairTrendValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribePairTrendsReply_PairTrendValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribePairTrendsReply_PairTrendValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribePairTrendsReply_PairTrendValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribePairTrendsReply_PairTrendValidationError) ErrorName() string {
+	return "DescribePairTrendsReply_PairTrendValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribePairTrendsReply_PairTrendValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribePairTrendsReply_PairTrend.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribePairTrendsReply_PairTrendValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribePairTrendsReply_PairTrendValidationError{}
+
+// Validate checks the field values on DescribeCoinsByChainReply_Coin with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DescribeCoinsByChainReply_Coin) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DescribeCoinsByChainReply_Coin with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// DescribeCoinsByChainReply_CoinMultiError, or nil if none found.
+func (m *DescribeCoinsByChainReply_Coin) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DescribeCoinsByChainReply_Coin) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CoinID
+
+	// no validation rules for Address
+
+	// no validation rules for Symbol
+
+	// no validation rules for Icon
+
+	// no validation rules for Description
+
+	// no validation rules for DecimalPlace
+
+	// no validation rules for Name
+
+	if len(errors) > 0 {
+		return DescribeCoinsByChainReply_CoinMultiError(errors)
+	}
+
+	return nil
+}
+
+// DescribeCoinsByChainReply_CoinMultiError is an error wrapping multiple
+// validation errors returned by DescribeCoinsByChainReply_Coin.ValidateAll()
+// if the designated constraints aren't met.
+type DescribeCoinsByChainReply_CoinMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DescribeCoinsByChainReply_CoinMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DescribeCoinsByChainReply_CoinMultiError) AllErrors() []error { return m }
+
+// DescribeCoinsByChainReply_CoinValidationError is the validation error
+// returned by DescribeCoinsByChainReply_Coin.Validate if the designated
+// constraints aren't met.
+type DescribeCoinsByChainReply_CoinValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DescribeCoinsByChainReply_CoinValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DescribeCoinsByChainReply_CoinValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DescribeCoinsByChainReply_CoinValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DescribeCoinsByChainReply_CoinValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DescribeCoinsByChainReply_CoinValidationError) ErrorName() string {
+	return "DescribeCoinsByChainReply_CoinValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DescribeCoinsByChainReply_CoinValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDescribeCoinsByChainReply_Coin.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DescribeCoinsByChainReply_CoinValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DescribeCoinsByChainReply_CoinValidationError{}

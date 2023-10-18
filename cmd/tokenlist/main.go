@@ -8,6 +8,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"gitlab.bixin.com/mili/node-proxy/internal/conf"
+	"gitlab.bixin.com/mili/node-proxy/internal/data"
 	"os"
 )
 
@@ -58,7 +59,7 @@ func main() {
 		panic(err)
 	}
 	defer cleanup()
-
+	data.NewMarketClient(bc.TokenList)
 	// start and wait for stop signal
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

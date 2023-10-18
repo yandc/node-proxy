@@ -332,6 +332,39 @@ var OtherTokenFileMap = map[string][]string{
 	"klay-token": {"https://s.klayswap.com/data/klayswap/tokens.json"},
 }
 
+var UpdateChainNameMap = map[string]string{
+	"ETH":          "ethereum",
+	"HECO":         "huobi-token",
+	"OEC":          "okex-chain",
+	"BSC":          "binance-smart-chain",
+	"Polygon":      "polygon-pos",
+	"Fantom":       "fantom",
+	"Avalanche":    "avalanche",
+	"Cronos":       "cronos",
+	"Arbitrum":     "arbitrum-one",
+	"Klaytn":       "klay-token",
+	"Aurora":       "aurora",
+	"Optimism":     "optimistic-ethereum",
+	"Oasis":        "oasis",
+	"STC":          "starcoin",
+	"xDai":         "xdai",
+	"ETC":          "ethereum-classic",
+	"Solana":       "solana",
+	"Aptos":        "aptos",
+	"Nervos":       "nervos",
+	"SmartBCH":     "bitcoin-cash",
+	"Harmony":      "harmony-shard-0",
+	"Ronin":        "ronin",
+	"ArbitrumNova": "arbitrum-nova",
+	"Conflux":      "conflux",
+	"zkSync":       "zkSync",
+	"SUI":          "SUI",
+	"evm210425":    "evm210425",
+	"Linea":        "Linea",
+	"evm8453":      "evm8453",
+	"Sei":          "Sei",
+}
+
 func GetChainPriceKey() []string {
 	return priceKeys
 }
