@@ -252,6 +252,21 @@ platform:
       - https://cosmos-mainnet-rpc.allthatnode.com:1317
       - https://api.cosmos.network
       - https://us-atom-restapi.binancechain.io
+  - chain: CelestiaMochaTEST
+    type: COSMOS
+    chainId: 0
+    rpcURL:
+     - https://api-2.celestia.nodes.guru/
+     - https://api-1.celestia.nodes.guru/
+     - https://celestia-testnet.api.kjnodes.com/
+     - https://api-mocha.pops.one/
+     - https://api-t.celestia.nodestake.top/
+     - https://api-2.celestia-mocha.com/
+     - https://celestia-testnet.brightlystake.com/api/
+     - https://rest-celestia-mocha.architectnodes.com/
+    gasDefaults:
+      gasLimit: 100_000
+      gasPrice: 100_000 # 0.1
   - chain: Casper
     type: CSPR
     chainId: 0
