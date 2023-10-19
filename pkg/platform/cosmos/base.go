@@ -28,6 +28,9 @@ func (p *platform) BuildWasmRequest(ctx context.Context, nodeRpc, functionName, 
 	switch functionName {
 	case types.BUILD_HEIGHT:
 		url = fmt.Sprintf("%s/blocks/latest", nodeRpc)
+		if strings.HasPrefix(p.chain, "Celestia") {
+			url = fmt.Sprintf("%s/cosmos/base/tendermint/v1beta1/blocks/latest", nodeRpc)
+		}
 		method = "GET"
 	case types.BUILD_ACCOUNTS:
 		url = fmt.Sprintf("%s/cosmos/auth/v1beta1/accounts/%s", nodeRpc, params)
