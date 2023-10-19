@@ -1870,48 +1870,17 @@ func getTopTokenByKey(chain, key string, topN int) ([]*v1.TokenInfoData, error) 
 						LogoURI:  c.logoPrefix + t.LogoURI,
 					}
 				}
-				markets := make([]types.CGMarket, 0, len(tokenLists)+2)
-				pageSize := 500
-				endIndex := 0
-				for i := 0; i < len(ids); i += pageSize {
-					if i+pageSize > len(ids) {
-						endIndex = len(ids)
-					} else {
-						endIndex = i + pageSize
-					}
-					cgMarkets, err := GetCGMarkets(ids[i:endIndex], "CNY", topN)
-					if err != nil {
-						c.log.Error("get cg markets error:", err)
-					}
-					for j := 0; err != nil && j < 3; j++ {
-						time.Sleep(time.Duration(j) * time.Second)
-						cgMarkets, err = GetCGMarkets(ids[i:endIndex], "CNY", topN)
-					}
-					if err != nil {
-						continue
-					}
-					markets = append(markets, cgMarkets...)
-				}
-				//sort markets
-				sort.Slice(markets, func(i, j int) bool {
-					return markets[i].MarketCapRank <= markets[j].MarketCapRank
-				})
-				index := 0
-				for ; index < len(markets) && markets[index].MarketCapRank == 0; index++ {
-				}
-
-				markets = append(markets[index:], markets[:index]...)
-
-				if len(markets) > topN {
-					markets = markets[:topN]
-				}
-				c.log.Info("cgMarkets=", markets)
+				markets := utils3.GetTopNByMarkets(ids, topN)
+				coinIdsMap := make(map[string]struct{})
 				result = make([]*v1.TokenInfoData, 0, len(markets))
 				for _, market := range markets {
-					if value, ok := tokenInfos[market.ID]; ok {
+					if value, ok := tokenInfos[market.CoinID]; ok {
 						result = append(result, value)
+						coinIdsMap[market.CoinID] = struct{}{}
 					}
 				}
+				//手动插入
+				result = InsertTopNByWhiteList(oldChain, result, coinIdsMap)
 				if len(result) > 0 {
 					b, _ := json.Marshal(result)
 					if err := utils.SetTokenTop20RedisKey(c.redisClient, key, string(b)); err != nil {
@@ -2138,4 +2107,32 @@ func GetCGTokenListByChain(chain string) ([]models.TokenList, error) {
 		c.log.Error("get token list error:", err)
 	}
 	return tokenLists, err
+}
+
+func InsertTopNByWhiteList(chain string, result []*v1.TokenInfoData, coinIdsMap map[string]struct{}) []*v1.TokenInfoData {
+	tokenInfoList := utils.GetTopNInfoByChain(chain)
+	if tokenInfoList == nil {
+		return result
+	}
+	for _, tokenInfo := range tokenInfoList {
+		if _, ok := coinIdsMap[tokenInfo.CgId]; !ok {
+			var t models.TokenList
+			err := c.db.Where("chain = ? AND address = ?", tokenInfo.DBChain, tokenInfo.Address).Find(&t).Error
+			if err != nil {
+				c.log.Error("get token list error:", err)
+				continue
+			}
+			tokenInfoData := &v1.TokenInfoData{
+				Chain:    chain,
+				Address:  t.Address,
+				Symbol:   t.Symbol,
+				Decimals: uint32(t.Decimals),
+				Name:     t.Name,
+				LogoURI:  c.logoPrefix + t.LogoURI,
+			}
+			index := tokenInfo.Index - 1
+			result = utils.InsertSlice(result, index, tokenInfoData)
+		}
+	}
+	return result
 }

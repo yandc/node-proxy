@@ -365,6 +365,10 @@ var UpdateChainNameMap = map[string]string{
 	"Sei":          "Sei",
 }
 
+var TopNWhiteListMap = map[string][]types.TopNInfo{
+	"ETH": {{CgId: "big-time", DBChain: "ethereum", Address: "0x64bc2ca1be492be7185faa2c8835d9b824c8a194", Index: 4}},
+}
+
 func GetChainPriceKey() []string {
 	return priceKeys
 }
@@ -890,4 +894,28 @@ func GetFakeCoinWhiteList(redisClient *redis.Client, key string) (*models.FakeCo
 		return nil, err
 	}
 	return fakeCoinWhiteList, nil
+}
+
+func GetTopNInfoByChain(chain string) []types.TopNInfo {
+	if value, ok := TopNWhiteListMap[chain]; ok {
+		return value
+	}
+	return nil
+}
+
+func InsertSlice(slice []*v12.TokenInfoData, index int, value *v12.TokenInfoData) []*v12.TokenInfoData {
+	// 创建一个新的切片，长度比原切片多1
+	newSlice := make([]*v12.TokenInfoData, len(slice))
+
+	// 将原切片的前半部分复制到新切片
+	copy(newSlice[:index], slice[:index])
+
+	// 在指定位置插入元素
+	newSlice[index] = value
+
+	// 将原切片的后半部分复制到新切片
+	copy(newSlice[index+1:], slice[index:])
+
+	return newSlice
+
 }

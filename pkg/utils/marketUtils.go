@@ -6,6 +6,7 @@ import (
 	v1 "gitlab.bixin.com/mili/node-proxy/api/market/v1"
 	nftmarketplacev1 "gitlab.bixin.com/mili/node-proxy/api/nft-marketplace/v1"
 	nftmarketplacev2 "gitlab.bixin.com/mili/node-proxy/api/nft-marketplace/v2"
+	"sort"
 	"time"
 )
 
@@ -118,4 +119,45 @@ func GetCoinInfoByMarket(chain string) ([]*v1.DescribeCoinsByChainReply_Coin, er
 		}
 	}
 	return nil, nil
+}
+
+func GetTopNByMarkets(ids []string, topN int) []*v1.DescribeCexCoinsReply_Coin {
+	markets := make([]*v1.DescribeCexCoinsReply_Coin, 0, len(ids)+2)
+	pageSize := 500
+	endIndex := 0
+	for i := 0; i < len(ids); i += pageSize {
+		if i+pageSize > len(ids) {
+			endIndex = len(ids)
+		} else {
+			endIndex = i + pageSize
+		}
+
+		reply, err := marketClient.DescribeCexCoins(context.Background(), &v1.DescribeCexCoinsRequest{
+			EventId:   fmt.Sprintf("%d", time.Now().Unix()),
+			CoinIDs:   ids[i:endIndex],
+			Currency:  "cny",
+			PageSize:  int32(topN),
+			Page:      1,
+			SortField: v1.DescribeCexCoinsRequest_MarketCap,
+		})
+
+		if err != nil {
+			fmt.Errorf("get cg markets error:%v", err)
+			continue
+		}
+
+		markets = append(markets, reply.Coins...)
+	}
+	//sort markets
+	sort.Slice(markets, func(i, j int) bool {
+		return markets[i].Rank <= markets[j].Rank
+	})
+	//index := 0
+	//for ; index < len(markets) && markets[index].Rank == 0; index++ {
+	//}
+	//markets = append(markets[index:], markets[:index]...)
+	if len(markets) > topN {
+		markets = markets[:topN]
+	}
+	return markets
 }
