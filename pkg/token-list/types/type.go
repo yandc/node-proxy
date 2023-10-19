@@ -207,3 +207,10 @@ type OsmosisTokenInfo struct {
 		} `json:"counter_party,omitempty"`
 	} `json:"assets"`
 }
+
+type TopNInfo struct {
+	CgId    string `json:"cg_id"`
+	Index   int    `json:"index"`
+	DBChain string `json:"db_chain"`
+	Address string `json:"address"`
+}
