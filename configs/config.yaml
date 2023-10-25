@@ -74,6 +74,7 @@ tokenList:
     - Linea
     - evm8453
     - Sei
+    - Scroll
 
 nftList:
   ipfs: https://cloudflare-ipfs.com/ipfs/
