@@ -1768,6 +1768,8 @@ func UpdateChainToken(chain string) {
 		UpdateArbitrumToken()
 	case "ethereum":
 		UpdateEthereumToken()
+	case "scroll":
+		UpdateScrollToken()
 
 		//default:
 		//	utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")

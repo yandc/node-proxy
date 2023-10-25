@@ -1203,3 +1203,104 @@ func UpdateEthereumToken() {
 		}).Create(&t)
 	}
 }
+
+func UpdateScrollToken() {
+	var tokenLists = []models.TokenList{
+		{
+			Chain:       "scroll",
+			Address:     "0x06efdbff2a14a7c8e15944d1f4a48f9f95f663a4",
+			Name:        "USD Coin",
+			Symbol:      "USDC",
+			Logo:        "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+			Decimals:    6,
+			CmcId:       3408,
+			CgId:        "usd-coin",
+			WebSite:     "https://www.centre.io/usdc",
+			Description: `{"en":"USDC is a fully collateralized US dollar stablecoin. USDC is the bridge between dollars and trading on cryptocurrency exchanges. The technology behind CENTRE makes it possible to exchange value between people, businesses and financial institutions just like email between mail services and texts between SMS providers. We believe by removing artificial economic borders, we can create a more inclusive global economy."}`,
+		},
+		{
+			Chain:    "scroll",
+			Address:  "0xf55bec9cafdbe8730f096aa55dad6d22d44099df",
+			Name:     "Tether USD",
+			Symbol:   "USDT",
+			Logo:     `{"thumb":"https://assets.coingecko.com/coins/images/325/thumb/Tether.png?1668148663","small":"https://assets.coingecko.com/coins/images/325/small/Tether.png?1668148663","large":"https://assets.coingecko.com/coins/images/325/large/Tether.png?1668148663"}`,
+			Decimals: 6,
+			CgId:     "tether",
+			WebSite:  "https://tether.to/",
+			Description: `{"en":"Tether (USDT) is a cryptocurrency with a value meant to mirror the value of the U.S. dollar. The idea was to create a stable cryptocurrency that can be used like digital dollars. Coins that serve this purpose of being a stable dollar substitute are called “stable coins.” Tether is the most popular stable coin and even acts as a dollar replacement on many popular exchanges! According to their site, Tether converts cash into digital currency, to anchor or “tether” the value of the coin to the price of national currencies like the US dollar, the Euro, and the Yen. Like other cryptos it uses blockchain. Unlike other cryptos, it is [according to the official Tether site] “100% backed by USD” (USD is held in reserve). The primary use of Tether is that it offers some stability to the otherwise volatile crypto space and offers liquidity to exchanges who can’t deal in dollars and with banks (for example to the sometimes controversial but leading exchange \u003ca href=\"https://www.coingecko.com/en/exchanges/bitfinex\"\u003eBitfinex\u003c/a\u003e).\r\n\r\nThe digital coins are issued by a company called Tether Limited that is governed by the laws of the British Virgin Islands, according to the legal part of its website. It is incorporated in Hong Kong. It has emerged that Jan Ludovicus van der Velde is the CEO of cryptocurrency exchange Bitfinex, which has been accused of being involved in the price manipulation of bitcoin, as well as tether. Many people trading on exchanges, including Bitfinex, will use tether to buy other cryptocurrencies like bitcoin. Tether Limited argues that using this method to buy virtual currencies allows users to move fiat in and out of an exchange more quickly and cheaply. Also, exchanges typically have rocky relationships with banks, and using Tether is a way to circumvent that.\r\n\r\nUSDT is fairly simple to use. Once on exchanges like \u003ca href=\"https://www.coingecko.com/en/exchanges/poloniex\"\u003ePoloniex\u003c/a\u003e or Bittrex, it can be used to purchase Bitcoin and other cryptocurrencies. It can be easily transferred from an exchange to any Omni La
+yer enabled wallet. Tether has no transaction fees, although external wallets and exchanges may charge one. In order to convert USDT to USD and vise versa through the Tether.to Platform, users must pay a small fee. Buying and selling Tether for Bitcoin can be done through a variety of exchanges like the ones mentioned previously or through the Tether.to platform, which also allows the conversion between USD to and from your bank account."}`,
+		},
+		{
+			Chain:       "scroll",
+			Address:     "0x5300000000000000000000000000000000000004",
+			Name:        "Wrapped Ether",
+			Symbol:      "WETH",
+			Logo:        `{"thumb":"https://assets.coingecko.com/coins/images/2518/thumb/weth.png?1628852295","small":"https://assets.coingecko.com/coins/images/2518/small/weth.png?1628852295","large":"https://assets.coingecko.com/coins/images/2518/large/weth.png?1628852295"}`,
+			Decimals:    18,
+			CgId:        "weth",
+			WebSite:     "https://weth.io/",
+			Description: `{"en":"What is WETH (Wrapped ETH)?\r\nWETH is the tokenized/packaged form of ETH that you use to pay for items when you interact with Ethereum dApps. WETH follows the ERC-20 token standards, enabling it to achieve interoperability with other ERC-20 tokens. \r\n\r\nThis offers more utility to holders as they can use it across networks and dApps. You can stake, yield farm, lend, and provide liquidity to various liquidity pools with WETH. \r\n\r\nAlso, unlike ETH, which doesn’t conform to its own ERC-20 standard and thus has lower interoperability as it can’t be used on other chains besides Ethereum, WETH can be used on cheaper and high throughput alternatives like Binance, Polygon, Solana, and Cardano.\r\n\r\nThe price of WETH will always be the same as ETH because it maintains a 1:1 wrapping ratio.\r\n\r\nHow to Wrap ETH?\r\nCustodians wrap and unwrap ETH. To wrap ETH, you send ETH to a custodian. This can be a multi-sig wallet, a Decentralized Autonomous Organization (DAO), or a smart contract. After connecting your web3 wallet to a DeFi exchange, you enter the amount of ETH you wish to wrap and click the swap function. Once the transaction is confirmed, you will receive WETH tokens equivalent to the ETH that you’ve swapped.\r\n\r\nOn a centralized exchange, the exchange burns the deposited ETH and mints a wrapped form for you. And when you want to unwrap it, the exchange will burn the wrapped version and mint the ETH on your behalf.\r\n\r\nWhat’s Next for WETH?\r\nAccording to the developers, hopefully there will be no future for WETH. According to the website, steps are being taken to update ETH to make it compliant with its own ERC-20 standards."}`,
+		},
+		{
+			Chain:       "scroll",
+			Address:     "0x36f983124b027781216adc94c4d81ef4026ffcdd",
+			Name:        "Scroll Doge",
+			Symbol:      "ZKDOGE",
+			Logo:        `{"thumb":"https://assets.coingecko.com/coins/images/32271/thumb/8d7453f7-340b-4327-9529-180572813a7a.jpeg?1697179075","small":"https://assets.coingecko.com/coins/images/32271/small/8d7453f7-340b-4327-9529-180572813a7a.jpeg?1697179075","large":"https://assets.coingecko.com/coins/images/32271/large/8d7453f7-340b-4327-9529-180572813a7a.jpeg?1697179075"}`,
+			Decimals:    9,
+			CgId:        "scroll-doge",
+			WebSite:     "https://scrolldog3.xyz/",
+			Description: `{"en": "Scroll Doge is first doge on Scroll chain with cryptocurrency based on the popular Dogecoin. It operates on the Scroll Chain blockchain, offering fast and low-cost transactions. With its fun and playful branding is perfect for fun-loving enthusiasts."}`,
+		},
+		{
+			Chain:       "scroll",
+			Address:     "0x9daea97fd467d704c583beda2454e3da27097b60",
+			Name:        "Scrollswap Finance",
+			Symbol:      "SF",
+			Logo:        `{"thumb":"https://assets.coingecko.com/coins/images/32269/thumb/h4lCoyvo_400x400.jpg?1697177957","small":"https://assets.coingecko.com/coins/images/32269/small/h4lCoyvo_400x400.jpg?1697177957","large":https://assets.coingecko.com/coins/images/32269/large/h4lCoyvo_400x400.jpg?1697177957"}`,
+			Decimals:    18,
+			CgId:        "scrollswap-finance",
+			WebSite:     "https://dex.scrollswap.app/",
+			Description: `{"en": ""}`,
+		},
+		{
+			Chain:       "scroll",
+			Address:     "0x3c1bca5a656e69edcd0d4e36bebb3fcdaca60cf1",
+			Name:        "Wrapped BTC",
+			Symbol:      "WBTC",
+			Logo:        `{"thumb":"https://assets.coingecko.com/coins/images/7598/thumb/wrapped_bitcoin_wbtc.png?1548822744","small":"https://assets.coingecko.com/coins/images/7598/small/wrapped_bitcoin_wbtc.png?1548822744","large":"https://assets.coingecko.com/coins/images/7598/large/wrapped_bitcoin_wbtc.png?1548822744"}`,
+			Decimals:    8,
+			CgId:        "wrapped-bitcoin",
+			WebSite:     "https://www.wbtc.network/c",
+			Description: `{"en":""}`,
+		},
+		{
+			Chain:       "scroll",
+			Address:     "0xca77eb3fefe3725dc33bccb54edefc3d9f764f97",
+			Name:        "Dai Stablecoin",
+			Symbol:      "DAI",
+			Logo:        `{"thumb":"https://assets.coingecko.com/coins/images/9956/thumb/4943.png?1636636734","small":"https://assets.coingecko.com/coins/images/9956/small/4943.png?1636636734","large":"https://assets.coingecko.com/coins/images/9956/large/4943.png?1636636734"}`,
+			Decimals:    18,
+			CgId:        "dai",
+			WebSite:     "https://makerdao.com/",
+			Description: `{"en":"MakerDAO has launched Multi-collateral DAI (MCD). This token refers to the new DAI that is collaterized by multiple assets.\r\n"}`,
+		},
+		{
+			Chain:       "scroll",
+			Address:     "0x466da81a766ff502fe8ea318d4d1e044b1bf84c1",
+			Name:        "cUSDC",
+			Symbol:      "CUSDC",
+			Logo:        `{"thumb":"https://assets.coingecko.com/coins/images/9442/thumb/Compound_USDC.png?1696509534","small":"https://assets.coingecko.com/coins/images/9442/small/Compound_USDC.png?1696509534","large":"https://assets.coingecko.com/coins/images/9442/large/Compound_USDC.png?1696509534"}`,
+			Decimals:    8,
+			CgId:        "compound-usd-coin",
+			WebSite:     "https://compound.finance/",
+			Description: `{"en":"Compound is an open-source, autonomous protocol built for developers, to unlock a universe of new financial applications. Interest and borrowing, for the open financial system."}`,
+		},
+	}
+	for _, t := range tokenLists {
+		c.db.Clauses(clause.OnConflict{
+			Columns:   []clause.Column{{Name: "address"}, {Name: "chain"}},
+			UpdateAll: true,
+		}).Create(&t)
+	}
+}
