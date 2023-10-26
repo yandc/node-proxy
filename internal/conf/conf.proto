@@ -102,4 +102,11 @@ message Lark {
   string larkSecret = 3;
   uint64 lockNum = 4;
   string larkAtList = 5;
+  map<string, string> larkUids = 6;
+  map<string, LarkSubscription> larkSubscriptions = 7;
 }
+
+message LarkSubscription {
+  repeated string uids = 1;
+}
+

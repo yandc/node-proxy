@@ -84,15 +84,17 @@ func (lark *Lark) NotifyLark(msg string, opts ...AlarmOption) {
 		}
 	}
 
-	c := make([]Content, 0, 6)
-	if lark.conf.GetLarkAtList() != "" {
-		atList := strings.Split(lark.conf.GetLarkAtList(), ",")
-		for _, v := range atList {
-			c = append(c, Content{Tag: "at", UserID: v, UserName: v})
-		}
-	} else {
-		c = append(c, Content{Tag: "at", UserID: "all", UserName: "所有人"})
-	}
+	//c := make([]Content, 0, 6)
+	//c = append(c, lark.handleAtList(alarmOpts)...)
+	c := lark.handleAtList(alarmOpts)
+	//if lark.conf.GetLarkAtList() != "" {
+	//	atList := strings.Split(lark.conf.GetLarkAtList(), ",")
+	//	for _, v := range atList {
+	//		c = append(c, Content{Tag: "at", UserID: v, UserName: v})
+	//	}
+	//} else {
+	//	c = append(c, Content{Tag: "at", UserID: "all", UserName: "所有人"})
+	//}
 	c = append(c, Content{Tag: "text", Text: msg + "\n"})
 
 	c = append(c, Content{Tag: "text", Text: "开始时间:\n"}, Content{Tag: "text", Text: BjNow()})
@@ -153,4 +155,34 @@ func GenSign(secret string, timestamp int64) (string, error) {
 	}
 	signature := base64.StdEncoding.EncodeToString(h.Sum(nil))
 	return signature, nil
+}
+
+func (lark *Lark) handleAtList(alarmOpts alarmOptions) []Content {
+	c := make([]Content, 0, 6)
+	channel := alarmOpts.getChannel()
+	if channel != "" {
+		subscriptions := lark.conf.GetLarkSubscriptions()
+		if users, ok := subscriptions[channel]; ok {
+			for _, user := range users.Uids {
+				if v, ok := lark.conf.LarkUids[user]; ok {
+					c = append(c, Content{Tag: "at", UserID: v, UserName: v})
+				} else {
+					log.Warn("UNKOWN LARK USER", zap.String("user", user))
+				}
+			}
+		} else {
+			log.Warn("UNKNOWN LARK CHANNEL", zap.String("channel", channel))
+		}
+		return c
+	}
+
+	if lark.conf.GetLarkAtList() != "" {
+		atList := strings.Split(lark.conf.GetLarkAtList(), ",")
+		for _, v := range atList {
+			c = append(c, Content{Tag: "at", UserID: v, UserName: v})
+		}
+	} else {
+		c = append(c, Content{Tag: "at", UserID: "all", UserName: "所有人"})
+	}
+	return c
 }
