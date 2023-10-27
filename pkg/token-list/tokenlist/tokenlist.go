@@ -621,6 +621,7 @@ func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoRe
 
 				alarmMsg := fmt.Sprintf("请注意：%s链查询代币信息失败，tokenAddress:%s\n错误消息：%s", chain, address, err)
 				alarmOpts := lark.WithMsgLevel("FATAL")
+				alarmOpts = lark.WithAlarmChannel("platform")
 				lark.LarkClient.NotifyLark(alarmMsg, alarmOpts)
 				continue
 			}
@@ -831,6 +832,7 @@ func handlerPriceByToken(tokenAddress []*v12.Tokens, addressIdMap map[string]str
 		//lark
 		alarmMsg := fmt.Sprintf("请注意：行情中心通过地址获取价格失败：%s\n tokens:%v", err, tokenAddress)
 		alarmOpts := lark.WithMsgLevel("FATAL")
+		alarmOpts = lark.WithAlarmChannel("token-list")
 		lark.LarkClient.NotifyLark(alarmMsg, alarmOpts)
 	}
 	setAutoPrice(marketPricesMap, addressIdMap, false)
@@ -845,6 +847,7 @@ func handlerCgPrice(cgIds []string, addressIdMap map[string]string) {
 		//lark
 		alarmMsg := fmt.Sprintf("请注意：行情中心获取价格失败：%s", err)
 		alarmOpts := lark.WithMsgLevel("FATAL")
+		alarmOpts = lark.WithAlarmChannel("token-list")
 		lark.LarkClient.NotifyLark(alarmMsg, alarmOpts)
 		// get price by coin gecko
 		pageSize := 500

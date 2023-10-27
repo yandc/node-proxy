@@ -88,6 +88,18 @@ lark:
   #  larkHost: "https://open.larksuite.com/open-apis/bot/v2/hook/1de00c8b-8b00-42e8-a4a0-111a465303d9_"
   larkSecret: "ZaIgbNX9rwSyOGhq4URhMb"
   larkAtList: "bfe7128f"
+  larkUids:
+    runhua: 98f57egg
+    qingliang: bfe7128f
+  larkSubscriptions:
+    token-list:
+      uids: [ qingliang ]
+    platform:
+      uids: [ qingliang ]
+    nft-marketplace:
+      uids: [ runhua ]
+    chain-list:
+      uids: [ runhua ]
   lockNum: 64
 
 platform:

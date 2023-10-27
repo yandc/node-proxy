@@ -193,6 +193,7 @@ func (uc *ChainListUsecase) UseChainNode(ctx context.Context, chainId string, ur
 		if blockChain == nil {
 			alarmMsg := fmt.Sprintf("用户添加了自定义节点：%s，需要手动添加该链的信息", url)
 			alarmOpts := lark.WithMsgLevel("FATAL")
+			alarmOpts = lark.WithAlarmChannel("chain-list")
 			lark.LarkClient.NotifyLark(alarmMsg, alarmOpts)
 		}
 

@@ -162,18 +162,12 @@ var DefaultAlarmOptions = alarmOptions{
 	alarmInterval: DEFAULT_ALARM_INTERVAL,
 }
 
-//func (o *alarmOptions) getChannel() string {
-//	if o.channel != "" {
-//		return o.channel
-//	}
-//	if o.chainName != "" {
-//		if c, ok := PlatInfoMap[o.chainName]; ok {
-//			return c.Type
-//		}
-//	}
-//
-//	return o.channel
-//}
+func (o *alarmOptions) getChannel() string {
+	if o.channel != "" {
+		return o.channel
+	}
+	return o.channel
+}
 
 // AlarmOption 报警自定义参数接口
 type AlarmOption interface {
