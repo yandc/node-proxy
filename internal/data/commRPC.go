@@ -15,12 +15,14 @@ import (
 type commRPCRepo struct {
 	log       *log.Helper
 	platforms []*conf.Platform
+	chainData map[string]string
 }
 
-func NewCommRPCRepo(logger log.Logger, platforms []*conf.Platform) biz.CommRPCRepo {
+func NewCommRPCRepo(logger log.Logger, platforms []*conf.Platform, chainData map[string]string) biz.CommRPCRepo {
 	return &commRPCRepo{
 		log:       log.NewHelper(logger),
 		platforms: platforms,
+		chainData: chainData,
 	}
 }
 
@@ -68,5 +70,20 @@ func (c *commRPCRepo) GetGasConstants(ctx context.Context) map[string]interface{
 		}
 	}
 	c.log.WithContext(ctx).Infof("GetGasConstants==result===", result)
+	return result
+}
+
+func (c *commRPCRepo) GetChainDataConfig(ctx context.Context) map[string]interface{} {
+	c.log.WithContext(ctx).Infof("GetChainDataConfig")
+	result := make(map[string]interface{})
+	gasDefaults := make(map[string]interface{})
+	for _, p := range c.platforms {
+		if p.GetGasDefaults() != nil {
+			gasDefaults[p.Chain] = p.GetGasDefaults()
+		}
+	}
+	result["gasDefaults"] = gasDefaults
+	result["chainData"] = c.chainData
+	c.log.WithContext(ctx).Infof("GetChainDataConfig==result===", result)
 	return result
 }

@@ -19,6 +19,7 @@ type CommRPCRepo interface {
 	GetPretreatmentAmount(ctx context.Context, chain, from, to, data, value string) map[string][]interface{}
 	IsContractAddress(ctx context.Context, chain, address string) (bool, error)
 	GetGasConstants(ctx context.Context) map[string]interface{}
+	GetChainDataConfig(ctx context.Context) map[string]interface{}
 }
 
 type CommRPCUsecase struct {
@@ -104,4 +105,8 @@ func (uc *CommRPCUsecase) IsContractAddress(ctx context.Context, req *utils.IsCo
 
 func (uc *CommRPCUsecase) GetGasConstants(ctx context.Context, req *utils.GasDefaultsReq) map[string]interface{} {
 	return uc.repo.GetGasConstants(ctx)
+}
+
+func (uc *CommRPCUsecase) GetChainDataConfig(ctx context.Context, req *utils.GasDefaultsReq) map[string]interface{} {
+	return uc.repo.GetChainDataConfig(ctx)
 }

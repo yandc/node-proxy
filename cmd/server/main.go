@@ -73,7 +73,7 @@ func main() {
 		panic(err)
 	}
 	//fmt.Println("db:", bc.Data.Database.String(), bc.TokenList.String(), bc.Platform)
-	app, cleanup, err := wireApp(bc.Server, bc.Data, bc.TokenList, bc.Platform, bc.NftList, logger)
+	app, cleanup, err := wireApp(bc.Server, bc.Data, bc.TokenList, bc.Platform, bc.NftList, bc.ChainData, logger)
 	if err != nil {
 		panic(err)
 	}

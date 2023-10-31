@@ -15,6 +15,7 @@ message Bootstrap {
   Lark lark = 6;
   map<string,string> defaultAbiList = 7;
   map<string,string> blockExplorerApi = 8;
+  map<string,string> chainData = 9;
 }
 
 message Server {
@@ -109,4 +110,3 @@ message Lark {
 message LarkSubscription {
   repeated string uids = 1;
 }
-

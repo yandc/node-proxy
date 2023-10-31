@@ -535,3 +535,6 @@ blockExplorerApi:
   Conflux: https://evm.confluxscan.net/v1/contract/%v?fields=abi
   Linea: https://explorer.linea.build/api?module=contract&action=getabi&address=%v
   zkSync: https://zksync2-mainnet-explorer.zksync.io/address/%v
+
+chainData:
+  txSleep: "5s"
