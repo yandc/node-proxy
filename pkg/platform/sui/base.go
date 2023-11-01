@@ -18,12 +18,13 @@ import (
 )
 
 const (
-	JSONRPC        = "2.0"
-	JSONID         = 1
-	RESULT_SUCCESS = "Exists"
-	NATIVE_TYPE    = "0x2::coin::Coin<0x2::sui::SUI>"
-	TXFAILED       = "failed"
-	TXSUCCESS      = "success"
+	JSONRPC             = "2.0"
+	JSONID              = 1
+	RESULT_SUCCESS      = "Exists"
+	NATIVE_TYPE         = "0x2::coin::Coin<0x2::sui::SUI>"
+	BEN_FEN_NATIVE_TYPE = "0x2::coin::Coin<0x2::bfc::BFC>"
+	TXFAILED            = "failed"
+	TXSUCCESS           = "success"
 )
 
 type platform struct {
@@ -280,7 +281,7 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 	suiObjects := make([]interface{}, 0, len(objectReads))
 	nativeObjects := make([]interface{}, 0, len(objectReads))
 	for _, objectRead := range objectReads {
-		if objectRead.Data.Type == NATIVE_TYPE {
+		if objectRead.Data.Type == NATIVE_TYPE || objectRead.Data.Type == BEN_FEN_NATIVE_TYPE {
 			if objectRead.Data.Content.Fields.Balance != "" && objectRead.Data.Content.Fields.Balance != "0" {
 				filedBalance, _ := strconv.Atoi(objectRead.Data.Content.Fields.Balance)
 				nativeObjects = append(nativeObjects, map[string]interface{}{

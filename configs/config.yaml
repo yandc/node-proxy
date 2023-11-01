@@ -490,6 +490,11 @@ platform:
     chainId: 0
     rpcURL:
       - https://node-clarity-testnet.make.services/rpc
+  - chain: BenfenTEST
+    type: SUI
+    chainId: 0
+    rpcURL:
+      - https://obcrpc.openblock.vip
 
 defaultAbiList:
   EVM: '[
