@@ -11,6 +11,7 @@ import (
 	v12 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/types"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/utils"
+	"math"
 	"sort"
 	"strconv"
 	"strings"
@@ -88,6 +89,7 @@ var responseFunc = map[string]types.AnalysisResponseType{
 	types.RESPONSE_TOKEN_INFO:    analysisTokenInfo,
 	types.RESPONSE_GAS_PRICE:     analysisGasPrice,
 	types.RESPONSE_TXDATA:        analysisTxData,
+	types.RESPONSE_DRY_RUN:       analysisGasLimit,
 }
 
 func (p *platform) AnalysisWasmResponse(ctx context.Context, functionName, params, response string) (string, error) {
@@ -264,6 +266,12 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 		return nil, err
 	}
 	gasLimit := 3000
+	if value, ok := paramsMap["gasLimit"]; ok {
+		tempGasLimit, err := strconv.Atoi(value)
+		if err == nil && tempGasLimit > 0 {
+			gasLimit = tempGasLimit
+		}
+	}
 	sort.Slice(objectReads, func(i, j int) bool {
 		balanceI, _ := strconv.Atoi(objectReads[i].Data.Content.Fields.Balance)
 		balanceJ, _ := strconv.Atoi(objectReads[j].Data.Content.Fields.Balance)
@@ -321,6 +329,23 @@ func analysisGasPrice(params string, result json.RawMessage) (interface{}, error
 		return nil, err
 	}
 	return gasPrice, nil
+}
+
+func analysisGasLimit(params string, result json.RawMessage) (interface{}, error) {
+	var out types.SUIDryRunTransactionBlockResponse
+	if err := json.Unmarshal(result, &out); err != nil {
+		return nil, err
+	}
+	computationCost, _ := strconv.Atoi(out.Effects.GasUsed.ComputationCost)
+	storageCost, _ := strconv.Atoi(out.Effects.GasUsed.StorageCost)
+	storageRebate, _ := strconv.Atoi(out.Effects.GasUsed.StorageRebate)
+	budget := computationCost + storageCost - storageRebate
+	price, err := strconv.Atoi(out.Input.GasData.Price)
+	if err != nil {
+		return nil, err
+	}
+	gasLimit := int(math.Ceil(float64(budget / price)))
+	return gasLimit, nil
 }
 
 func (p *platform) GetRpcURL() []string {

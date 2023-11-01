@@ -224,3 +224,21 @@ type SuiNFTObjectResponse struct {
 		} `json:"bcs"`
 	} `json:"data"`
 }
+
+type SUIDryRunTransactionBlockResponse struct {
+	Effects struct {
+		GasUsed struct {
+			ComputationCost         string `json:"computationCost"`
+			StorageCost             string `json:"storageCost"`
+			StorageRebate           string `json:"storageRebate"`
+			NonRefundableStorageFee string `json:"nonRefundableStorageFee"`
+		} `json:"gasUsed"`
+	} `json:"effects"`
+	Input struct {
+		GasData struct {
+			Owner  string `json:"owner"`
+			Price  string `json:"price"`
+			Budget string `json:"budget"`
+		} `json:"gasData"`
+	} `json:"input"`
+}
