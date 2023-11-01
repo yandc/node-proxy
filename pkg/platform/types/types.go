@@ -30,6 +30,7 @@ const (
 	RESPONSE_STATEROOTHASH     = "stateRootHash"
 	RESPONSE_MAINPURSE         = "mainPurse"
 	RESPONSE_GAS_PRICE         = "gasPrice"
+	RESPONSE_DRY_RUN           = "dryRun"
 
 	BUILD_HEIGHT   = "height"
 	BUILD_ACCOUNTS = "accounts"
