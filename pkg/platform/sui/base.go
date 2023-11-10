@@ -381,7 +381,8 @@ func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error
 func (p *platform) GetNFTObject(objectId string) (*types.SuiNFTObjectResponse, error) {
 	var resultErr error
 	for i := 0; i < len(p.rpcURL); i++ {
-		method := "sui_getObject"
+		//method := "sui_getObject"
+		method := getRpcMethod(p.chain, "sui_getObject")
 		params := []interface{}{objectId, map[string]bool{"showType": true,
 			"showOwner":               true,
 			"showPreviousTransaction": true,
@@ -402,7 +403,8 @@ func (p *platform) GetNFTObject(objectId string) (*types.SuiNFTObjectResponse, e
 }
 
 func getWASMCoinMetadata(chain, url, coinType string) (*v12.GetTokenInfoResp_Data, error) {
-	method := "suix_getCoinMetadata"
+	//method := "suix_getCoinMetadata"
+	method := getRpcMethod(chain, "suix_getCoinMetadata")
 	out := &types.SUICoinMetadata{}
 	params := []interface{}{coinType}
 	err := call(url, JSONID, method, &out, params)
@@ -437,7 +439,8 @@ func call(url string, id int, method string, out interface{}, params []interface
 func (p *platform) IsContractAddress(address string) (bool, error) {
 	var resultErr error
 	for i := 0; i < len(p.rpcURL); i++ {
-		method := "sui_getObject"
+		//method := "sui_getObject"
+		method := getRpcMethod(p.chain, "sui_getObject")
 		out := &types.SuiObjectRead{}
 		params := []interface{}{address}
 		err := call(p.rpcURL[i], JSONID, method, &out, params)
@@ -448,4 +451,12 @@ func (p *platform) IsContractAddress(address string) (bool, error) {
 		return out.Error.Code != "notExists", nil
 	}
 	return false, resultErr
+}
+
+func getRpcMethod(chain, m string) string {
+	if strings.HasPrefix(chain, "Benfen") {
+		m = strings.Replace(m, "sui_", "bfc_", 1)
+		m = strings.Replace(m, "suix_", "bfcx_", 1)
+	}
+	return m
 }
