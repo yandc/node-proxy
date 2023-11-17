@@ -539,7 +539,7 @@ func TestUpdatePriceByChain() {
 func TestGetContractAbi() {
 	platform.InitPlatform(bc.Platform, logger, client)
 	utils.InitConfig(bc)
-	ret, err := platform.GetContractABI("ETH", "0xdac17f958d2ee523a2206206994597c13d831ec7", "a9059cbb")
+	ret, err := platform.GetContractABI("TRX", "TDgrSuii9e7HLfY1DhEBxkcFa3vrLgS3Gx", "3805550f")
 	if err != nil {
 		fmt.Println("error==", err)
 	}

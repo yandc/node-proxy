@@ -371,6 +371,9 @@ func GetContractABI(chain, contract, methodId string) (interface{}, error) {
 	methodKey := fmt.Sprintf("contract_abi:methodId:%v", methodId)
 	abiResult, _ := utils2.GetRedisClient().Get(methodKey).Result()
 	if abiResult != "" && abiResult != "[]" {
+		if strings.Contains(abiResult, "Function") {
+			abiResult = strings.Replace(abiResult, "Function", "function", -1)
+		}
 		json.Unmarshal([]byte(abiResult), &abiResultList)
 		return abiResultList, nil
 	}

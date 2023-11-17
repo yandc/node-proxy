@@ -33,3 +33,23 @@ type IsContractReq struct {
 
 type GasDefaultsReq struct {
 }
+
+type GasOracleReq struct {
+	Key       string `json:"key"`
+	CacheTime int64  `json:"cache_time"`
+}
+
+type GasOracleRes struct {
+	SafeGasPrice    string `json:"safe_gas_price"`
+	ProposeGasPrice string `json:"propose_gas_price"`
+	FastGasPrice    string `json:"fast_gas_price"`
+	SuggestBaseFee  string `json:"suggest_base_fee"`
+}
+
+type GasOracleOkex struct {
+	Data map[string]interface{} `json:"data"`
+}
+
+type GasOracleResult struct {
+	Result map[string]interface{} `json:"result"`
+}
