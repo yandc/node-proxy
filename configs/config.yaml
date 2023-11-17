@@ -543,3 +543,43 @@ blockExplorerApi:
 
 chainData:
   txSleep: "5s"
+
+gasOracle:
+  url:
+    gasOracleOkex: https://wallet.okex.org/v1/deposit/wallet/gas/gas_price?network=okexchain
+    gasOracleETHW: https://wallet.okex.org/v1/deposit/wallet/gas/gas_price?network=ethw
+    gasOracleETH: https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=CT5GUMRVZMMB94IZ34SNWSI5MEBPBXPPIK
+    gasOracleHeco: https://gheco.blockscan.com/gasapi.ashx?method=gasoracle&apikey=key
+    gasOracleBsc: https://api.bscscan.com/api?module=gastracker&action=gasoracle&apikey=75TWH5YYC1XAG7M7CFPFH3KB4PY63XJT3K
+    gasOraclePolygon: https://api.polygonscan.com/api?module=gastracker&action=gasoracle&apikey=H1YCT1KW18F9NIMFN1JISEBYWZZ5RS3K3W
+    gasOracleFantom: https://api.ftmscan.com/api?module=gastracker&action=gasoracle&apikey=TD9MC5XCJ65X561DKUBI6GMWMGMVAMVXP5
+    gasOracleAvalanche: https://gavax.blockscan.com/gasapi.ashx?apikey=key&method=gasoracle
+    gasOraclexDai: https://ggnosis.blockscan.com/gasapi.ashx?apikey=key&method=pendingpooltxgweidata
+    feeOracleBTC: https://api.blockcypher.com/v1/btc/main
+    feeOracleLTC: https://api.blockcypher.com/v1/ltc/main
+    feeOracleDOGE: https://api.blockcypher.com/v1/doge/main
+  oracleConfig:
+    - key: gasOracleOkex
+      cacheTime: 15
+    - key: gasOracleETHW
+      cacheTime: 15
+    - key: gasOracleETH
+      cacheTime: 15
+    - key: gasOracleHeco
+      cacheTime: 5
+    - key: gasOracleBsc
+      cacheTime: 15
+    - key: gasOraclePolygon
+      cacheTime: 5
+    - key: gasOracleFantom
+      cacheTime: 5
+    - key: gasOracleAvalanche
+      cacheTime: 15
+    - key: gasOraclexDai
+      cacheTime: 15
+    - key: feeOracleBTC
+      cacheTime: 180
+    - key: feeOracleLTC
+      cacheTime: 180
+    - key: feeOracleDOGE
+      cacheTime: 15

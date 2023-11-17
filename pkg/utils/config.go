@@ -8,7 +8,6 @@ var bc conf.Bootstrap
 
 func InitConfig(c conf.Bootstrap) {
 	bc = c
-	//fmt.Println("abi==", bc.BlockExplorerApi)
 }
 
 func GetBlockExplorerApiURL(chain string) string {
@@ -23,4 +22,15 @@ func GetDefaultAbiList(chainType string) string {
 		return value
 	}
 	return ""
+}
+
+func GetGasOracleURL(key string) string {
+	if value, ok := bc.GasOracle.Url[key]; ok {
+		return value
+	}
+	return ""
+}
+
+func GetGasOracleConfig() []*conf.GasOracleInfoOracleConf {
+	return bc.GasOracle.OracleConfig
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"gitlab.bixin.com/mili/node-proxy/pkg/gasOracle"
 	"gitlab.bixin.com/mili/node-proxy/pkg/lark"
 	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/tokenlist"
 	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
@@ -85,6 +86,11 @@ func main() {
 	}()
 	//init config
 	utils.InitConfig(bc)
+	//init gasOracle
+	gasOracle.InitGasOracle(logger)
+	go func() {
+		gasOracle.AutoUpdateGasOracle()
+	}()
 	// start and wait for stop signal
 	if err := app.Run(); err != nil {
 		panic(err)

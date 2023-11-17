@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"fmt"
+	"gitlab.bixin.com/mili/node-proxy/pkg/gasOracle"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"gitlab.bixin.com/mili/node-proxy/internal/biz"
@@ -85,5 +86,12 @@ func (c *commRPCRepo) GetChainDataConfig(ctx context.Context) map[string]interfa
 	result["gasDefaults"] = gasDefaults
 	result["chainData"] = c.chainData
 	c.log.WithContext(ctx).Infof("GetChainDataConfig==result===", result)
+	return result
+}
+
+func (c *commRPCRepo) GetGasOracle(ctx context.Context, key string, cacheTime int64) string {
+	c.log.WithContext(ctx).Infof("GetGasOracle")
+	result := gasOracle.GetGasOracle(key, cacheTime)
+	c.log.WithContext(ctx).Infof("GetGasOracle result=", result)
 	return result
 }

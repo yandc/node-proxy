@@ -16,6 +16,8 @@ message Bootstrap {
   map<string,string> defaultAbiList = 7;
   map<string,string> blockExplorerApi = 8;
   map<string,string> chainData = 9;
+  gasOracleInfo gasOracle = 10;
+
 }
 
 message Server {
@@ -109,4 +111,13 @@ message Lark {
 
 message LarkSubscription {
   repeated string uids = 1;
+}
+
+message gasOracleInfo {
+  message oracleConf {
+    string key = 1;
+    int64 cacheTime = 2;
+  }
+  map<string, string> url = 1;
+  repeated oracleConf oracleConfig = 2;
 }

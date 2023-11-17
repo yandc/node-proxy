@@ -20,6 +20,7 @@ type CommRPCRepo interface {
 	IsContractAddress(ctx context.Context, chain, address string) (bool, error)
 	GetGasConstants(ctx context.Context) map[string]interface{}
 	GetChainDataConfig(ctx context.Context) map[string]interface{}
+	GetGasOracle(ctx context.Context, key string, cacheTime int64) string
 }
 
 type CommRPCUsecase struct {
@@ -71,11 +72,19 @@ func (uc *CommRPCUsecase) ExecNodeProxyRPC(ctx context.Context, req *v1.ExecNode
 			}, nil
 		}
 	}
-	respone := ss[0].Interface()
-	ret, _ := json.Marshal(respone)
-	result := string(ret)
+	response := ss[0].Interface()
+	var result string
+	if value, ok := response.(string); ok {
+		result = value
+	} else {
+		ret, _ := json.Marshal(response)
+		result = string(ret)
+	}
 	if result == "null" {
 		result = ""
+	}
+	if req.Method == "GetContractABI" && strings.Contains(result, "Function") {
+		result = strings.Replace(result, "Function", "function", -1)
 	}
 	return &v1.ExecNodeProxyRPCReply{
 		Result: result,
@@ -109,4 +118,8 @@ func (uc *CommRPCUsecase) GetGasConstants(ctx context.Context, req *utils.GasDef
 
 func (uc *CommRPCUsecase) GetChainDataConfig(ctx context.Context, req *utils.GasDefaultsReq) map[string]interface{} {
 	return uc.repo.GetChainDataConfig(ctx)
+}
+
+func (uc *CommRPCUsecase) GetGasOracle(ctx context.Context, req *utils.GasOracleReq) string {
+	return uc.repo.GetGasOracle(ctx, req.Key, req.CacheTime)
 }
