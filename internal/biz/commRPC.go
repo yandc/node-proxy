@@ -83,8 +83,12 @@ func (uc *CommRPCUsecase) ExecNodeProxyRPC(ctx context.Context, req *v1.ExecNode
 	if result == "null" {
 		result = ""
 	}
-	if req.Method == "GetContractABI" && strings.Contains(result, "Function") {
-		result = strings.Replace(result, "Function", "function", -1)
+	if req.Method == "GetContractABI" {
+		parseKey := `"type":"Function"`
+		newABIFunction := `"type":"function"`
+		if strings.Contains(result, parseKey) {
+			result = strings.Replace(result, parseKey, newABIFunction, -1)
+		}
 	}
 	return &v1.ExecNodeProxyRPCReply{
 		Result: result,

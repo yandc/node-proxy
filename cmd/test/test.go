@@ -155,6 +155,9 @@ func main() {
 		TestInitGetPriceKey()
 	case "logoByAddress":
 		testRefreshLogoURIByAddress()
+	case "parseABIData":
+		TestParseContractABI()
+
 	default:
 		TestGetContractAbi()
 	}
@@ -657,5 +660,28 @@ func TestInitGetPriceKey() {
 				db.Model(&models.BlockChain{}).Where("id = ?", blockChain.ID).Update("get_price_key", tempCoinGeckoList.CgId)
 			}
 		}
+	}
+}
+
+func TestParseContractABI() {
+	parseKey := `"type":"Function"`
+	newStr := `"type":"function"`
+	keys, _ := client.Keys("contract_abi:methodId:*").Result()
+	for _, key := range keys {
+		//if key == "contract_abi:methodId:3805550f" {
+		cacheData, err := client.Get(key).Result()
+		if err != nil {
+			fmt.Println("redis get error:", err)
+			continue
+		}
+		if strings.Contains(cacheData, parseKey) {
+			//fmt.Println("key==", key, "zql====", cacheData)
+			newCacheData := strings.Replace(cacheData, parseKey, newStr, -1)
+			if err := client.Set(key, newCacheData, -1).Err(); err != nil {
+				fmt.Println("redis set error:", err)
+			}
+		}
+		//}
+
 	}
 }

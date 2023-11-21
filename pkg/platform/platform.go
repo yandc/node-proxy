@@ -367,12 +367,14 @@ func GetContractABI(chain, contract, methodId string) (interface{}, error) {
 	//if methodId[:2] == "0x" {
 	//	methodId = methodId[2:]
 	//}
+	parseKey := `"type":"Function"`
+	newABIFunction := `"type":"function"`
 	var abiResultList []interface{}
 	methodKey := fmt.Sprintf("contract_abi:methodId:%v", methodId)
 	abiResult, _ := utils2.GetRedisClient().Get(methodKey).Result()
 	if abiResult != "" && abiResult != "[]" {
-		if strings.Contains(abiResult, "Function") {
-			abiResult = strings.Replace(abiResult, "Function", "function", -1)
+		if strings.Contains(abiResult, parseKey) {
+			abiResult = strings.Replace(abiResult, parseKey, newABIFunction, -1)
 		}
 		json.Unmarshal([]byte(abiResult), &abiResultList)
 		return abiResultList, nil
@@ -543,6 +545,10 @@ func GetContractABI(chain, contract, methodId string) (interface{}, error) {
 				methodRedisData, _ := utils2.GetRedisClient().Get(key).Result()
 				if methodRedisData == "" || methodRedisData == "[]" {
 					methodABIList := make([]interface{}, 0, 1)
+					if strings.Contains(string(b), parseKey) {
+						newStr := strings.Replace(string(b), parseKey, newABIFunction, -1)
+						json.Unmarshal([]byte(newStr), &value)
+					}
 					methodABIList = append(methodABIList, value)
 					methodABIListRedis, _ := json.Marshal(methodABIList)
 					err = utils2.GetRedisClient().Set(key, string(methodABIListRedis), -1).Err()
