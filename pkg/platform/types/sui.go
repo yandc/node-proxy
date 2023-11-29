@@ -121,6 +121,7 @@ type SuiTransactionResponse struct {
 		MessageVersion string `json:"messageVersion"`
 		Status         struct {
 			Status string `json:"status"`
+			Error  string `json:"error"`
 		} `json:"status"`
 		ExecutedEpoch string `json:"executedEpoch"`
 		GasUsed       struct {
