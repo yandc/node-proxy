@@ -360,6 +360,9 @@ platform:
       - https://sei-rest.brocha.in/
       - https://rest.sei-apis.com/
       - https://sei-m.api.manticore.team/
+    gasDefaults:
+      gasLimit: 100_000
+      gasPrice: 100_000 #0.1
   - chain: Scroll
     type: EVM
     chainId: 534352
