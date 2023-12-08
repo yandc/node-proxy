@@ -558,7 +558,7 @@ gasOracle:
     gasOracleFantom: https://api.ftmscan.com/api?module=gastracker&action=gasoracle&apikey=TD9MC5XCJ65X561DKUBI6GMWMGMVAMVXP5
     gasOracleAvalanche: https://gavax.blockscan.com/gasapi.ashx?apikey=key&method=gasoracle
     gasOraclexDai: https://ggnosis.blockscan.com/gasapi.ashx?apikey=key&method=pendingpooltxgweidata
-    feeOracleBTC: https://api.blockcypher.com/v1/btc/main
+    feeOracleBTC: https://mempool.space/api/v1/fees/recommended
     feeOracleLTC: https://api.blockcypher.com/v1/ltc/main
     feeOracleDOGE: https://api.blockcypher.com/v1/doge/main
   oracleConfig:

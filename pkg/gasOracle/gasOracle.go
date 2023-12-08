@@ -2,11 +2,14 @@ package gasOracle
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
-	"github.com/go-kratos/kratos/v2/log"
-	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
+	"net/url"
 	"strconv"
 	"time"
+
+	"github.com/go-kratos/kratos/v2/log"
+	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
 )
 
 const (
@@ -70,11 +73,27 @@ func getByKey(key string) (string, error) {
 			fmt.Println("zql===1")
 			return "", err
 		}
-		resultData = &utils.GasOracleRes{
-			SafeGasPrice:    parseMapData(tempData, "low_fee_per_kb"),
-			ProposeGasPrice: parseMapData(tempData, "medium_fee_per_kb"),
-			FastGasPrice:    parseMapData(tempData, "high_fee_per_kb"),
-			SuggestBaseFee:  "",
+		host, err := urlHost(proxyURL)
+		if err != nil {
+			return "", err
+		}
+		switch host {
+		case "api.blockcypher.com":
+			resultData = &utils.GasOracleRes{
+				SafeGasPrice:    parseMapData(tempData, "low_fee_per_kb"),
+				ProposeGasPrice: parseMapData(tempData, "medium_fee_per_kb"),
+				FastGasPrice:    parseMapData(tempData, "high_fee_per_kb"),
+				SuggestBaseFee:  "",
+			}
+		case "mempool.space":
+			resultData = &utils.GasOracleRes{
+				SafeGasPrice:    parseMapDataMulK(tempData, "hourFee"),
+				ProposeGasPrice: parseMapDataMulK(tempData, "halfHourFee"),
+				FastGasPrice:    parseMapDataMulK(tempData, "fastestFee"),
+				SuggestBaseFee:  "",
+			}
+		default:
+			return "", errors.New("unknown host for bitcoin gasOracle")
 		}
 	case "gasOracleOkex":
 		var tempData utils.GasOracleOkex
@@ -125,6 +144,13 @@ func getByKey(key string) (string, error) {
 	return "", nil
 
 }
+func parseMapDataMulK(data map[string]interface{}, key string) string {
+	value := parseMapData(data, key)
+	if iv, err := strconv.ParseInt(value, 10, 64); err == nil && iv > 0 {
+		return fmt.Sprint(iv * 1_000)
+	}
+	return value
+}
 
 func parseMapData(data map[string]interface{}, key string) string {
 	if value, ok := data[key]; ok {
@@ -134,6 +160,14 @@ func parseMapData(data map[string]interface{}, key string) string {
 		return fmt.Sprintf("%v", value)
 	}
 	return ""
+}
+
+func urlHost(s string) (string, error) {
+	u, err := url.Parse(s)
+	if err != nil {
+		return "", nil
+	}
+	return u.Host, nil
 }
 
 func getRedisData(key string, cacheTime int64) (string, bool, error) {
