@@ -1773,6 +1773,8 @@ func UpdateChainToken(chain string) {
 		UpdateEthereumToken()
 	case "scroll":
 		UpdateScrollToken()
+	case "BenfenTEST":
+		UpdateBenfenTESTToken()
 
 		//default:
 		//	utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")
