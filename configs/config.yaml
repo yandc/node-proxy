@@ -75,6 +75,7 @@ tokenList:
     - evm8453
     - Sei
     - Scroll
+    - BenfenTEST
 
 nftList:
   ipfs: https://cloudflare-ipfs.com/ipfs/
@@ -497,7 +498,7 @@ platform:
     type: SUI
     chainId: 0
     rpcURL:
-      - https://obcrpc.openblock.vip
+      - https://testrpc.benfen.org
 
 defaultAbiList:
   EVM: '[

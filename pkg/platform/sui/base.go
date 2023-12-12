@@ -2,6 +2,7 @@ package sui
 
 import (
 	"context"
+	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -36,6 +37,8 @@ type platform struct {
 func (p *platform) GetERCType(token string) string {
 	return ""
 }
+
+var chain = ""
 
 func Platform2SUIPlatform(p types.Platform) *platform {
 	suiPlatform, ok := p.(*platform)
@@ -79,23 +82,25 @@ func (p *platform) BuildWasmRequest(ctx context.Context, nodeRpc, functionName, 
 }
 
 var responseFunc = map[string]types.AnalysisResponseType{
-	types.RESPONSE_BALANCE:       analysisBalance,
-	types.RESPONSE_OBJECTID:      analysisObjectIds,
-	types.RESPONSE_TXHASH:        analysisTxHash,
-	types.RESPONSE_TXPARAMS:      analysisTxParams,
-	types.RESPONSE_OBJECTREAD:    analysisObjectRead,
-	types.RESPONSE_TXSTATUS:      analysisTxStatus,
-	types.RESPONSE_HEIGHT:        analysisTxHeight,
-	types.RESPONSE_TOKEN_BALANCE: analysisTokenBalance,
-	types.RESPONSE_TOKEN_INFO:    analysisTokenInfo,
-	types.RESPONSE_GAS_PRICE:     analysisGasPrice,
-	types.RESPONSE_TXDATA:        analysisTxData,
-	types.RESPONSE_DRY_RUN:       analysisGasLimit,
+	types.RESPONSE_BALANCE:        analysisBalance,
+	types.RESPONSE_OBJECTID:       analysisObjectIds,
+	types.RESPONSE_TXHASH:         analysisTxHash,
+	types.RESPONSE_TXPARAMS:       analysisTxParams,
+	types.RESPONSE_OBJECTREAD:     analysisObjectRead,
+	types.RESPONSE_TXSTATUS:       analysisTxStatus,
+	types.RESPONSE_HEIGHT:         analysisTxHeight,
+	types.RESPONSE_TOKEN_BALANCE:  analysisTokenBalance,
+	types.RESPONSE_TOKEN_INFO:     analysisTokenInfo,
+	types.RESPONSE_GAS_PRICE:      analysisGasPrice,
+	types.RESPONSE_TXDATA:         analysisTxData,
+	types.RESPONSE_DRY_RUN:        analysisGasLimit,
+	types.RESPONSE_BATCH_OBJECTID: analysisBatchObjectIds,
 }
 
 func (p *platform) AnalysisWasmResponse(ctx context.Context, functionName, params, response string) (string, error) {
 	var result interface{}
 	var err error
+	chain = p.chain
 	if functionName == types.RESPONSE_SUI_BALANCE {
 		result, err = analysisBalanceV2(response)
 	} else if doFunc, ok := responseFunc[functionName]; ok {
@@ -148,21 +153,30 @@ func analysisObjectIds(params string, result json.RawMessage) (interface{}, erro
 	if err := json.Unmarshal(result, &objectInfo); err != nil {
 		return nil, err
 	}
-	//var paramsMap map[string]string
-	//if err := json.Unmarshal([]byte(params), &paramsMap); err != nil {
-	//	return nil, err
-	//}
-	//coinType := NATIVE_TYPE
-	//if value, ok := paramsMap["coinType"]; ok {
-	//	coinType = value
-	//}
 	objectIds := make([]string, 0, len(objectInfo.Data))
 	for _, info := range objectInfo.Data {
-		//if info.Type == coinType {
 		objectIds = append(objectIds, info.Data.ObjectID)
-		//}
 	}
 	return objectIds, nil
+}
+
+func analysisBatchObjectIds(params string, result json.RawMessage) (interface{}, error) {
+	var objectInfo types.SuiObjectInfo
+	if err := json.Unmarshal(result, &objectInfo); err != nil {
+		return nil, err
+	}
+	objectIds := make([]string, 0, len(objectInfo.Data))
+	for _, info := range objectInfo.Data {
+		objectIds = append(objectIds, info.Data.ObjectID)
+	}
+	nextCursor := ""
+	if objectInfo.HasNextPage {
+		nextCursor = objectInfo.NextCursor
+	}
+	return map[string]interface{}{
+		"nextCursor": nextCursor,
+		"objectIds":  objectIds,
+	}, nil
 }
 
 func analysisBalance(params string, result json.RawMessage) (interface{}, error) {
@@ -180,6 +194,10 @@ func analysisTokenBalance(params string, result json.RawMessage) (interface{}, e
 	}
 	tokenBalances := make(map[string]string)
 	for _, info := range out {
+		if info.CoinType == "0xc8::busd::BUSD" {
+			tokenBalances["0x00000000000000000000000000000000000000000000000000000000000000c8::busd::BUSD"] = info.TotalBalance
+			tokenBalances["BFC00000000000000000000000000000000000000000000000000000000000000c8e30a::busd::BUSD"] = info.TotalBalance
+		}
 		tokenBalances[info.CoinType] = info.TotalBalance
 	}
 	return tokenBalances, nil
@@ -295,12 +313,15 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 			(coinKey != "nft" && (objectRead.Data.Type == coinType ||
 				objectRead.Data.Type == fmt.Sprintf("0x2::coin::Coin<%v>", coinType))) {
 			filedBalance, _ := strconv.Atoi(objectRead.Data.Content.Fields.Balance)
+			if coinKey == "nft" && filedBalance == 0 {
+				filedBalance = 1
+			}
 			suiObjects = append(suiObjects, map[string]interface{}{
 				"objectId": objectRead.Data.ObjectID,
 				"seqNo":    fmt.Sprintf("%v", objectRead.Data.Version),
 				"digest":   objectRead.Data.Digest,
 				"balance":  fmt.Sprintf("%v", filedBalance),
-				coinKey:    coinType,
+				coinKey:    EVMAddressToBFC(chain, coinType),
 			})
 		}
 
@@ -406,7 +427,7 @@ func getWASMCoinMetadata(chain, url, coinType string) (*v12.GetTokenInfoResp_Dat
 	//method := "suix_getCoinMetadata"
 	method := getRpcMethod(chain, "suix_getCoinMetadata")
 	out := &types.SUICoinMetadata{}
-	params := []interface{}{coinType}
+	params := []interface{}{BFCAddressToEVM(chain, coinType)}
 	err := call(url, JSONID, method, &out, params)
 	if err != nil {
 		return nil, err
@@ -459,4 +480,39 @@ func getRpcMethod(chain, m string) string {
 		m = strings.Replace(m, "suix_", "bfcx_", 1)
 	}
 	return m
+}
+
+func BFCAddressToEVM(chainName, tokenAddress string) string {
+	if IsBenfenChain(chainName) {
+		if strings.HasPrefix(tokenAddress, "BFC") && strings.Contains(tokenAddress, "::") {
+			addressInfo := strings.SplitN(tokenAddress, "::", 2)
+			if len(addressInfo) > 1 {
+				address, symbol := addressInfo[0], addressInfo[1]
+				return fmt.Sprintf("0x%s::%s", []byte(address)[3:len(address)-4], symbol)
+			}
+		}
+		return tokenAddress
+	}
+	return tokenAddress
+}
+
+func IsBenfenChain(chainName string) bool {
+	return strings.HasPrefix(strings.ToLower(chainName), "benfen")
+}
+
+func EVMAddressToBFC(chainName, tokenAddress string) string {
+	if IsBenfenChain(chainName) {
+		if strings.HasPrefix(tokenAddress, "0x") && strings.Contains(tokenAddress, "::") {
+			addressInfo := strings.SplitN(tokenAddress, "::", 2)
+			if len(addressInfo) > 1 {
+				address, symbol := addressInfo[0], addressInfo[1]
+				h := sha256.New()
+				h.Write([]byte(address)[2:])
+				checkSum := fmt.Sprintf("%x", h.Sum(nil))[0:4]
+				return fmt.Sprintf("BFC%s%s::%s", []byte(address)[2:], checkSum, symbol)
+			}
+		}
+		return tokenAddress
+	}
+	return tokenAddress
 }

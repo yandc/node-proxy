@@ -31,6 +31,7 @@ const (
 	RESPONSE_MAINPURSE         = "mainPurse"
 	RESPONSE_GAS_PRICE         = "gasPrice"
 	RESPONSE_DRY_RUN           = "dryRun"
+	RESPONSE_BATCH_OBJECTID    = "batchObjectId"
 
 	BUILD_HEIGHT   = "height"
 	BUILD_ACCOUNTS = "accounts"

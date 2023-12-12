@@ -148,6 +148,7 @@ var dbName2HandlerMap = map[string]string{
 	"evm8453":             "evm8453",
 	"Sei":                 "Sei",
 	"scroll":              "scroll",
+	"BenfenTEST":          "benfen",
 }
 
 var handlerNameMap = map[string]string{
@@ -184,6 +185,7 @@ var handlerNameMap = map[string]string{
 	"evm8453":      "evm8453",
 	"sei":          "Sei",
 	"scroll":       "scroll",
+	"benfen":       "BenfenTEST",
 }
 
 var ChainNameMap = map[string]string{
@@ -251,6 +253,7 @@ var ChainNameMap = map[string]string{
 	"ConfluxTEST":      "conflux",
 	"zkSyncTEST":       "zkSync",
 	"SUITEST":          "SUI",
+	"BenfenTEST":       "BenfenTEST",
 }
 
 var priceKeys = []string{"ethereum", "polkadot", "ronin", "harmony", "osmosis", "bitcoin-cash", "casper-network",
@@ -293,6 +296,7 @@ var db2Chain = map[string]string{
 	"evm8453":             "evm8453",
 	"Sei":                 "Sei",
 	"scroll":              "Scroll",
+	"BenfenTEST":          "BenfenTEST",
 }
 
 var TokenFileMap = map[string][]string{
