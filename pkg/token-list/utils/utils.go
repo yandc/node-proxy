@@ -358,7 +358,6 @@ var UpdateChainNameMap = map[string]string{
 	"xDai":         "xdai",
 	"ETC":          "ethereum-classic",
 	"Solana":       "solana",
-	"Aptos":        "aptos",
 	"Nervos":       "nervos",
 	"SmartBCH":     "bitcoin-cash",
 	"Harmony":      "harmony-shard-0",
