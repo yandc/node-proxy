@@ -2138,6 +2138,9 @@ func InsertTopNByWhiteList(chain string, result []*v1.TokenInfoData, coinIdsMap 
 				LogoURI:  c.logoPrefix + t.LogoURI,
 			}
 			index := tokenInfo.Index - 1
+			if index >= len(result) {
+				index = len(result) - 1
+			}
 			result = utils.InsertSlice(result, index, tokenInfoData)
 		}
 	}
