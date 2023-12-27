@@ -374,7 +374,12 @@ var UpdateChainNameMap = map[string]string{
 }
 
 var TopNWhiteListMap = map[string][]types.TopNInfo{
-	"ETH": {{CgId: "big-time", DBChain: "ethereum", Address: "0x64bc2ca1be492be7185faa2c8835d9b824c8a194", Index: 4}},
+	"ETH": {{CgId: "big-time", DBChain: "ethereum", Address: "0x64bc2ca1be492be7185faa2c8835d9b824c8a194", Index: 4},
+		{CgId: "livepeer", DBChain: "ethereum", Address: "0x58b6a8a3302369daec383334672404ee733ab239", Index: 19},
+		{CgId: "axelar", DBChain: "ethereum", Address: "0x467719ad09025fcc6cf6f8311755809d45a5e5f3", Index: 20}},
+	"Solana": {{CgId: "hivemapper", DBChain: "solana", Address: "4vMsoUT2BWatFweudnQM1xedRLfJgJ7hswhcpz4xgBTy", Index: 20}},
+	"BSC":    {{CgId: "fetch-ai", DBChain: "binance-smart-chain", Address: "0x031b41e504677879370e9dbcf937283a8691fa7f", Index: 20}},
+	"Cosmos": {{CgId: "celestia", DBChain: "cosmos", Address: "ibc/D79E7D83AB399BFFF93433E54FAA480C191248FC556924A2A8351AE2638B3877", Index: 20}},
 }
 
 func GetChainPriceKey() []string {
