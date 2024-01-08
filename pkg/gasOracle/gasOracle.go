@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"net/url"
 	"strconv"
 	"time"
@@ -70,7 +71,6 @@ func getByKey(key string) (string, error) {
 	case "feeOracleBTC", "feeOracleLTC", "feeOracleDOGE":
 		var tempData map[string]interface{}
 		if err := json.Unmarshal(dataByte, &tempData); err != nil {
-			fmt.Println("zql===1")
 			return "", err
 		}
 		host, err := urlHost(proxyURL)
@@ -154,8 +154,22 @@ func parseMapDataMulK(data map[string]interface{}, key string) string {
 
 func parseMapData(data map[string]interface{}, key string) string {
 	if value, ok := data[key]; ok {
-		if valueInt, okInt := value.(int); okInt && valueInt == 0 {
-			return ""
+		switch value.(type) {
+		case float64, float32:
+			valueFlat := value.(float64)
+			valueInt := int64(math.Floor(valueFlat))
+			if valueInt == 0 {
+				return ""
+			}
+			return fmt.Sprintf("%v", valueInt)
+		case int, int64, int32:
+			valueInt := value.(int64)
+			if valueInt == 0 {
+				return ""
+			}
+			return fmt.Sprintf("%v", valueInt)
+		default:
+			return fmt.Sprintf("%v", value)
 		}
 		return fmt.Sprintf("%v", value)
 	}
