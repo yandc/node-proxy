@@ -2,12 +2,14 @@ package data
 
 import (
 	"context"
+	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	v12 "gitlab.bixin.com/mili/node-proxy/api/nft-marketplace/v1"
 	v2 "gitlab.bixin.com/mili/node-proxy/api/nft-marketplace/v2"
 	v1 "gitlab.bixin.com/mili/node-proxy/api/nft/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/biz"
 	"gitlab.bixin.com/mili/node-proxy/internal/conf"
+	"gitlab.bixin.com/mili/node-proxy/pkg/lark"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/list"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform"
@@ -42,6 +44,13 @@ func (r *nftListRepo) GetNFTInfo(ctx context.Context, chain string, tokenInfos [
 			Chain:   chain,
 		})
 		if err != nil || info == nil || info.Data == nil {
+			if err != nil {
+				alarmMsg := fmt.Sprintf("请注意：%s链查询NFT信息失败，tokenAddress:%s,tokenID:%s\n错误消息：%s",
+					chain, tokenInfo.TokenAddress, tokenInfo.TokenId, err)
+				alarmOpts := lark.WithMsgLevel("FATAL")
+				alarmOpts = lark.WithAlarmChannel("nft-marketplace")
+				lark.LarkClient.NotifyLark(alarmMsg, alarmOpts)
+			}
 			continue
 		}
 
@@ -89,6 +98,12 @@ func (r *nftListRepo) GetNftCollectionInfo(ctx context.Context, chain, address s
 		Chain:   chain,
 	})
 	if err != nil || info == nil || info.Data == nil {
+		if err != nil {
+			alarmMsg := fmt.Sprintf("请注意：%s链查询NFT集合信息失败，tokenAddress:%s\n错误消息：%s", chain, address, err)
+			alarmOpts := lark.WithMsgLevel("FATAL")
+			alarmOpts = lark.WithAlarmChannel("nft-marketplace")
+			lark.LarkClient.NotifyLark(alarmMsg, alarmOpts)
+		}
 		return nil, err
 	}
 
