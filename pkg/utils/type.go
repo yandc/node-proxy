@@ -53,3 +53,7 @@ type GasOracleOkex struct {
 type GasOracleResult struct {
 	Result map[string]interface{} `json:"result"`
 }
+
+const (
+	ERC20_TYPE_ERR = "token address is not erc20"
+)

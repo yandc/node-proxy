@@ -618,11 +618,12 @@ func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoRe
 					Symbol:   "Unknown Token",
 					Decimals: 0,
 				})
-
-				alarmMsg := fmt.Sprintf("请注意：%s链查询代币信息失败，tokenAddress:%s\n错误消息：%s", chain, address, err)
-				alarmOpts := lark.WithMsgLevel("FATAL")
-				alarmOpts = lark.WithAlarmChannel("platform")
-				lark.LarkClient.NotifyLark(alarmMsg, alarmOpts)
+				if err.Error() != utils3.ERC20_TYPE_ERR {
+					alarmMsg := fmt.Sprintf("请注意：%s链查询代币信息失败，tokenAddress:%s\n错误消息：%s", chain, address, err)
+					alarmOpts := lark.WithMsgLevel("FATAL")
+					alarmOpts = lark.WithAlarmChannel("platform")
+					lark.LarkClient.NotifyLark(alarmMsg, alarmOpts)
+				}
 				continue
 			}
 			if tokenInfo != nil {

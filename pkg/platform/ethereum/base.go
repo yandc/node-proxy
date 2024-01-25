@@ -2,6 +2,7 @@ package ethereum
 
 import (
 	"context"
+	"errors"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -15,6 +16,7 @@ import (
 	v12 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/types"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/utils"
+	utils2 "gitlab.bixin.com/mili/node-proxy/pkg/utils"
 	"math/big"
 	"strconv"
 	"strings"
@@ -117,6 +119,13 @@ func (p *platform) GetTokenType(token string) (*v12.GetTokenInfoResp_Data, error
 				Decimals: uint32(decimals),
 			}, nil
 		}
+	}
+	if resultErr != nil {
+		//get token type
+		if ercType := p.GetERCType(token); ercType == ERC721 || ercType == ERC1155 {
+			return nil, errors.New(utils2.ERC20_TYPE_ERR)
+		}
+
 	}
 	return nil, resultErr
 }
