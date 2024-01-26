@@ -214,3 +214,10 @@ type TopNInfo struct {
 	DBChain string `json:"db_chain"`
 	Address string `json:"address"`
 }
+
+type MarketTokenInfo struct {
+	Symbol   string `json:"symbol"`
+	Address  string `json:"address"`
+	Decimals int    `json:"decimals"`
+	LogoURI  string `json:"logoURI"`
+}

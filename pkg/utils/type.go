@@ -57,3 +57,8 @@ type GasOracleResult struct {
 const (
 	ERC20_TYPE_ERR = "token address is not erc20"
 )
+
+type CheckHMTokenAddress struct {
+	Chain        string   `json:"chain"`
+	TokenAddress []string `json:"token_address"`
+}

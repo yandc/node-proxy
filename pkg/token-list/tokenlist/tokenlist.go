@@ -1885,6 +1885,7 @@ func getTopTokenByKey(chain, key string, topN int) ([]*v1.TokenInfoData, error) 
 					if value, ok := tokenInfos[market.CoinID]; ok {
 						result = append(result, value)
 						coinIdsMap[market.CoinID] = struct{}{}
+						delete(tokenInfos, market.CoinID)
 					}
 				}
 				//手动插入
@@ -2143,6 +2144,27 @@ func InsertTopNByWhiteList(chain string, result []*v1.TokenInfoData, coinIdsMap 
 				index = len(result) - 1
 			}
 			result = utils.InsertSlice(result, index, tokenInfoData)
+		}
+	}
+	return result
+}
+
+func GetTokenListChains() []string {
+	return utils3.GetTokenListChains()
+}
+
+func CheckHMTokenAddress(chain string, tokenAddress []string) map[string]types.MarketTokenInfo {
+	result := make(map[string]types.MarketTokenInfo, len(tokenAddress))
+	dbChain := utils.GetChainNameByChain(chain)
+	for _, addr := range tokenAddress {
+		var tokenList *models.TokenList
+		if err := c.db.Where("chain = ? and address ilike ?", dbChain, addr).First(&tokenList).Error; err == nil && tokenList != nil {
+			result[addr] = types.MarketTokenInfo{
+				Address:  tokenList.Address,
+				Symbol:   strings.ToUpper(tokenList.Symbol),
+				LogoURI:  c.logoPrefix + tokenList.LogoURI,
+				Decimals: tokenList.Decimals,
+			}
 		}
 	}
 	return result

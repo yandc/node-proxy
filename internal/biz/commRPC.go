@@ -3,6 +3,7 @@ package biz
 import (
 	"context"
 	"encoding/json"
+	types2 "gitlab.bixin.com/mili/node-proxy/pkg/token-list/types"
 	"reflect"
 	"strings"
 
@@ -21,6 +22,8 @@ type CommRPCRepo interface {
 	GetGasConstants(ctx context.Context) map[string]interface{}
 	GetChainDataConfig(ctx context.Context) map[string]interface{}
 	GetGasOracle(ctx context.Context, key string, cacheTime int64) string
+	GetTokenListChains(ctx context.Context) []string
+	CheckHMTokenAddress(ctx context.Context, chain string, tokenAddress []string) map[string]types2.MarketTokenInfo
 }
 
 type CommRPCUsecase struct {
@@ -126,4 +129,14 @@ func (uc *CommRPCUsecase) GetChainDataConfig(ctx context.Context, req *utils.Gas
 
 func (uc *CommRPCUsecase) GetGasOracle(ctx context.Context, req *utils.GasOracleReq) string {
 	return uc.repo.GetGasOracle(ctx, req.Key, req.CacheTime)
+}
+
+func (uc *CommRPCUsecase) GetTokenListChains(ctx context.Context) []string {
+	return uc.repo.GetTokenListChains(ctx)
+}
+
+//CheckHMTokenAddress 匹配手动添加token地址
+func (uc *CommRPCUsecase) CheckHMTokenAddress(ctx context.Context, req *utils.CheckHMTokenAddress) map[string]types2.MarketTokenInfo {
+	//return uc.repo.GetGasOracle(ctx, req.Key, req.CacheTime)
+	return uc.repo.CheckHMTokenAddress(ctx, req.Chain, req.TokenAddress)
 }

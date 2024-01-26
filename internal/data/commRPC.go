@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"gitlab.bixin.com/mili/node-proxy/pkg/gasOracle"
+	types2 "gitlab.bixin.com/mili/node-proxy/pkg/token-list/types"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"gitlab.bixin.com/mili/node-proxy/internal/biz"
@@ -93,5 +94,17 @@ func (c *commRPCRepo) GetGasOracle(ctx context.Context, key string, cacheTime in
 	c.log.WithContext(ctx).Infof("GetGasOracle")
 	result := gasOracle.GetGasOracle(key, cacheTime)
 	c.log.WithContext(ctx).Infof("GetGasOracle result=", result)
+	return result
+}
+
+func (c *commRPCRepo) GetTokenListChains(ctx context.Context) []string {
+	c.log.WithContext(ctx).Infof("GetTokenListChains")
+	return tokenlist.GetTokenListChains()
+}
+
+func (c *commRPCRepo) CheckHMTokenAddress(ctx context.Context, chain string, tokenAddress []string) map[string]types2.MarketTokenInfo {
+	c.log.WithContext(ctx).Infof("CheckHMTokenAddress chain=", chain, ",tokenAddress=", tokenAddress)
+	result := tokenlist.CheckHMTokenAddress(chain, tokenAddress)
+	c.log.WithContext(ctx).Infof("CheckHMTokenAddress result=", result)
 	return result
 }
