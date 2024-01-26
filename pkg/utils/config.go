@@ -34,3 +34,7 @@ func GetGasOracleURL(key string) string {
 func GetGasOracleConfig() []*conf.GasOracleInfoOracleConf {
 	return bc.GasOracle.OracleConfig
 }
+
+func GetTokenListChains() []string {
+	return bc.TokenList.Chains
+}
