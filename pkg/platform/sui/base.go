@@ -260,10 +260,7 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 	if err := json.Unmarshal([]byte(params), &paramsMap); err != nil {
 		return nil, err
 	}
-	//var amount = 0
-	//if value, ok := paramsMap["amount"]; ok {
-	//	amount, _ = strconv.Atoi(value)
-	//}
+
 	var gasPrice = "1000"
 	if value, ok := paramsMap["gasPrice"]; ok {
 		gasPrice = value
@@ -298,6 +295,16 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 	})
 	suiObjects := make([]interface{}, 0, len(objectReads))
 	nativeObjects := make([]interface{}, 0, len(objectReads))
+	nativeBalances := 0
+	busdBalances := 0
+	busdObjects := make([]interface{}, 0, len(objectReads))
+	busdAddress := "0x00000000000000000000000000000000000000000000000000000000000000c8::busd::BUSD"
+	//是否需要benfen的busd代付
+	isGasBusdFlag := false
+	gasToken := ""
+	if IsBenfenChain(chain) && coinKey != "" {
+		isGasBusdFlag = true
+	}
 	for _, objectRead := range objectReads {
 		if objectRead.Data.Type == NATIVE_TYPE || objectRead.Data.Type == BEN_FEN_NATIVE_TYPE {
 			if objectRead.Data.Content.Fields.Balance != "" && objectRead.Data.Content.Fields.Balance != "0" {
@@ -308,6 +315,7 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 					"digest":   objectRead.Data.Digest,
 					"balance":  fmt.Sprintf("%v", filedBalance),
 				})
+				nativeBalances += filedBalance
 			}
 		} else if (coinKey == "nft" && objectRead.Data.ObjectID == tokenId) ||
 			(coinKey != "nft" && (objectRead.Data.Type == coinType ||
@@ -324,6 +332,17 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 				coinKey:    EVMAddressToBFC(chain, coinType),
 			})
 		}
+		if isGasBusdFlag && (objectRead.Data.Type == busdAddress ||
+			objectRead.Data.Type == fmt.Sprintf("0x2::coin::Coin<%v>", busdAddress)) {
+			filedBalance, _ := strconv.Atoi(objectRead.Data.Content.Fields.Balance)
+			busdObjects = append(busdObjects, map[string]interface{}{
+				"objectId": objectRead.Data.ObjectID,
+				"seqNo":    fmt.Sprintf("%v", objectRead.Data.Version),
+				"digest":   objectRead.Data.Digest,
+				"balance":  fmt.Sprintf("%v", filedBalance),
+			})
+			busdBalances += filedBalance
+		}
 
 	}
 	// 主币转账
@@ -332,7 +351,29 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 	} else {
 		// token/nft转账
 		if len(suiObjects) > 0 {
-			suiObjects = append(suiObjects, nativeObjects...)
+			if isGasBusdFlag {
+				//判断bfc是否足够支付小费
+				gasPriceInt, err := strconv.Atoi(gasPrice)
+				if err == nil {
+					fee := gasPriceInt * gasLimit
+					if fee > nativeBalances {
+						//当主币不够支付费用时，判断busd是否够
+						if busdBalances > fee {
+							suiObjects = append(suiObjects, busdObjects...)
+							if coinType == busdAddress {
+								suiObjects = busdObjects
+							}
+							gasToken = busdAddress
+						}
+					} else {
+						//主币支持支付
+						suiObjects = append(suiObjects, nativeObjects...)
+					}
+				}
+
+			} else {
+				suiObjects = append(suiObjects, nativeObjects...)
+			}
 		}
 	}
 	if len(objectReads) == 0 && coinKey == "" {
@@ -342,6 +383,7 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 		"gasPrice":   gasPrice,
 		"suiObjects": suiObjects,
 		"gasLimit":   strconv.Itoa(int(float32(gasLimit) * 1.2)),
+		"gasToken":   gasToken,
 	}, nil
 }
 
