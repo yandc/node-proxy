@@ -1467,7 +1467,8 @@ func DownLoadImages(tokenLists []models.TokenList) {
 				fileSuffix = ".svg"
 			}
 			address := t.Address
-			if (t.Chain == "osmosis" || t.Chain == "cosmos") && strings.Contains(t.Address, "/") {
+			if (t.Chain == "osmosis" || t.Chain == "cosmos" || strings.ToLower(t.Chain) == "stride" ||
+				strings.ToLower(t.Chain) == "neutron" || strings.ToLower(t.Chain) == "kujira") && strings.Contains(t.Address, "/") {
 				address = strings.Split(t.Address, "/")[1]
 			} else if t.Chain == "Sei" && strings.Contains(t.Address, "/") {
 				address = strings.Replace(t.Address, "/", "_", -1)
@@ -1596,7 +1597,8 @@ func InsertLogoURI() {
 			if len(chainAddress) == 2 {
 				chain := chainAddress[0]
 				address := chainAddress[1]
-				if (chain == "osmosis" || chain == "cosmos") && len(address) == 64 {
+				if (chain == "osmosis" || chain == "cosmos" || strings.ToLower(chain) == "stride" ||
+					strings.ToLower(chain) == "neutron") && len(address) == 64 {
 					address = fmt.Sprintf("ibc/%s", address)
 				} else if chain == "Sei" {
 					address = strings.Replace(address, "_", "/", -1)
@@ -1776,6 +1778,12 @@ func UpdateChainToken(chain string) {
 		UpdateScrollToken()
 	case "BenfenTEST":
 		UpdateBenfenTESTToken()
+	case "Neutron":
+		UpdateNeutronToken()
+	case "Stride":
+		UpdateStrideToken()
+	case "Kujira":
+		UpdateKujiraToken()
 
 		//default:
 		//	utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")

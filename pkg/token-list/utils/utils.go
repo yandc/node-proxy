@@ -34,7 +34,11 @@ const (
 	APTOS_CHAIN               = "aptos"
 	COSMOS_CHAIN              = "cosmos"
 	OSMOSIS_CHAIN             = "osmosis"
-	REDIS_TOKENLIST_TOP20     = "tokenTop20"
+	STRIDE_CHAIN              = "stride"
+	NEUTRON_CHAIN             = "neutron"
+	KUJIRA_CHAIN              = "kujira"
+
+	REDIS_TOKENLIST_TOP20 = "tokenTop20"
 )
 
 var noUpdateChainMap = map[string]struct{}{
@@ -149,6 +153,9 @@ var dbName2HandlerMap = map[string]string{
 	"Sei":                 "Sei",
 	"scroll":              "scroll",
 	"BenfenTEST":          "benfen",
+	"Stride":              "stride",
+	"Neutron":             "neutron",
+	"Kujira":              "kujira",
 }
 
 var handlerNameMap = map[string]string{
@@ -186,6 +193,9 @@ var handlerNameMap = map[string]string{
 	"sei":          "Sei",
 	"scroll":       "scroll",
 	"benfen":       "BenfenTEST",
+	"stride":       "Stride",
+	"neutron":      "Neutron",
+	"kujira":       "Kujira",
 }
 
 var ChainNameMap = map[string]string{
@@ -223,6 +233,9 @@ var ChainNameMap = map[string]string{
 	"evm8453":      "evm8453",
 	"Sei":          "Sei",
 	"Scroll":       "scroll",
+	"Stride":       "Stride",
+	"Neutron":      "Neutron",
+	"Kujira":       "Kujira",
 
 	"ETHTEST":          "ethereum",
 	"HECOTEST":         "huobi-token",
@@ -297,6 +310,9 @@ var db2Chain = map[string]string{
 	"Sei":                 "Sei",
 	"scroll":              "Scroll",
 	"BenfenTEST":          "BenfenTEST",
+	"Stride":              "Stride",
+	"Neutron":             "Neutron",
+	"Kujira":              "Kujira",
 }
 
 var TokenFileMap = map[string][]string{
@@ -726,8 +742,9 @@ func GetUnificationAddress(chain, address string) string {
 	if strings.HasPrefix(address, "0x") && chain != STARCOIN_CHAIN && chain != APTOS_CHAIN &&
 		!strings.Contains(chain, "sui") && !strings.Contains(chain, "SUI") {
 		return strings.ToLower(address)
-	} else if (strings.Contains(chain, COSMOS_CHAIN) || strings.Contains(chain, OSMOSIS_CHAIN)) &&
-		strings.Contains(address, "/") {
+	} else if (strings.Contains(chain, COSMOS_CHAIN) || strings.Contains(chain, OSMOSIS_CHAIN) ||
+		strings.Contains(strings.ToLower(chain), STRIDE_CHAIN) || strings.Contains(strings.ToLower(chain), NEUTRON_CHAIN) ||
+		strings.Contains(strings.ToLower(chain), KUJIRA_CHAIN)) && strings.Contains(address, "/") {
 		return "ibc/" + strings.ToUpper(strings.Split(address, "/")[1])
 	}
 	return address

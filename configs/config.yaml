@@ -74,6 +74,9 @@ tokenList:
     - Sei
     - Scroll
     - BenfenTEST
+    - Stride
+    - Neutron
+    - Kujira
 
 nftList:
   ipfs: https://cloudflare-ipfs.com/ipfs/
@@ -368,6 +371,53 @@ platform:
     rpcURL:
       - https://scroll.blockpi.network/v1/rpc/public
       - https://rpc.scroll.io
+
+  - chain: Celestia
+    type: COSMOS
+    chainId: 0
+    rpcURL:
+      - https://public-celestia-lcd.numia.xyz
+      - https://api.celestia.pops.one
+      - https://api.lunaroasis.net
+      - https://api.celestia.nodestake.top
+    gasDefaults:
+      gasLimit: 100_000
+      gasPrice: 20_000 #0.02
+
+  - chain: Kujira
+    type: COSMOS
+    chainId: 0
+    rpcURL:
+      - https://kujira-rest.publicnode.com
+      - https://kujira-api.polkachu.com
+      - https://api-kujira-ia.cosmosia.notional.ventures
+      - https://kujira-api.ibs.team
+      - https://kujira-api.theamsolutions.info
+    gasDefaults:
+      gasLimit: 100_000
+      gasPrice: 6_000 #0.006
+
+  - chain: Neutron
+    type: COSMOS
+    chainId: 0
+    rpcURL:
+      - https://api.neutron.nodestake.top
+      - https://neutron-rest.publicnode.com
+      - https://api-neutron.cosmos-spaces.cloud
+    gasDefaults:
+      gasLimit: 100_000
+      gasPrice: 150_000 #0.15
+  - chain: Stride
+    type: COSMOS
+    chainId: 0
+    rpcURL:
+      - https://stride-rest.publicnode.com
+      - https://stride-api.polkachu.com
+      - https://api-stride.cosmos-spaces.cloud
+      - https://rest-stride.architectnodes.com
+    gasDefaults:
+      gasLimit: 100_000
+      gasPrice: 2_000 #0.002
 
   - chain: AvalancheTEST
     type: EVM
