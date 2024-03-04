@@ -242,4 +242,40 @@ type SUIDryRunTransactionBlockResponse struct {
 			Budget string `json:"budget"`
 		} `json:"gasData"`
 	} `json:"input"`
+	BalanceChanges SUIPretreatment `json:"balanceChanges"`
+	Events         SUIDryRunEvents `json:"events"`
+}
+
+type SUIDryRunEvents []struct {
+	ID struct {
+		TxDigest string `json:"txDigest"`
+		EventSeq string `json:"eventSeq"`
+	} `json:"id"`
+	PackageID         string `json:"packageId"`
+	TransactionModule string `json:"transactionModule"`
+	Sender            string `json:"sender"`
+	Type              string `json:"type"`
+	ParsedJSON        struct {
+		AfterSqrtPrice  string `json:"after_sqrt_price"`
+		AmountIn        string `json:"amount_in"`
+		AmountOut       string `json:"amount_out"`
+		Atob            bool   `json:"atob"`
+		BeforeSqrtPrice string `json:"before_sqrt_price"`
+		CoinTypeA       string `json:"coin_type_a"`
+		CoinTypeB       string `json:"coin_type_b"`
+		Steps           string `json:"steps"`
+		Vault           string `json:"vault"`
+		VaultAAmount    string `json:"vault_a_amount"`
+		VaultBAmount    string `json:"vault_b_amount"`
+		FeeAmount       string `json:"fee_amount"`
+	} `json:"parsedJson"`
+	Bcs string `json:"bcs"`
+}
+
+type SUIPretreatment []struct {
+	Owner struct {
+		AddressOwner string `json:"AddressOwner"`
+	} `json:"owner"`
+	CoinType string `json:"coinType"`
+	Amount   string `json:"amount"`
 }
