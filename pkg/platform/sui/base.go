@@ -82,19 +82,20 @@ func (p *platform) BuildWasmRequest(ctx context.Context, nodeRpc, functionName, 
 }
 
 var responseFunc = map[string]types.AnalysisResponseType{
-	types.RESPONSE_BALANCE:        analysisBalance,
-	types.RESPONSE_OBJECTID:       analysisObjectIds,
-	types.RESPONSE_TXHASH:         analysisTxHash,
-	types.RESPONSE_TXPARAMS:       analysisTxParams,
-	types.RESPONSE_OBJECTREAD:     analysisObjectRead,
-	types.RESPONSE_TXSTATUS:       analysisTxStatus,
-	types.RESPONSE_HEIGHT:         analysisTxHeight,
-	types.RESPONSE_TOKEN_BALANCE:  analysisTokenBalance,
-	types.RESPONSE_TOKEN_INFO:     analysisTokenInfo,
-	types.RESPONSE_GAS_PRICE:      analysisGasPrice,
-	types.RESPONSE_TXDATA:         analysisTxData,
-	types.RESPONSE_DRY_RUN:        analysisGasLimit,
-	types.RESPONSE_BATCH_OBJECTID: analysisBatchObjectIds,
+	types.RESPONSE_BALANCE:              analysisBalance,
+	types.RESPONSE_OBJECTID:             analysisObjectIds,
+	types.RESPONSE_TXHASH:               analysisTxHash,
+	types.RESPONSE_TXPARAMS:             analysisTxParams,
+	types.RESPONSE_OBJECTREAD:           analysisObjectRead,
+	types.RESPONSE_TXSTATUS:             analysisTxStatus,
+	types.RESPONSE_HEIGHT:               analysisTxHeight,
+	types.RESPONSE_TOKEN_BALANCE:        analysisTokenBalance,
+	types.RESPONSE_TOKEN_INFO:           analysisTokenInfo,
+	types.RESPONSE_GAS_PRICE:            analysisGasPrice,
+	types.RESPONSE_TXDATA:               analysisTxData,
+	types.RESPONSE_DRY_RUN:              analysisGasLimit,
+	types.RESPONSE_BATCH_OBJECTID:       analysisBatchObjectIds,
+	types.RESPONSE_DRY_RUN_PRETREATMENT: analysisGasLimitPretreatment,
 }
 
 func (p *platform) AnalysisWasmResponse(ctx context.Context, functionName, params, response string) (string, error) {
@@ -410,6 +411,27 @@ func analysisGasLimit(params string, result json.RawMessage) (interface{}, error
 	}
 	gasLimit := int(math.Ceil(float64(budget / price)))
 	return gasLimit, nil
+}
+
+func analysisGasLimitPretreatment(params string, result json.RawMessage) (interface{}, error) {
+	var out types.SUIDryRunTransactionBlockResponse
+	if err := json.Unmarshal(result, &out); err != nil {
+		return nil, err
+	}
+	computationCost, _ := strconv.Atoi(out.Effects.GasUsed.ComputationCost)
+	storageCost, _ := strconv.Atoi(out.Effects.GasUsed.StorageCost)
+	storageRebate, _ := strconv.Atoi(out.Effects.GasUsed.StorageRebate)
+	budget := computationCost + storageCost - storageRebate
+	price, err := strconv.Atoi(out.Input.GasData.Price)
+	if err != nil {
+		return nil, err
+	}
+	gasLimit := int(math.Ceil(float64(budget / price)))
+	return map[string]interface{}{
+		"balanceChange": out.BalanceChanges,
+		"gasLimit":      gasLimit,
+		"budget":        budget,
+	}, nil
 }
 
 func (p *platform) GetRpcURL() []string {
