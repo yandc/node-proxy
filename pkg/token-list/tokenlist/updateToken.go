@@ -1287,12 +1287,22 @@ yer enabled wallet. Tether has no transaction fees, although external wallets an
 
 func UpdateBenfenTESTToken() {
 	var tokenLists = []models.TokenList{
+		//{
+		//	Chain:       "BenfenTEST",
+		//	Address:     "BFC00000000000000000000000000000000000000000000000000000000000000c8e30a::busd::BUSD",
+		//	Name:        "Benfen USD",
+		//	Symbol:      "BUSD",
+		//	LogoURI:     "images/BenfenTEST/BFC00000000000000000000000000000000000000000000000000000000000000c8e30a::busd::BUSD.png",
+		//	Decimals:    9,
+		//	WebSite:     "",
+		//	Description: "",
+		//},
 		{
 			Chain:       "BenfenTEST",
-			Address:     "BFC00000000000000000000000000000000000000000000000000000000000000c8e30a::busd::BUSD",
-			Name:        "Benfen USD",
-			Symbol:      "BUSD",
-			LogoURI:     "images/BenfenTEST/BFC00000000000000000000000000000000000000000000000000000000000000c8e30a::busd::BUSD.png",
+			Address:     "BFC00000000000000000000000000000000000000000000000000000000000000c8e30a::bjpy::BJPY",
+			Name:        "Benfen JPY",
+			Symbol:      "BJPY",
+			LogoURI:     "images/BenfenTEST/BFC00000000000000000000000000000000000000000000000000000000000000c8e30a::bjpy::BJPY.png",
 			Decimals:    9,
 			WebSite:     "",
 			Description: "",
