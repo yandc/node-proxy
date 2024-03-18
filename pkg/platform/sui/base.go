@@ -194,10 +194,12 @@ func analysisTokenBalance(params string, result json.RawMessage) (interface{}, e
 		return nil, err
 	}
 	tokenBalances := make(map[string]string)
+	zero := "00000000000000000000000000000000000000000000000000000000000000"
 	for _, info := range out {
-		if info.CoinType == "0xc8::busd::BUSD" {
-			tokenBalances["0x00000000000000000000000000000000000000000000000000000000000000c8::busd::BUSD"] = info.TotalBalance
-			tokenBalances["BFC00000000000000000000000000000000000000000000000000000000000000c8e30a::busd::BUSD"] = info.TotalBalance
+		if strings.HasPrefix(info.CoinType, "0xc8::") {
+			evmAddress := info.CoinType[:2] + zero + info.CoinType[2:]
+			tokenBalances[evmAddress] = info.TotalBalance
+			tokenBalances[EVMAddressToBFC(chain, evmAddress)] = info.TotalBalance
 		}
 		tokenBalances[info.CoinType] = info.TotalBalance
 	}
