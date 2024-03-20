@@ -57,3 +57,11 @@ func (r chainListRepo) GetByChainIdAndUrl(ctx context.Context, chainId string, u
 func (r chainListRepo) GetAllWithInUsed(ctx context.Context) ([]*models.ChainNodeUrl, error) {
 	return chainlist.GetAllWithInUsed()
 }
+
+func (r chainListRepo) GetChainListByType(ctx context.Context, chainType string) ([]*models.BlockChain, error) {
+	return chainlist.FindBlockChainByChainType(chainType)
+}
+
+func (r chainListRepo) CheckChainIdByType(ctx context.Context, chainType, chainId, rpc string) error {
+	return chainlist.CheckTypeChainId(chainType, chainId, rpc)
+}

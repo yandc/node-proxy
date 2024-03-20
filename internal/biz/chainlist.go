@@ -4,14 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/go-kratos/kratos/v2/log"
 	"gitlab.bixin.com/mili/node-proxy/api/chainlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
 	"gitlab.bixin.com/mili/node-proxy/pkg/chainlist"
 	"gitlab.bixin.com/mili/node-proxy/pkg/lark"
 	"strings"
-	"time"
 )
 
 type ChainListRepo interface {
@@ -24,6 +22,8 @@ type ChainListRepo interface {
 	FindChainNodeUrlListWithSource(ctx context.Context, chainId string, source uint8) ([]*models.ChainNodeUrl, error)
 	GetByChainIdAndUrl(ctx context.Context, chainId string, url string) (*models.ChainNodeUrl, error)
 	GetAllWithInUsed(ctx context.Context) ([]*models.ChainNodeUrl, error)
+	GetChainListByType(ctx context.Context, chainType string) ([]*models.BlockChain, error)
+	CheckChainIdByType(ctx context.Context, chainType, chainId, rpc string) error
 }
 
 type ChainListUsecase struct {
@@ -36,63 +36,28 @@ func NewChainListUsecase(repo ChainListRepo, logger log.Logger) *ChainListUsecas
 	return &ChainListUsecase{repo: repo, log: log.NewHelper(logger)}
 }
 
-func (uc *ChainListUsecase) GetAllChainList(ctx context.Context) ([]*v1.GetAllChainListResp_Data, error) {
+func (uc *ChainListUsecase) GetAllChainList(ctx context.Context) ([]*v1.BlockChainData, error) {
 	chainList, err := uc.repo.GetAllChainList(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	result := make([]*v1.GetAllChainListResp_Data, len(chainList))
+	result := make([]*v1.BlockChainData, len(chainList))
 	for i, chain := range chainList {
-		if chain.GetPriceKey == "" {
-			chain.GetPriceKey = chainlist.GetPriceKeyBySymbol(chain.CurrencySymbol)
-		}
-		result[i] = &v1.GetAllChainListResp_Data{
-			ChainId:        chain.ChainId,
-			Name:           chain.Name,
-			Title:          chain.Title,
-			Chain:          fmt.Sprintf("%s%s", "evm", chain.ChainId),
-			CurrencyName:   chain.CurrencyName,
-			CurrencySymbol: chain.CurrencySymbol,
-			Decimals:       uint32(chain.Decimals),
-			Explorer:       chain.Explorer,
-			ChainSlug:      chain.ChainSlug,
-			Logo:           chain.Logo,
-			Type:           "EVM",
-			IsTest:         chain.IsTest,
-			GetPriceKey:    chain.GetPriceKey,
-		}
+		result[i] = DBBlockChain2Data(chain)
 	}
-
 	return result, nil
 }
 
-func (uc *ChainListUsecase) GetChainList(ctx context.Context, chainIds []string) ([]*v1.GetChainListResp_Data, error) {
+func (uc *ChainListUsecase) GetChainList(ctx context.Context, chainIds []string) ([]*v1.BlockChainData, error) {
 	chainList, err := uc.repo.FindBlockChainsByChainIds(ctx, chainIds)
 	if err != nil {
 		return nil, err
 	}
 
-	result := make([]*v1.GetChainListResp_Data, len(chainList))
+	result := make([]*v1.BlockChainData, len(chainList))
 	for i, chain := range chainList {
-		if chain.GetPriceKey == "" {
-			chain.GetPriceKey = chainlist.GetPriceKeyBySymbol(chain.CurrencySymbol)
-		}
-		result[i] = &v1.GetChainListResp_Data{
-			ChainId:        chain.ChainId,
-			Name:           chain.Name,
-			Title:          chain.Title,
-			Chain:          fmt.Sprintf("%s%s", "evm", chain.ChainId),
-			CurrencyName:   chain.CurrencyName,
-			CurrencySymbol: chain.CurrencySymbol,
-			Decimals:       uint32(chain.Decimals),
-			Explorer:       chain.Explorer,
-			ChainSlug:      chain.ChainSlug,
-			Logo:           chain.Logo,
-			Type:           "EVM",
-			IsTest:         chain.IsTest,
-			GetPriceKey:    chain.GetPriceKey,
-		}
+		result[i] = DBBlockChain2Data(chain)
 	}
 
 	return result, nil
@@ -115,8 +80,13 @@ func (uc *ChainListUsecase) GetChainNodeUrlList(ctx context.Context, chainId str
 	return result, nil
 }
 
-func (uc *ChainListUsecase) UseChainNode(ctx context.Context, chainId string, url string, source uint32) error {
-
+func (uc *ChainListUsecase) UseChainNode(ctx context.Context, chainId string, url string, source uint32, chainType string) error {
+	if chainType == "" {
+		chainType = models.ChainTypeEVM
+	}
+	if chainType == models.ChainTypeCOSMOS {
+		url = strings.TrimRight(url, "/")
+	}
 	switch uint8(source) {
 	case models.ChainNodeUrlSourcePublic:
 		nodeUrl, err := uc.repo.GetByChainIdAndUrl(ctx, chainId, url)
@@ -143,24 +113,27 @@ func (uc *ChainListUsecase) UseChainNode(ctx context.Context, chainId string, ur
 			return err
 		}
 
-		//连接节点
-		client, err := ethclient.Dial(url)
-		if err != nil {
-			return errors.New("use chain node error: connect to  node failed")
-		}
-
+		////连接节点
+		//client, err := ethclient.Dial(url)
+		//if err != nil {
+		//	return errors.New("use chain node error: connect to  node failed")
+		//}
+		//
+		////检查ChainId
+		//checkCtx, cancelFunc := context.WithTimeout(context.Background(), time.Second*10)
+		//defer cancelFunc()
+		//chainID, err := client.ChainID(checkCtx)
+		//if err != nil {
+		//	return errors.New("use chain node error: get chain id failed")
+		//}
+		//
+		//if chainID.String() != chainId {
+		//	return errors.New("use chain node error: chain id not match")
+		//}
 		//检查ChainId
-		checkCtx, cancelFunc := context.WithTimeout(context.Background(), time.Second*10)
-		defer cancelFunc()
-		chainID, err := client.ChainID(checkCtx)
-		if err != nil {
-			return errors.New("use chain node error: get chain id failed")
+		if err := uc.repo.CheckChainIdByType(ctx, chainType, chainId, url); err != nil {
+			return err
 		}
-
-		if chainID.String() != chainId {
-			return errors.New("use chain node error: chain id not match")
-		}
-
 		err = uc.repo.Create(context.Background(), &models.ChainNodeUrl{
 			ChainId: chainId,
 			Url:     url,
@@ -234,23 +207,30 @@ func (uc *ChainListUsecase) GetChainNodeInUsedList(ctx context.Context) ([]*v1.G
 	for i, nodeUrl := range chainNodeUrls {
 		nodeUrlMap[nodeUrl.ChainId] = append(nodeUrlMap[nodeUrl.ChainId], chainNodeUrls[i])
 	}
-
 	result := make([]*v1.GetChainNodeInUsedListResp_Data, len(blockChains))
 	for i, chain := range blockChains {
+		chainName := chain.Chain
+		if chain.ChainType == models.ChainTypeEVM {
+			chainName = fmt.Sprintf("%s%s", "evm", chain.ChainId)
+		} else if chain.ChainType == models.ChainTypeCOSMOS {
+			chainName = fmt.Sprintf("%s%s", "cosmos", chain.ChainId)
+		}
 		result[i] = &v1.GetChainNodeInUsedListResp_Data{
 			ChainId:        chain.ChainId,
 			Name:           chain.Name,
 			Title:          chain.Title,
-			Chain:          fmt.Sprintf("%s%s", "evm", chain.ChainId),
+			Chain:          chainName,
 			CurrencyName:   chain.CurrencyName,
 			CurrencySymbol: chain.CurrencySymbol,
 			Decimals:       uint32(chain.Decimals),
 			Explorer:       chain.Explorer,
 			ChainSlug:      chain.ChainSlug,
 			Logo:           chain.Logo,
-			Type:           "EVM",
+			Type:           chain.ChainType,
 			IsTest:         chain.IsTest,
 			GetPriceKey:    chain.GetPriceKey,
+			Denom:          chain.Denom,
+			Prefix:         chain.Prefix,
 		}
 
 		urls := make([]string, len(nodeUrlMap[chain.ChainId]))
@@ -262,4 +242,58 @@ func (uc *ChainListUsecase) GetChainNodeInUsedList(ctx context.Context) ([]*v1.G
 	}
 
 	return result, nil
+}
+
+func (uc *ChainListUsecase) GetChainListByType(ctx context.Context, chainType string) ([]*v1.BlockChainData, error) {
+	if chainType == "" {
+		chainType = models.ChainTypeEVM
+	}
+	chainList, err := uc.repo.GetChainListByType(ctx, chainType)
+	if err != nil {
+		return nil, err
+	}
+	result := make([]*v1.BlockChainData, len(chainList))
+	for i, chain := range chainList {
+		result[i] = DBBlockChain2Data(chain)
+	}
+	return result, nil
+}
+
+func DBBlockChain2Data(chain *models.BlockChain) *v1.BlockChainData {
+	if chain.GetPriceKey == "" {
+		chain.GetPriceKey = chainlist.GetPriceKeyBySymbol(chain.CurrencySymbol)
+	}
+	chainName := chain.Chain
+	if chain.ChainType == models.ChainTypeEVM {
+		chainName = fmt.Sprintf("%s%s", "evm", chain.ChainId)
+	} else if chain.ChainType == models.ChainTypeCOSMOS {
+		chainName = fmt.Sprintf("%s%s", "cosmos", chain.ChainId)
+	}
+
+	data := &v1.BlockChainData{
+		ChainId:        chain.ChainId,
+		Name:           chain.Name,
+		Title:          chain.Title,
+		Chain:          chainName,
+		CurrencyName:   chain.CurrencyName,
+		CurrencySymbol: chain.CurrencySymbol,
+		Decimals:       uint32(chain.Decimals),
+		Explorer:       chain.Explorer,
+		ChainSlug:      chain.ChainSlug,
+		Logo:           chain.Logo,
+		Type:           chain.ChainType,
+		IsTest:         chain.IsTest,
+		GetPriceKey:    chain.GetPriceKey,
+		Prefix:         chain.Prefix,
+		Denom:          chain.Denom,
+		ExplorerTx:     chain.ExplorerTx,
+		ExplorerAddr:   chain.ExplorerAddress,
+	}
+	if data.ExplorerAddr == "" {
+		data.ExplorerAddr = chainlist.GetExplorerURL(data.Explorer) + "address/"
+	}
+	if data.ExplorerTx == "" {
+		data.ExplorerTx = chainlist.GetExplorerURL(data.Explorer) + "tx/"
+	}
+	return data
 }

@@ -18,12 +18,12 @@ func NewChainListService(uc *biz.ChainListUsecase) *ChainListService {
 	return &ChainListService{uc: uc}
 }
 
-func (s *ChainListService) GetAllChainList(ctx context.Context, req *emptypb.Empty) (*v1.GetAllChainListResp, error) {
+func (s *ChainListService) GetAllChainList(ctx context.Context, req *v1.GetAllChainListReq) (*v1.GetAllChainListResp, error) {
 	// 设置接口 3s 超时
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
-	chainList, err := s.uc.GetAllChainList(ctx)
+	chainList, err := s.uc.GetChainListByType(ctx, req.ChainType)
 	return &v1.GetAllChainListResp{
 		Data: chainList,
 	}, err
@@ -67,6 +67,6 @@ func (s *ChainListService) UseChainNode(ctx context.Context, req *v1.UseChainNod
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
-	err := s.uc.UseChainNode(ctx, req.ChainId, req.Url, req.Source)
+	err := s.uc.UseChainNode(ctx, req.ChainId, req.Url, req.Source, req.ChainType)
 	return &emptypb.Empty{}, err
 }

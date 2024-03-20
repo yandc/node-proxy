@@ -2,18 +2,23 @@ package models
 
 type BlockChain struct {
 	BaseModel
-	Name           string
-	Chain          string
-	Title          string `gorm:"index"`
-	Logo           string
-	ChainId        string `gorm:"index:,unique"`
-	CurrencyName   string
-	CurrencySymbol string
-	Decimals       uint8
-	Explorer       string
-	ChainSlug      string
-	IsTest         bool `gorm:"index"`
-	GetPriceKey    string
+	Name            string
+	Chain           string
+	Title           string `gorm:"index"`
+	Logo            string
+	ChainId         string `gorm:"index:,unique"`
+	CurrencyName    string
+	CurrencySymbol  string
+	Decimals        uint8
+	Explorer        string
+	ChainSlug       string
+	IsTest          bool `gorm:"index"`
+	GetPriceKey     string
+	ChainType       string //EVM/COSMOS
+	Prefix          string
+	Denom           string
+	ExplorerTx      string
+	ExplorerAddress string
 }
 
 const (
@@ -24,6 +29,9 @@ const (
 	// 节点来源
 	ChainNodeUrlSourcePublic = uint8(1)
 	ChainNodeUrlSourceCustom = uint8(2)
+
+	ChainTypeEVM    = "EVM"
+	ChainTypeCOSMOS = "COSMOS"
 )
 
 type ChainNodeUrl struct {
