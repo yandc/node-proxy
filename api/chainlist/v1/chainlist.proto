@@ -9,7 +9,7 @@ option go_package = "gitlab.bixin.com/mili/node-proxy/api/chainlist/v1;v1";
 service ChainList {
 
   //获取所有链列表
-  rpc GetAllChainList (google.protobuf.Empty) returns (GetAllChainListResp);
+  rpc GetAllChainList (GetAllChainListReq) returns (GetAllChainListResp);
   //批量获取链列表
   rpc GetChainList (GetChainListReq) returns (GetChainListResp);
   //获取对应链节点列表
@@ -20,24 +20,12 @@ service ChainList {
   rpc UseChainNode (UseChainNodeReq) returns (google.protobuf.Empty);
 }
 
-message GetAllChainListResp {
-  repeated Data data = 1;
+message GetAllChainListReq{
+   string chainType = 1;
+}
 
-  message Data {
-    string chainId = 1;
-    string name = 2;
-    string title = 3;
-    string chain = 4;
-    string currencyName = 5;
-    string currencySymbol = 6;
-    uint32 decimals = 7;
-    string explorer = 8;
-    string chainSlug = 9;
-    string logo = 10;
-    string type = 11;
-    bool isTest = 12;
-    string getPriceKey = 13;
-  }
+message GetAllChainListResp {
+  repeated BlockChainData data = 1;
 }
 
 message GetChainListReq{
@@ -45,23 +33,7 @@ message GetChainListReq{
 }
 
 message GetChainListResp{
-  repeated Data data = 1;
-
-  message Data {
-    string chainId = 1;
-    string name = 2;
-    string title = 3;
-    string chain = 4;
-    string currencyName = 5;
-    string currencySymbol = 6;
-    uint32 decimals = 7;
-    string explorer = 8;
-    string chainSlug = 9;
-    string logo = 10;
-    string type = 11;
-    bool isTest = 12;
-    string getPriceKey = 13;
-  }
+  repeated BlockChainData data = 1;
 }
 
 message GetChainNodeListReq {
@@ -99,6 +71,8 @@ message GetChainNodeInUsedListResp{
     string type = 12;
     bool isTest = 13;
     string getPriceKey = 14;
+    string prefix = 15;
+    string denom = 16;
   }
 }
 
@@ -107,4 +81,25 @@ message UseChainNodeReq{
   string url = 2;
   //1-推荐节点 2-用户自定义节点
   uint32 source = 3;
+  string chainType = 4;
+}
+
+message BlockChainData {
+  string chainId = 1;
+  string name = 2;
+  string title = 3;
+  string chain = 4;
+  string currencyName = 5;
+  string currencySymbol = 6;
+  uint32 decimals = 7;
+  string explorer = 8;
+  string chainSlug = 9;
+  string logo = 10;
+  string type = 11;
+  bool isTest = 12;
+  string getPriceKey = 13;
+  string prefix = 14;
+  string denom = 15;
+  string explorerTx = 16;
+  string explorerAddr = 17;
 }

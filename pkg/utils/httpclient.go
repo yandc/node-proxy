@@ -237,6 +237,7 @@ func init() {
 	}
 	client = &http.Client{
 		Transport: GlobalTransport,
+		Timeout:   10 * time.Second,
 	}
 }
 

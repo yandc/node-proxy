@@ -1,6 +1,7 @@
 package chainlist
 
 import (
+	"errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-redis/redis"
 	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
@@ -106,4 +107,30 @@ func GetPriceKeyBySymbol(symbol string) string {
 		return tempCoinGeckoList.CgId
 	}
 	return ""
+}
+
+func FindBlockChainByChainType(chainType string) ([]*models.BlockChain, error) {
+	var blockChains []*models.BlockChain
+	if err := c.db.Where("chain_type = ?", chainType).Order("id asc").Find(&blockChains).Error; err != nil {
+		return nil, err
+	}
+	return blockChains, nil
+}
+
+func CheckTypeChainId(chainType, chainId, rpc string) error {
+	switch chainType {
+	case models.ChainTypeEVM:
+		return CheckEVMChainIdByURL(chainId, rpc)
+	case models.ChainTypeCOSMOS:
+		_, err := CheckCosmosChainId(chainId, rpc)
+		return err
+	}
+	return errors.New(chainType + " is not support")
+}
+
+func GetExplorerURL(explorer string) string {
+	if strings.HasSuffix(explorer, "/") {
+		return explorer
+	}
+	return explorer + "/"
 }
