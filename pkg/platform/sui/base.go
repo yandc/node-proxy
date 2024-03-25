@@ -202,6 +202,9 @@ func analysisTokenBalance(params string, result json.RawMessage) (interface{}, e
 			tokenBalances[EVMAddressToBFC(chain, evmAddress)] = info.TotalBalance
 		}
 		tokenBalances[info.CoinType] = info.TotalBalance
+		if IsBenfenChain(chain) && !strings.HasPrefix(info.CoinType, "0xc8::") {
+			tokenBalances[EVMAddressToBFC(chain, info.CoinType)] = info.TotalBalance
+		}
 	}
 	return tokenBalances, nil
 }
