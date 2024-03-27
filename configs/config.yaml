@@ -594,7 +594,7 @@ blockExplorerApi:
   zkSync: https://zksync2-mainnet-explorer.zksync.io/address/%v
 
 chainData:
-  txSleep: "5s"
+  txSleep: "10s"
 
 gasOracle:
   url:
