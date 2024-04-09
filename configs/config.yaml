@@ -595,6 +595,8 @@ blockExplorerApi:
 
 chainData:
   txSleep: "10s"
+  pretreatmentChains: "ETH,BSC,Arbitrum,Polygon"
+  pretreatmentPlatform: "android,ios"
 
 gasOracle:
   url:
