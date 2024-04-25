@@ -96,6 +96,7 @@ var responseFunc = map[string]types.AnalysisResponseType{
 	types.RESPONSE_DRY_RUN:              analysisGasLimit,
 	types.RESPONSE_BATCH_OBJECTID:       analysisBatchObjectIds,
 	types.RESPONSE_DRY_RUN_PRETREATMENT: analysisGasLimitPretreatment,
+	types.RESPONSE_BATCH_OBJECT_LIST:    analysisBatchObjectList,
 }
 
 func (p *platform) AnalysisWasmResponse(ctx context.Context, functionName, params, response string) (string, error) {
@@ -177,6 +178,21 @@ func analysisBatchObjectIds(params string, result json.RawMessage) (interface{},
 	return map[string]interface{}{
 		"nextCursor": nextCursor,
 		"objectIds":  objectIds,
+	}, nil
+}
+
+func analysisBatchObjectList(params string, result json.RawMessage) (interface{}, error) {
+	var objectInfo types.SuiObjectInfoList
+	if err := json.Unmarshal(result, &objectInfo); err != nil {
+		return nil, err
+	}
+	nextCursor := ""
+	if objectInfo.HasNextPage {
+		nextCursor = objectInfo.NextCursor
+	}
+	return map[string]interface{}{
+		"nextCursor": nextCursor,
+		"objectList": objectInfo.Data,
 	}, nil
 }
 
