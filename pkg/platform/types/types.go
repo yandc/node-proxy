@@ -33,6 +33,7 @@ const (
 	RESPONSE_DRY_RUN              = "dryRun"
 	RESPONSE_BATCH_OBJECTID       = "batchObjectId"
 	RESPONSE_DRY_RUN_PRETREATMENT = "dryRunPretreatment"
+	RESPONSE_BATCH_OBJECT_LIST    = "batchObjectList"
 
 	BUILD_HEIGHT   = "height"
 	BUILD_ACCOUNTS = "accounts"

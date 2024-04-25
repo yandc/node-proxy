@@ -23,6 +23,12 @@ type SuiObjectInfo struct {
 	HasNextPage bool   `json:"hasNextPage"`
 }
 
+type SuiObjectInfoList struct {
+	Data        []SuiObjectResponse `json:"data"`
+	NextCursor  string              `json:"nextCursor"`
+	HasNextPage bool                `json:"hasNextPage"`
+}
+
 type SuiObjectRead struct {
 	Status string `json:"status"`
 	Error  struct {
