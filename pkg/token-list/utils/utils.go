@@ -156,6 +156,7 @@ var dbName2HandlerMap = map[string]string{
 	"Stride":              "stride",
 	"Neutron":             "neutron",
 	"Kujira":              "kujira",
+	"evm4200":             "evm4200",
 }
 
 var handlerNameMap = map[string]string{
@@ -196,6 +197,7 @@ var handlerNameMap = map[string]string{
 	"stride":       "Stride",
 	"neutron":      "Neutron",
 	"kujira":       "Kujira",
+	"evm4200":      "evm4200",
 }
 
 var ChainNameMap = map[string]string{
@@ -236,6 +238,7 @@ var ChainNameMap = map[string]string{
 	"Stride":       "Stride",
 	"Neutron":      "Neutron",
 	"Kujira":       "Kujira",
+	"evm4200":      "evm4200",
 
 	"ETHTEST":          "ethereum",
 	"HECOTEST":         "huobi-token",
@@ -313,6 +316,7 @@ var db2Chain = map[string]string{
 	"Stride":              "Stride",
 	"Neutron":             "Neutron",
 	"Kujira":              "Kujira",
+	"evm4200":             "evm4200",
 }
 
 var TokenFileMap = map[string][]string{
@@ -387,6 +391,7 @@ var UpdateChainNameMap = map[string]string{
 	"evm8453":      "evm8453",
 	"Sei":          "Sei",
 	"Scroll":       "scroll",
+	"evm4200":      "evm4200",
 }
 
 var TopNWhiteListMap = map[string][]types.TopNInfo{

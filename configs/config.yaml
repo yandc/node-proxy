@@ -77,6 +77,7 @@ tokenList:
     - Stride
     - Neutron
     - Kujira
+    - evm4200
 
 nftList:
   ipfs: https://cloudflare-ipfs.com/ipfs/

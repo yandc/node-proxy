@@ -1969,3 +1969,134 @@ func UpdateKujiraToken() {
 		c.log.Error("create db aptos error:", result.Error)
 	}
 }
+
+func UpdateMerlinToken() {
+	var tokenLists = []models.TokenList{
+		{
+			Chain:    "evm4200",
+			Address:  strings.ToLower("0x07884346a65F95276C2b0E56b17165b191ab2C49"),
+			Name:     "Influpia",
+			Symbol:   "ING",
+			Logo:     "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/ing.svg",
+			Decimals: 18,
+		},
+		{
+			Chain:    "evm4200",
+			Address:  strings.ToLower("0x09401c470a76Ec07512EEDDEF5477BE74bac2338"),
+			Name:     "Merlinstarter Token",
+			Symbol:   "MSTAR",
+			Logo:     "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/mstar.png",
+			Decimals: 18,
+		},
+		{
+			Chain:    "evm4200",
+			Address:  strings.ToLower("0x0a3bb08b3a15a19b4de82f8acfc862606fb69a2d"),
+			Name:     "iZUMi Bond USD",
+			Symbol:   "IUSD",
+			Logo:     "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/iusd.png",
+			Decimals: 18,
+		},
+		{
+			Chain:    "evm4200",
+			Address:  strings.ToLower("0x32A4b8b10222F85301874837F27F4c416117B811"),
+			Name:     "Bridged Runes DOG•GO•TO•THE•MOON",
+			Symbol:   "DOG•GO•TO•THE•MOON",
+			Logo:     "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/dogtothemoon.png",
+			Decimals: 5,
+		},
+		{
+			Chain:    "evm4200",
+			Address:  strings.ToLower("0x480e158395cc5b41e5584347c495584ca2caf78d"),
+			Name:     "Bridged BRC20 VOYA",
+			Symbol:   "VOYA",
+			Logo:     "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/voya.png",
+			Decimals: 0,
+		},
+		{
+			Chain:    "evm4200",
+			Address:  strings.ToLower("0x5c46bFF4B38dc1EAE09C5BAc65872a1D8bc87378"),
+			Name:     "MERL Token",
+			Symbol:   "MERL",
+			Logo:     "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/merl.png",
+			Decimals: 0,
+		},
+		{
+			Chain:    "evm4200",
+			Address:  strings.ToLower("0x63c2e663a6cfb0f5568c84a1c8134acbe1b88bec"),
+			Name:     "MerlinBox",
+			Symbol:   "MerlinBox",
+			Logo:     "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/merlinbox.png",
+			Decimals: 18,
+		},
+		{
+			Chain:    "evm4200",
+			Address:  strings.ToLower("0x6b4ecada640f1b30dbdb68f77821a03a5f282ebe"),
+			Name:     "Merlin's Seal USDC",
+			Symbol:   "M-USDC",
+			Logo:     "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/musdc.svg",
+			Decimals: 18,
+		},
+		{
+			Chain:    "evm4200",
+			Address:  strings.ToLower("0x967aec3276b63c5e2262da9641db9dbebb07dc0d"),
+			Name:     "Merlin's Seal USDT",
+			Symbol:   "M-USDT",
+			Logo:     "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/musdt.svg",
+			Decimals: 6,
+		},
+		{
+			Chain:    "evm4200",
+			Address:  strings.ToLower("0xb880fd278198bd590252621d4cd071b1842e9bcd"),
+			Name:     "Merlin's Seal BTC",
+			Symbol:   "M-BTC",
+			Logo:     "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/mbtc.svg",
+			Decimals: 18,
+		},
+		{
+			Chain:    "evm4200",
+			Address:  strings.ToLower("0xF6D226f9Dc15d9bB51182815b320D3fBE324e1bA"),
+			Name:     "Wrapped BTC",
+			Symbol:   "WBTC",
+			Logo:     "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/btc.png",
+			Decimals: 18,
+		},
+		{
+			Chain:    "evm4200",
+			Address:  strings.ToLower("0xbd40c74cb5cf9f9252B3298230Cb916d80430bBa"),
+			Name:     "MerlinSwap Token",
+			Symbol:   "MP",
+			Logo:     "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/mp.png",
+			Decimals: 18,
+		},
+		{
+			Chain:    "evm4200",
+			Address:  strings.ToLower("0x9458eA21932515dd0E82543891068F065B88A98a"),
+			Name:     "Bridged Runes LOBO•THE•WOLF•PUP",
+			Symbol:   "LOBO•THE•WOLF•PUP",
+			Logo:     "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/lobothewolfpup.png",
+			Decimals: 0,
+		},
+		{
+			Chain:    "evm4200",
+			Address:  strings.ToLower("0x8Aed42735027aa6d97023D8196B084eCFbA701af"),
+			Name:     "MDBL",
+			Symbol:   "MDBL",
+			Logo:     "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/mdbl.png",
+			Decimals: 18,
+		},
+		{
+			Chain:    "evm4200",
+			Address:  strings.ToLower("0xf0db39a5e37eb2df2d2b968f3fc8e5d7a9969dea"),
+			Name:     "MerlinLand Token",
+			Symbol:   "MERLINLAND",
+			Logo:     "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/merlinland.png",
+			Decimals: 18,
+		},
+	}
+	result := c.db.Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Create(&tokenLists)
+	if result.Error != nil {
+		c.log.Error("create db Merlin error:", result.Error)
+	}
+}
