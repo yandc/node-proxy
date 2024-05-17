@@ -91,6 +91,7 @@ func Init() {
 	client = data.NewRedis(bc.Data)
 	data.NewMarketClient(bc.TokenList)
 	utils.SetRedisClient(client)
+	fmt.Println("map==", bc.ChainData.TxHashErr)
 }
 
 func main() {
