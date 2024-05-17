@@ -54,6 +54,8 @@ func (j *ChainListGetNodeUrlJob) Run() {
 		chainlist.GetEVMChainList(j.log, j.db, j.client)
 	}()
 	jobGroup.Wait()
+	//更新chainList到cdn
+	go chainlist.UpLoadChainList2CDN()
 	j.log.Infof("任务执行完成：%s", jobName)
 }
 

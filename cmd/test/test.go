@@ -157,6 +157,8 @@ func main() {
 		testRefreshLogoURIByAddress()
 	case "parseABIData":
 		TestParseContractABI()
+	case "uploadChainList":
+		TestUploadChainList()
 
 	default:
 		TestGetContractAbi()
@@ -684,4 +686,11 @@ func TestParseContractABI() {
 		//}
 
 	}
+}
+
+func TestUploadChainList() {
+	//platform.InitPlatform(bc.Platform, logger, client)
+	utils.InitConfig(bc)
+	chainlist.InitChainList(db, client, logger)
+	chainlist.UpLoadChainList2CDN()
 }

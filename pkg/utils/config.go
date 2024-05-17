@@ -38,3 +38,15 @@ func GetGasOracleConfig() []*conf.GasOracleInfoOracleConf {
 func GetTokenListChains() []string {
 	return bc.TokenList.Chains
 }
+
+func GetAWSConfig() []*conf.TokenList_AWS {
+	return bc.TokenList.Aws
+}
+
+func GetQiNiuConfig() *conf.TokenList_QiNiu {
+	return bc.TokenList.Qiniu
+}
+
+func GetTokenListConfig() *conf.TokenList {
+	return bc.TokenList
+}
