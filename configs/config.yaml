@@ -595,9 +595,19 @@ blockExplorerApi:
   zkSync: https://zksync2-mainnet-explorer.zksync.io/address/%v
 
 chainData:
-  txSleep: "10s"
-  pretreatmentChains: "ETH,BSC,Arbitrum,Polygon"
-  pretreatmentPlatform: "android,ios"
+  paramsStr:
+    txSleep: "10s"
+    pretreatmentChains: "ETH,BSC,Arbitrum,Polygon"
+    pretreatmentPlatform: "android,ios"
+  txParamsErr:
+    EXECUTION_REVERTED: "execution reverted"
+  txHashErr:
+    NONCE_TOO_LOW: "nonce too low"
+    GAS_TOO_LOW: "gas too low"
+    INSUFFICIENT_FUNDS: "insufficient funds"
+#  "nonce too low, gas too low, insufficient funds"
+  retryCount:
+    default: 0
 
 gasOracle:
   url:
