@@ -2,10 +2,16 @@ package chainlist
 
 import (
 	"errors"
+	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-redis/redis"
+	v1 "gitlab.bixin.com/mili/node-proxy/api/chainlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
+	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
 	"gorm.io/gorm"
+	"io/fs"
+	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -133,4 +139,111 @@ func GetExplorerURL(explorer string) string {
 		return explorer
 	}
 	return explorer + "/"
+}
+
+type BlockChainInfo struct {
+	*v1.BlockChainData
+	Currency string     `json:"currency"`
+	Hrp      string     `json:"hrp"`
+	Nodes    []NodeInfo `json:"nodes"`
+}
+
+type NodeInfo struct {
+	URL     string `json:"url"`
+	Privacy string `json:"privacy"`
+}
+
+func UpLoadChainList2CDN() {
+	chainTypes := []string{"EVM", "COSMOS"}
+	localPath := "chainList"
+	exist, _ := utils.PathExists(localPath)
+	if exist {
+		err := os.RemoveAll(localPath)
+		c.log.Error("remove path error:", err.Error())
+	}
+	os.MkdirAll(localPath, 0777)
+	for _, chainType := range chainTypes {
+		blockChains, err := FindBlockChainByChainType(chainType)
+		if err != nil {
+			continue
+		}
+		blockChainInfo := make([]BlockChainInfo, 0, len(blockChains))
+		for _, blockChain := range blockChains {
+			nodeURLS, err := FindChainNodeUrlListWithSource(blockChain.ChainId, models.ChainNodeUrlSourcePublic)
+			if err != nil || nodeURLS == nil || len(nodeURLS) == 0 {
+				continue
+			}
+			urls := make([]NodeInfo, 0, len(nodeURLS))
+			for _, nodeUrl := range nodeURLS {
+				urls = append(urls, NodeInfo{
+					URL:     nodeUrl.Url,
+					Privacy: nodeUrl.Privacy,
+				})
+			}
+			blockChainData := DBBlockChain2Data(blockChain)
+			blockChainInfo = append(blockChainInfo, BlockChainInfo{
+				BlockChainData: blockChainData, Currency: blockChain.CurrencySymbol, Hrp: blockChain.Prefix, Nodes: urls,
+			})
+		}
+		//写数据到本地本地
+		fileName := fmt.Sprintf("%s/%s.json", localPath, chainType)
+		err = utils.WriteInfoToFile(fileName, blockChainInfo)
+		if err != nil {
+			c.log.Error("编码错误", err.Error())
+		}
+	}
+	var paths []string
+	filepath.Walk(localPath, func(path string, info fs.FileInfo, err error) error {
+		if !info.IsDir() {
+			paths = append(paths, path)
+		}
+		return nil
+	})
+	//上传到cdn
+	utils.UploadFileToS3(paths)
+	utils.UpLoadFile2QiNiu(paths)
+	//删除目录
+	err := os.RemoveAll(localPath)
+	if err != nil {
+		c.log.Error("remove path error", err.Error())
+	}
+}
+
+func DBBlockChain2Data(chain *models.BlockChain) *v1.BlockChainData {
+	if chain.GetPriceKey == "" {
+		chain.GetPriceKey = GetPriceKeyBySymbol(chain.CurrencySymbol)
+	}
+	chainName := chain.Chain
+	if chain.ChainType == models.ChainTypeEVM {
+		chainName = fmt.Sprintf("%s%s", "evm", chain.ChainId)
+	} else if chain.ChainType == models.ChainTypeCOSMOS {
+		chainName = fmt.Sprintf("%s%s", "cosmos", chain.ChainId)
+	}
+
+	data := &v1.BlockChainData{
+		ChainId:        chain.ChainId,
+		Name:           chain.Name,
+		Title:          chain.Title,
+		Chain:          chainName,
+		CurrencyName:   chain.CurrencyName,
+		CurrencySymbol: chain.CurrencySymbol,
+		Decimals:       uint32(chain.Decimals),
+		Explorer:       chain.Explorer,
+		ChainSlug:      chain.ChainSlug,
+		Logo:           chain.Logo,
+		Type:           chain.ChainType,
+		IsTest:         chain.IsTest,
+		GetPriceKey:    chain.GetPriceKey,
+		Prefix:         chain.Prefix,
+		Denom:          chain.Denom,
+		ExplorerTx:     chain.ExplorerTx,
+		ExplorerAddr:   chain.ExplorerAddress,
+	}
+	if data.ExplorerAddr == "" {
+		data.ExplorerAddr = GetExplorerURL(data.Explorer) + "address/"
+	}
+	if data.ExplorerTx == "" {
+		data.ExplorerTx = GetExplorerURL(data.Explorer) + "tx/"
+	}
+	return data
 }

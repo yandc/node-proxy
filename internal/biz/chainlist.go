@@ -44,7 +44,7 @@ func (uc *ChainListUsecase) GetAllChainList(ctx context.Context) ([]*v1.BlockCha
 
 	result := make([]*v1.BlockChainData, len(chainList))
 	for i, chain := range chainList {
-		result[i] = DBBlockChain2Data(chain)
+		result[i] = chainlist.DBBlockChain2Data(chain)
 	}
 	return result, nil
 }
@@ -57,7 +57,7 @@ func (uc *ChainListUsecase) GetChainList(ctx context.Context, chainIds []string)
 
 	result := make([]*v1.BlockChainData, len(chainList))
 	for i, chain := range chainList {
-		result[i] = DBBlockChain2Data(chain)
+		result[i] = chainlist.DBBlockChain2Data(chain)
 	}
 
 	return result, nil
@@ -254,46 +254,46 @@ func (uc *ChainListUsecase) GetChainListByType(ctx context.Context, chainType st
 	}
 	result := make([]*v1.BlockChainData, len(chainList))
 	for i, chain := range chainList {
-		result[i] = DBBlockChain2Data(chain)
+		result[i] = chainlist.DBBlockChain2Data(chain)
 	}
 	return result, nil
 }
 
-func DBBlockChain2Data(chain *models.BlockChain) *v1.BlockChainData {
-	if chain.GetPriceKey == "" {
-		chain.GetPriceKey = chainlist.GetPriceKeyBySymbol(chain.CurrencySymbol)
-	}
-	chainName := chain.Chain
-	if chain.ChainType == models.ChainTypeEVM {
-		chainName = fmt.Sprintf("%s%s", "evm", chain.ChainId)
-	} else if chain.ChainType == models.ChainTypeCOSMOS {
-		chainName = fmt.Sprintf("%s%s", "cosmos", chain.ChainId)
-	}
-
-	data := &v1.BlockChainData{
-		ChainId:        chain.ChainId,
-		Name:           chain.Name,
-		Title:          chain.Title,
-		Chain:          chainName,
-		CurrencyName:   chain.CurrencyName,
-		CurrencySymbol: chain.CurrencySymbol,
-		Decimals:       uint32(chain.Decimals),
-		Explorer:       chain.Explorer,
-		ChainSlug:      chain.ChainSlug,
-		Logo:           chain.Logo,
-		Type:           chain.ChainType,
-		IsTest:         chain.IsTest,
-		GetPriceKey:    chain.GetPriceKey,
-		Prefix:         chain.Prefix,
-		Denom:          chain.Denom,
-		ExplorerTx:     chain.ExplorerTx,
-		ExplorerAddr:   chain.ExplorerAddress,
-	}
-	if data.ExplorerAddr == "" {
-		data.ExplorerAddr = chainlist.GetExplorerURL(data.Explorer) + "address/"
-	}
-	if data.ExplorerTx == "" {
-		data.ExplorerTx = chainlist.GetExplorerURL(data.Explorer) + "tx/"
-	}
-	return data
-}
+//func DBBlockChain2Data(chain *models.BlockChain) *v1.BlockChainData {
+//	if chain.GetPriceKey == "" {
+//		chain.GetPriceKey = chainlist.GetPriceKeyBySymbol(chain.CurrencySymbol)
+//	}
+//	chainName := chain.Chain
+//	if chain.ChainType == models.ChainTypeEVM {
+//		chainName = fmt.Sprintf("%s%s", "evm", chain.ChainId)
+//	} else if chain.ChainType == models.ChainTypeCOSMOS {
+//		chainName = fmt.Sprintf("%s%s", "cosmos", chain.ChainId)
+//	}
+//
+//	data := &v1.BlockChainData{
+//		ChainId:        chain.ChainId,
+//		Name:           chain.Name,
+//		Title:          chain.Title,
+//		Chain:          chainName,
+//		CurrencyName:   chain.CurrencyName,
+//		CurrencySymbol: chain.CurrencySymbol,
+//		Decimals:       uint32(chain.Decimals),
+//		Explorer:       chain.Explorer,
+//		ChainSlug:      chain.ChainSlug,
+//		Logo:           chain.Logo,
+//		Type:           chain.ChainType,
+//		IsTest:         chain.IsTest,
+//		GetPriceKey:    chain.GetPriceKey,
+//		Prefix:         chain.Prefix,
+//		Denom:          chain.Denom,
+//		ExplorerTx:     chain.ExplorerTx,
+//		ExplorerAddr:   chain.ExplorerAddress,
+//	}
+//	if data.ExplorerAddr == "" {
+//		data.ExplorerAddr = chainlist.GetExplorerURL(data.Explorer) + "address/"
+//	}
+//	if data.ExplorerTx == "" {
+//		data.ExplorerTx = chainlist.GetExplorerURL(data.Explorer) + "tx/"
+//	}
+//	return data
+//}
