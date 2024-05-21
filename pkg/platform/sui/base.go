@@ -448,10 +448,15 @@ func analysisGasLimitPretreatment(params string, result json.RawMessage) (interf
 		return nil, err
 	}
 	gasLimit := int(math.Ceil(float64(budget / price)))
+	objectIds := make([]string, 0, len(out.Input.GasData.Payment))
+	for _, payment := range out.Input.GasData.Payment {
+		objectIds = append(objectIds, payment.ObjectID)
+	}
 	return map[string]interface{}{
 		"balanceChange": out.BalanceChanges,
 		"gasLimit":      gasLimit,
 		"budget":        budget,
+		"objectIds":     objectIds,
 	}, nil
 }
 

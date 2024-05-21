@@ -243,6 +243,11 @@ type SUIDryRunTransactionBlockResponse struct {
 	} `json:"effects"`
 	Input struct {
 		GasData struct {
+			Payment []struct {
+				ObjectID string `json:"objectId"`
+				Version  int    `json:"version"`
+				Digest   string `json:"digest"`
+			} `json:"payment"`
 			Owner  string `json:"owner"`
 			Price  string `json:"price"`
 			Budget string `json:"budget"`
