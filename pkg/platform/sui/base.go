@@ -326,6 +326,7 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 	gasToken := ""
 	if IsBenfenChain(chain) && coinKey != "" {
 		isGasBusdFlag = true
+		gasLimit = gasLimit * 10
 	}
 	for _, objectRead := range objectReads {
 		if objectRead.Data.Type == NATIVE_TYPE || objectRead.Data.Type == BEN_FEN_NATIVE_TYPE {
@@ -401,6 +402,7 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 	if len(objectReads) == 0 && coinKey == "" {
 		return nil, errors.New("insufficiency of balance")
 	}
+
 	return map[string]interface{}{
 		"gasPrice":   gasPrice,
 		"suiObjects": suiObjects,
