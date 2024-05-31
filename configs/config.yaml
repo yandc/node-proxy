@@ -600,12 +600,17 @@ chainData:
     pretreatmentChains: "ETH,BSC,Arbitrum,Polygon"
     pretreatmentPlatform: "android,ios"
   txParamsErr:
-    EXECUTION_REVERTED: "execution reverted"
+#    EXECUTION_REVERTED: "execution reverted"
+    "execution reverted": EXECUTION_REVERTED
   txHashErr:
-    NONCE_TOO_LOW: "nonce too low"
-    GAS_TOO_LOW: "gas too low"
-    INSUFFICIENT_FUNDS: "insufficient funds"
-#  "nonce too low, gas too low, insufficient funds"
+    "nonce too low": NONCE_ERROR
+    "nonce too high": NONCE_ERROR
+    "gas too low": GAS_TOO_LOW
+    "replacement transaction underpriced": GAS_TOO_LOW
+    "intrinsic gas too low": GAS_LIMIT_TOO_LOW
+    "insufficient funds": INSUFFICIENT_FUNDS
+    "network error": NETWORK_ERROR
+    "Failed to fetch": NETWORK_ERROR
   retryCount:
     default: 0
 
