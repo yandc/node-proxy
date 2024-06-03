@@ -100,9 +100,9 @@ lark:
     platform:
       uids: [ qingliang ]
     nft-marketplace:
-      uids: [ runhua ]
+      uids: [ qingliang ]
     chain-list:
-      uids: [ runhua ]
+      uids: [ qingliang ]
   lockNum: 64
 
 platform:
