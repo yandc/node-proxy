@@ -6,6 +6,7 @@ import (
 	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft"
 	"gitlab.bixin.com/mili/node-proxy/pkg/token-list/types"
+	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
 	"gorm.io/gorm/clause"
 	"strings"
 )
@@ -2108,5 +2109,62 @@ func UpdateMerlinToken() {
 	}).Create(&tokenLists)
 	if result.Error != nil {
 		c.log.Error("create db Merlin error:", result.Error)
+	}
+}
+
+type TonTokenList struct {
+	Data struct {
+		Assets []struct {
+			Type     string `json:"type"`
+			Address  string `json:"address"`
+			Name     string `json:"name"`
+			Symbol   string `json:"symbol"`
+			Image    string `json:"image"`
+			Decimals int    `json:"decimals"`
+		} `json:"assets"`
+	} `json:"data"`
+}
+
+func UpdateTonToken() {
+	url := "https://api.dedust.io/v3/graphql"
+	reqBody := `{
+    "query": "\n    query GetAssets {\n  assets {\n    type\n    address\n    name\n    symbol\n    image\n    decimals\n    aliased\n    price\n    source {\n      chain\n      address\n      bridge\n      symbol\n      name\n    }\n  }\n}\n    ",
+    "operationName": "GetAssets"
+}`
+	out := &TonTokenList{}
+	if err := utils.CommHttpsForm(url, "POST", nil, nil, reqBody, out); err != nil {
+		fmt.Println("error=", err)
+	}
+	var tokenLists = make([]models.TokenList, 0, len(out.Data.Assets))
+	for _, tokenInfo := range out.Data.Assets {
+		if tokenInfo.Type == "jetton" {
+			tokenList := models.TokenList{
+				Chain:    "Ton",
+				Address:  tokenInfo.Address,
+				Name:     tokenInfo.Name,
+				Symbol:   strings.ToUpper(tokenInfo.Symbol),
+				Decimals: tokenInfo.Decimals,
+				Logo:     tokenInfo.Image,
+			}
+			if tokenInfo.Address == "EQAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM__NOT" {
+				tokenList.CgId = "notcoin"
+			}
+			tokenLists = append(tokenLists, tokenList)
+		}
+	}
+	tokenLists = append(tokenLists, models.TokenList{
+		Chain:    "Ton",
+		Address:  "EQA2kCVNwVsil2EM2mB0SkXytxCqQjS4mttjDpnXmwG9T6bO",
+		Name:     "STON master",
+		Symbol:   "STON",
+		Logo:     "https://asset.ston.fi/img/EQA2kCVNwVsil2EM2mB0SkXytxCqQjS4mttjDpnXmwG9T6bO",
+		Decimals: 9,
+	})
+	result := c.db.Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "address"}, {Name: "chain"}},
+		UpdateAll: true,
+	}).Create(&tokenLists)
+	if result.Error != nil {
+		c.log.Error("create db aptos error:", result.Error)
 	}
 }

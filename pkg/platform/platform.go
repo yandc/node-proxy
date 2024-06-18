@@ -22,6 +22,7 @@ import (
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/solana"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/starcoin"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/sui"
+	"gitlab.bixin.com/mili/node-proxy/pkg/platform/ton"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/tron"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/types"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/utils"
@@ -44,6 +45,7 @@ const (
 	REDIS_ESTIME_KEY  = "platform:estime:"
 	SETAPPROVALFORALL = "setApprovalForAll"
 	APPROVENFT        = "approveNFT"
+	TON               = "TON"
 )
 
 type TypeAndRpc struct {
@@ -146,6 +148,8 @@ func newPlatform(chain string) types.Platform {
 			return solana.NewSolanaPlatform(chain, value.RpcURL, c.logger)
 		case CSPR:
 			return casper.NewCasperPlatform(chain, value.RpcURL, c.logger)
+		case TON:
+			return ton.NewTonPlatform(chain, value.RpcURL, c.logger)
 		}
 	} else if strings.HasPrefix(strings.ToLower(chain), "evm") { //支持自定义EVM
 		url := getRpcUrl(chain)
