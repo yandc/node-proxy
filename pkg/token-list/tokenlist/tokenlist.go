@@ -1786,6 +1786,8 @@ func UpdateChainToken(chain string) {
 		UpdateKujiraToken()
 	case "evm4200":
 		UpdateMerlinToken()
+	case "Ton":
+		UpdateTonToken()
 
 		//default:
 		//	utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")

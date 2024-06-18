@@ -34,12 +34,14 @@ const (
 	RESPONSE_BATCH_OBJECTID       = "batchObjectId"
 	RESPONSE_DRY_RUN_PRETREATMENT = "dryRunPretreatment"
 	RESPONSE_BATCH_OBJECT_LIST    = "batchObjectList"
-
-	BUILD_HEIGHT   = "height"
-	BUILD_ACCOUNTS = "accounts"
-	BUILD_BALANCE  = "balance"
-	BUILD_TX       = "transaction"
-	IS_COCHAIN     = "isCochain"
+	BUILD_HEIGHT                  = "height"
+	BUILD_ACCOUNTS                = "accounts"
+	BUILD_BALANCE                 = "balance"
+	BUILD_TX                      = "transaction"
+	IS_COCHAIN                    = "isCochain"
+	RESPONSE_JETTON_ADDRESS       = "jettonAddress"
+	RESPONSE_NFT_ADDRESS          = "nftAddress"
+	RESPONSE_NONCE                = "nonce"
 )
 
 type AnalysisResponseType func(params string, result json.RawMessage) (interface{}, error)

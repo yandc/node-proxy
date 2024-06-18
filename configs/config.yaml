@@ -78,6 +78,7 @@ tokenList:
     - Neutron
     - Kujira
     - evm4200
+    - Ton
 
 nftList:
   ipfs: https://cloudflare-ipfs.com/ipfs/
@@ -419,6 +420,14 @@ platform:
     gasDefaults:
       gasLimit: 100_000
       gasPrice: 2_000 #0.002
+  - chain: Ton
+    type: TON
+    chainId: 0
+    rpcURL:
+      - https://toncenter.com
+    gasDefaults:
+      gasLimit: 100_000_000
+      gasPrice: 10_000_000
 
   - chain: AvalancheTEST
     type: EVM
@@ -611,6 +620,7 @@ chainData:
     "insufficient funds": INSUFFICIENT_FUNDS
     "network error": NETWORK_ERROR
     "Failed to fetch": NETWORK_ERROR
+    "terminating vm with exit code 36": EXPIRED_TRANSACTION
   retryCount:
     default: 0
 
