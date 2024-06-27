@@ -1788,6 +1788,8 @@ func UpdateChainToken(chain string) {
 		UpdateMerlinToken()
 	case "Ton":
 		UpdateTonToken()
+	case "BenfenAlphaTEST":
+		UpdateBenfenAlphaTESTToken()
 
 		//default:
 		//	utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")
