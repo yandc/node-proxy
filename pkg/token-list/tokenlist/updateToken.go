@@ -2168,3 +2168,64 @@ func UpdateTonToken() {
 		c.log.Error("create db aptos error:", result.Error)
 	}
 }
+
+func UpdateBenfenAlphaTESTToken() {
+	var tokenLists = []models.TokenList{
+		{
+			Chain:       "BenfenAlphaTEST",
+			Address:     "BFC00000000000000000000000000000000000000000000000000000000000000c8e30a::busd::BUSD",
+			Name:        "Benfen USD",
+			Symbol:      "BUSD",
+			LogoURI:     "images/BenfenAlphaTEST/BFC00000000000000000000000000000000000000000000000000000000000000c8e30a::busd::BUSD.png",
+			Decimals:    9,
+			WebSite:     "",
+			Description: "",
+		},
+		{
+			Chain:       "BenfenAlphaTEST",
+			Address:     "BFC00000000000000000000000000000000000000000000000000000000000000c8e30a::bjpy::BJPY",
+			Name:        "Benfen JPY",
+			Symbol:      "BJPY",
+			LogoURI:     "images/BenfenAlphaTEST/BFC00000000000000000000000000000000000000000000000000000000000000c8e30a::bjpy::BJPY.png",
+			Decimals:    9,
+			WebSite:     "",
+			Description: "",
+		},
+		{
+			Chain:       "BenfenAlphaTEST",
+			Address:     "BFCd38fd790a723dd83b79a13c728a64df7313b0673a4edc608985ad33d95a5b503b24c::long::LONG",
+			Name:        "Benfen Long Coin",
+			Symbol:      "LONG",
+			LogoURI:     "images/BenfenAlphaTEST/BFCd38fd790a723dd83b79a13c728a64df7313b0673a4edc608985ad33d95a5b503b24c::long::LONG.png",
+			Decimals:    9,
+			WebSite:     "",
+			Description: "",
+		},
+		{
+			Chain:       "BenfenAlphaTEST",
+			Address:     "BFCab6dea7ce45964da39c9d8a27370620eb2ca19aee03b0a8cef30883d572faeaff544::bfc_usdc::BFC_USDC",
+			Name:        "Benfen USDC",
+			Symbol:      "BFC_USDC",
+			LogoURI:     "images/BenfenAlphaTEST/BFCba2f0b7fe79bf3b6689297814daecc7aef6e19940c52c4e123d52273a011fb5575b1::bfc_usdc::BFC_USDC.png",
+			Decimals:    9,
+			WebSite:     "",
+			Description: "",
+		},
+		{
+			Chain:       "BenfenAlphaTEST",
+			Address:     "BFCab6dea7ce45964da39c9d8a27370620eb2ca19aee03b0a8cef30883d572faeaff544::bfc_usdt::BFC_USDT",
+			Name:        "Benfen USDT",
+			Symbol:      "BFC_USDT",
+			LogoURI:     "images/BenfenAlphaTEST/BFCba2f0b7fe79bf3b6689297814daecc7aef6e19940c52c4e123d52273a011fb5575b1::bfc_usdt::BFC_USDT.png",
+			Decimals:    9,
+			WebSite:     "",
+			Description: "",
+		},
+	}
+	for _, t := range tokenLists {
+		c.db.Clauses(clause.OnConflict{
+			Columns:   []clause.Column{{Name: "address"}, {Name: "chain"}},
+			UpdateAll: true,
+		}).Create(&t)
+	}
+}

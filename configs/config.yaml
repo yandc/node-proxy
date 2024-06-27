@@ -79,6 +79,7 @@ tokenList:
     - Kujira
     - evm4200
     - Ton
+    - BenfenAlphaTEST
 
 nftList:
   ipfs: https://cloudflare-ipfs.com/ipfs/
@@ -557,6 +558,11 @@ platform:
     chainId: 0
     rpcURL:
       - https://testrpc.benfen.org
+  - chain: BenfenAlphaTEST
+    type: SUI
+    chainId: 0
+    rpcURL:
+      - https://rpc1.benfen.org
 
 defaultAbiList:
   EVM: '[

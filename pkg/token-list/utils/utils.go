@@ -158,6 +158,7 @@ var dbName2HandlerMap = map[string]string{
 	"Kujira":              "kujira",
 	"evm4200":             "evm4200",
 	"Ton":                 "Ton",
+	"BenfenAlphaTEST":     "BenfenAlphaTEST",
 }
 
 var handlerNameMap = map[string]string{
@@ -199,7 +200,8 @@ var handlerNameMap = map[string]string{
 	"neutron":      "Neutron",
 	"kujira":       "Kujira",
 	"evm4200":      "evm4200",
-	"Ton":          "Ton",
+	"ton":          "Ton",
+	"benfenalpha":  "BenfenAlphaTEST",
 }
 
 var ChainNameMap = map[string]string{
@@ -273,6 +275,7 @@ var ChainNameMap = map[string]string{
 	"zkSyncTEST":       "zkSync",
 	"SUITEST":          "SUI",
 	"BenfenTEST":       "BenfenTEST",
+	"BenfenAlphaTEST":  "BenfenAlphaTEST",
 }
 
 var priceKeys = []string{"ethereum", "polkadot", "ronin", "harmony", "osmosis", "bitcoin-cash", "casper-network",
@@ -321,6 +324,7 @@ var db2Chain = map[string]string{
 	"Kujira":              "Kujira",
 	"evm4200":             "evm4200",
 	"Ton":                 "Ton",
+	"BenfenAlphaTEST":     "BenfenAlphaTEST",
 }
 
 var TokenFileMap = map[string][]string{
