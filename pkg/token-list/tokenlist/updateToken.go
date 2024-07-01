@@ -320,7 +320,7 @@ func UpdateCosmosToken() {
 		UpdateAll: true,
 	}).Create(&tokenLists)
 	if result.Error != nil {
-		c.log.Error("create db aptos error:", result.Error)
+		c.log.Error("create db cosmos error:", result.Error)
 	}
 }
 
@@ -1625,7 +1625,7 @@ func UpdateStrideToken() {
 		UpdateAll: true,
 	}).Create(&tokenLists)
 	if result.Error != nil {
-		c.log.Error("create db aptos error:", result.Error)
+		c.log.Error("create db Stride error:", result.Error)
 	}
 }
 
@@ -1756,7 +1756,7 @@ func UpdateNeutronToken() {
 		UpdateAll: true,
 	}).Create(&tokenLists)
 	if result.Error != nil {
-		c.log.Error("create db aptos error:", result.Error)
+		c.log.Error("create db Neutron error:", result.Error)
 	}
 }
 
@@ -1977,7 +1977,7 @@ func UpdateKujiraToken() {
 		UpdateAll: true,
 	}).Create(&tokenLists)
 	if result.Error != nil {
-		c.log.Error("create db aptos error:", result.Error)
+		c.log.Error("create db Kujira error:", result.Error)
 	}
 }
 
@@ -2165,7 +2165,7 @@ func UpdateTonToken() {
 		UpdateAll: true,
 	}).Create(&tokenLists)
 	if result.Error != nil {
-		c.log.Error("create db aptos error:", result.Error)
+		c.log.Error("create db ton error:", result.Error)
 	}
 }
 

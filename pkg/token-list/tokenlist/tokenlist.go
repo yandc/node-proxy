@@ -1798,39 +1798,25 @@ func UpdateChainToken(chain string) {
 
 func UpdateAptosToken() {
 	var tokenLists = []models.TokenList{{
-		Address:  "0x5e156f1207d0ebfa19a9eeff00d62a282278fb8719f4fab3a586a0a2c0fffbea::coin::T",
+		Address:  "0xf22bede237a07e121b56d91a491eb7bcdfd1f5907926a9e58338f964a01b17fa::asset::USDT",
 		Decimals: 6,
-		Name:     "USD Coin (eth)",
-		Symbol:   "USDC (eth)",
+		Name:     "USD Tether (LayerZero)",
+		Symbol:   "zUSDT",
 		Chain:    "aptos",
-	}, {
-		Address:  "0xdd89c0e695df0692205912fb69fc290418bed0dbe6e4573d744a6d5e6bab6c13::coin::T",
-		Decimals: 8,
-		Name:     "Wrapped SOL",
-		Symbol:   "SOL",
-		Chain:    "aptos",
-	}, {
-		Address:  "0xae478ff7d83ed072dbc5e264250e67ef58f57c99d89b447efd8a0a2e8b2be76e::coin::T",
-		Decimals: 8,
-		Name:     "Wrapped BTC",
-		Symbol:   "WBTC",
-		Chain:    "aptos",
-	}, {
-		Address:  "0x1000000fa32d122c18a6a31c009ce5e71674f22d06a581bb0a15575e6addadcc::usda::USDA",
-		Decimals: 6,
-		Name:     "Argo USD",
-		Symbol:   "USDA",
-		Chain:    "aptos",
-	}, {
-		Address:  "0xc91d826e29a3183eb3b6f6aa3a722089fdffb8e9642b94c5fcd4c48d035c0080::coin::T",
-		Decimals: 6,
-		Name:     "USD Coin (sol)",
-		Symbol:   "USDC (sol)",
-		Chain:    "aptos",
+		LogoURI:  "images/aptos/aptos_0xa2eda21a58856fda86451436513b867c97eecb4ba099da5775520e0f7492e852::coin::T.png",
+		CgId:     "tether",
 	},
+		{
+			Address: "0xf22bede237a07e121b56d91a491eb7bcdfd1f5907926a9e58338f964a01b17fa::asset::USDC",
+			Name:    "USD Coin (LayerZero)",
+			Symbol:  "zUSDC",
+			Chain:   "aptos",
+		},
 	}
 	result := c.db.Clauses(clause.OnConflict{
-		UpdateAll: true,
+		//UpdateAll: true,
+		Columns:   []clause.Column{{Name: "address"}, {Name: "chain"}},
+		DoUpdates: clause.AssignmentColumns([]string{"name", "symbol"}),
 	}).Create(&tokenLists)
 	if result.Error != nil {
 		c.log.Error("create db aptos error:", result.Error)
