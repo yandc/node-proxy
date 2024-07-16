@@ -201,7 +201,7 @@ func UpLoadChainList2CDN() {
 	})
 	//上传到cdn
 	utils.UploadFileToS3(paths)
-	utils.UpLoadFile2QiNiu(paths)
+	//utils.UpLoadFile2QiNiu(paths)
 	//删除目录
 	err := os.RemoveAll(localPath)
 	if err != nil {
