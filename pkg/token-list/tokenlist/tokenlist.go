@@ -615,10 +615,19 @@ func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoRe
 					Decimals: 0,
 				})
 				if err.Error() != utils3.ERC20_TYPE_ERR {
-					alarmMsg := fmt.Sprintf("请注意：%s链查询代币信息失败，tokenAddress:%s\n错误消息：%s", chain, address, err)
-					alarmOpts := lark.WithMsgLevel("FATAL")
-					alarmOpts = lark.WithAlarmChannel("platform")
-					lark.LarkClient.NotifyLark(alarmMsg, alarmOpts)
+					//alarmMsg := fmt.Sprintf("请注意：%s链查询代币信息失败，tokenAddress:%s\n错误消息：%s", chain, address, err)
+					//alarmOpts := lark.WithMsgLevel("FATAL")
+					//alarmOpts = lark.WithAlarmChannel("platform")
+					//lark.LarkClient.NotifyLark(alarmMsg, alarmOpts)
+					tokenInfoLark := &models.NodeProxyLark{
+						Chain:   chain,
+						Address: address,
+						ErrMsg:  err.Error(),
+					}
+					c.db.Clauses(clause.OnConflict{
+						Columns:   []clause.Column{{Name: "address"}, {Name: "chain"}},
+						UpdateAll: true,
+					}).Create(tokenInfoLark)
 				}
 				continue
 			}
