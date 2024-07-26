@@ -2240,3 +2240,64 @@ func UpdateBenfenAlphaTESTToken() {
 		}).Create(&t)
 	}
 }
+
+func UpdateBenfenToken() {
+	var tokenLists = []models.TokenList{
+		{
+			Chain:       "Benfen",
+			Address:     "BFC00000000000000000000000000000000000000000000000000000000000000c8e30a::busd::BUSD",
+			Name:        "Benfen USD",
+			Symbol:      "BUSD",
+			LogoURI:     "images/Benfen/BFC00000000000000000000000000000000000000000000000000000000000000c8e30a::busd::BUSD.png",
+			Decimals:    9,
+			WebSite:     "",
+			Description: "",
+		},
+		{
+			Chain:       "Benfen",
+			Address:     "BFC00000000000000000000000000000000000000000000000000000000000000c8e30a::bjpy::BJPY",
+			Name:        "Benfen JPY",
+			Symbol:      "BJPY",
+			LogoURI:     "images/Benfen/BFC00000000000000000000000000000000000000000000000000000000000000c8e30a::bjpy::BJPY.png",
+			Decimals:    9,
+			WebSite:     "",
+			Description: "",
+		},
+		{
+			Chain:       "Benfen",
+			Address:     "BFC55a92171872ae3ebf1f1d0fac8a2a9badee8ea89731154e8fa5597b5f9daa99e9a62::long::LONG",
+			Name:        "Benfen Long Coin",
+			Symbol:      "LONG",
+			LogoURI:     "images/Benfen/BFC55a92171872ae3ebf1f1d0fac8a2a9badee8ea89731154e8fa5597b5f9daa99e9a62::long::LONG.png",
+			Decimals:    9,
+			WebSite:     "",
+			Description: "",
+		},
+		{
+			Chain:       "Benfen",
+			Address:     "BFC64e9788a0deefb69accca9b05833045e7c790d9df31a5b73ae429d6df6c5f8d3ec02::bf_usdc::BF_USDC",
+			Name:        "Benfen USDC",
+			Symbol:      "BF_USDC",
+			LogoURI:     "images/Benfen/BFC64e9788a0deefb69accca9b05833045e7c790d9df31a5b73ae429d6df6c5f8d3ec02::bf_usdc::BF_USDC.png",
+			Decimals:    9,
+			WebSite:     "",
+			Description: "",
+		},
+		{
+			Chain:       "Benfen",
+			Address:     "BFC64e9788a0deefb69accca9b05833045e7c790d9df31a5b73ae429d6df6c5f8d3ec02::bf_usdt::BF_USDT",
+			Name:        "Benfen USDT",
+			Symbol:      "BF_USDT",
+			LogoURI:     "images/Benfen/BFC64e9788a0deefb69accca9b05833045e7c790d9df31a5b73ae429d6df6c5f8d3ec02::bf_usdt::BF_USDT.png",
+			Decimals:    9,
+			WebSite:     "",
+			Description: "",
+		},
+	}
+	for _, t := range tokenLists {
+		c.db.Clauses(clause.OnConflict{
+			Columns:   []clause.Column{{Name: "address"}, {Name: "chain"}},
+			UpdateAll: true,
+		}).Create(&t)
+	}
+}
