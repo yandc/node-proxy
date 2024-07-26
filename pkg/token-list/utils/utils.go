@@ -152,13 +152,14 @@ var dbName2HandlerMap = map[string]string{
 	"evm8453":             "evm8453",
 	"Sei":                 "Sei",
 	"scroll":              "scroll",
-	"BenfenTEST":          "benfen",
+	"BenfenTEST":          "benfentest",
 	"Stride":              "stride",
 	"Neutron":             "neutron",
 	"Kujira":              "kujira",
 	"evm4200":             "evm4200",
 	"Ton":                 "Ton",
 	"BenfenAlphaTEST":     "BenfenAlphaTEST",
+	"Benfen":              "benfen",
 }
 
 var handlerNameMap = map[string]string{
@@ -195,13 +196,14 @@ var handlerNameMap = map[string]string{
 	"evm8453":      "evm8453",
 	"sei":          "Sei",
 	"scroll":       "scroll",
-	"benfen":       "BenfenTEST",
+	"benfentest":   "BenfenTEST",
 	"stride":       "Stride",
 	"neutron":      "Neutron",
 	"kujira":       "Kujira",
 	"evm4200":      "evm4200",
 	"ton":          "Ton",
 	"benfenalpha":  "BenfenAlphaTEST",
+	"benfen":       "Benfen",
 }
 
 var ChainNameMap = map[string]string{
@@ -244,6 +246,7 @@ var ChainNameMap = map[string]string{
 	"Kujira":       "Kujira",
 	"evm4200":      "evm4200",
 	"Ton":          "Ton",
+	"Benfen":       "Benfen",
 
 	"ETHTEST":          "ethereum",
 	"HECOTEST":         "huobi-token",
@@ -325,6 +328,7 @@ var db2Chain = map[string]string{
 	"evm4200":             "evm4200",
 	"Ton":                 "Ton",
 	"BenfenAlphaTEST":     "BenfenAlphaTEST",
+	"Benfen":              "Benfen",
 }
 
 var TokenFileMap = map[string][]string{

@@ -417,6 +417,7 @@ func testUpdateDecimalsByChain() {
 }
 
 func testUpLoadTokenList() {
+	utils.InitConfig(bc)
 	tokenlist.InitTokenList(bc.TokenList, db, client, logger)
 	fmt.Println("cgIds=", cgIds)
 	//ids := strings.Split(cgIds, ",")

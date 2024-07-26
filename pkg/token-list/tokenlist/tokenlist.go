@@ -1630,6 +1630,8 @@ func UpdateChainToken(chain string) {
 		UpdateTonToken()
 	case "BenfenAlphaTEST":
 		UpdateBenfenAlphaTESTToken()
+	case "Benfen":
+		UpdateBenfenToken()
 
 		//default:
 		//	utils.GetCDNTokenList(c.logoPrefix + "tokenlist/tokenlist.json")

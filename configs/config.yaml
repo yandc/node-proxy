@@ -80,6 +80,7 @@ tokenList:
     - evm4200
     - Ton
     - BenfenAlphaTEST
+    - Benfen
 
 nftList:
   ipfs: https://cloudflare-ipfs.com/ipfs/
@@ -563,6 +564,12 @@ platform:
     chainId: 0
     rpcURL:
       - https://rpc1.benfen.org
+  - chain: Benfen
+    type: SUI
+    chainId: 0
+    rpcURL:
+      - https://rpc1.benfen.org
+
 
 defaultAbiList:
   EVM: '[
