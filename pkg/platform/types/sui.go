@@ -240,6 +240,10 @@ type SUIDryRunTransactionBlockResponse struct {
 			StorageRebate           string `json:"storageRebate"`
 			NonRefundableStorageFee string `json:"nonRefundableStorageFee"`
 		} `json:"gasUsed"`
+		Status struct {
+			Status string `json:"status"`
+			Error  string `json:"error"`
+		} `json:"status"`
 	} `json:"effects"`
 	Input struct {
 		GasData struct {

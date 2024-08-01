@@ -304,9 +304,12 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 		return nil, err
 	}
 	gasLimit := 3000
+	if IsBenfenChain(chain) {
+		gasLimit = 20000
+	}
 	if value, ok := paramsMap["gasLimit"]; ok {
 		tempGasLimit, err := strconv.Atoi(value)
-		if err == nil && tempGasLimit > 0 {
+		if err == nil && tempGasLimit != 3000 && tempGasLimit != 20000 {
 			gasLimit = tempGasLimit
 		}
 	}
@@ -326,7 +329,7 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 	gasToken := ""
 	if IsBenfenChain(chain) && coinKey != "" {
 		isGasBusdFlag = true
-		gasLimit = gasLimit * 10
+		//gasLimit = gasLimit * 3
 	}
 	for _, objectRead := range objectReads {
 		if objectRead.Data.Type == NATIVE_TYPE || objectRead.Data.Type == BEN_FEN_NATIVE_TYPE {
@@ -402,7 +405,10 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 	if len(objectReads) == 0 && coinKey == "" {
 		return nil, errors.New("insufficiency of balance")
 	}
-
+	if IsBenfenChain(chain) && gasToken != "" && gasLimit == 20000 {
+		//代付不用改变原来的gasLimit
+		gasLimit = 3000
+	}
 	return map[string]interface{}{
 		"gasPrice":   gasPrice,
 		"suiObjects": suiObjects,
@@ -453,6 +459,9 @@ func analysisGasLimitPretreatment(params string, result json.RawMessage) (interf
 	objectIds := make([]string, 0, len(out.Input.GasData.Payment))
 	for _, payment := range out.Input.GasData.Payment {
 		objectIds = append(objectIds, payment.ObjectID)
+	}
+	if out.Effects.Status.Status == "failure" {
+		gasLimit = 20000
 	}
 	return map[string]interface{}{
 		"balanceChange": out.BalanceChanges,
