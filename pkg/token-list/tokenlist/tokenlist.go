@@ -623,6 +623,7 @@ func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoRe
 						Chain:   chain,
 						Address: address,
 						ErrMsg:  err.Error(),
+						ErrType: models.ERR_TYPE_TOKEN,
 					}
 					c.db.Clauses(clause.OnConflict{
 						Columns:   []clause.Column{{Name: "address"}, {Name: "chain"}},

@@ -9,6 +9,7 @@ import (
 	v1 "gitlab.bixin.com/mili/node-proxy/api/nft/v1"
 	"gitlab.bixin.com/mili/node-proxy/internal/biz"
 	"gitlab.bixin.com/mili/node-proxy/internal/conf"
+	"gitlab.bixin.com/mili/node-proxy/internal/data/models"
 	"gitlab.bixin.com/mili/node-proxy/pkg/lark"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft"
 	"gitlab.bixin.com/mili/node-proxy/pkg/nft/list"
@@ -17,10 +18,12 @@ import (
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/tron"
 	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type nftListRepo struct {
 	log *log.Helper
+	db  *gorm.DB
 }
 
 // NewNFTRepo .
@@ -28,6 +31,7 @@ func NewNFTRepo(db *gorm.DB, logger log.Logger, nftList *conf.NFTList) biz.NFTRe
 	nft.InitNFT(db, logger, nftList)
 	return &nftListRepo{
 		log: log.NewHelper(logger),
+		db:  db,
 	}
 }
 
@@ -45,11 +49,22 @@ func (r *nftListRepo) GetNFTInfo(ctx context.Context, chain string, tokenInfos [
 		})
 		if err != nil || info == nil || info.Data == nil {
 			if err != nil {
-				alarmMsg := fmt.Sprintf("请注意：%s链查询NFT信息失败，tokenAddress:%s,tokenID:%s\n错误消息：%s",
-					chain, tokenInfo.TokenAddress, tokenInfo.TokenId, err)
-				alarmOpts := lark.WithMsgLevel("FATAL")
-				alarmOpts = lark.WithAlarmChannel("nft-marketplace")
-				lark.LarkClient.NotifyLark(alarmMsg, alarmOpts)
+				//alarmMsg := fmt.Sprintf("请注意：%s链查询NFT信息失败，tokenAddress:%s,tokenID:%s\n错误消息：%s",
+				//	chain, tokenInfo.TokenAddress, tokenInfo.TokenId, err)
+				//alarmOpts := lark.WithMsgLevel("FATAL")
+				//alarmOpts = lark.WithAlarmChannel("nft-marketplace")
+				//lark.LarkClient.NotifyLark(alarmMsg, alarmOpts)
+				tokenInfoLark := &models.NodeProxyLark{
+					Chain:   chain,
+					Address: tokenInfo.TokenAddress,
+					ErrMsg:  err.Error(),
+					TokenId: tokenInfo.TokenId,
+					ErrType: models.ERR_TYPE_NFT,
+				}
+				r.db.Clauses(clause.OnConflict{
+					Columns:   []clause.Column{{Name: "address"}, {Name: "chain"}, {Name: "token_id"}},
+					UpdateAll: true,
+				}).Create(tokenInfoLark)
 			}
 			continue
 		}
