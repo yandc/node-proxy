@@ -305,7 +305,7 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 	}
 	gasLimit := 3000
 	if IsBenfenChain(chain) {
-		gasLimit = 20000
+		gasLimit = 500000
 	}
 	if value, ok := paramsMap["gasLimit"]; ok {
 		tempGasLimit, err := strconv.Atoi(value)
@@ -461,7 +461,7 @@ func analysisGasLimitPretreatment(params string, result json.RawMessage) (interf
 		objectIds = append(objectIds, payment.ObjectID)
 	}
 	if out.Effects.Status.Status == "failure" {
-		gasLimit = 20000
+		gasLimit = 500000
 	}
 	return map[string]interface{}{
 		"balanceChange": out.BalanceChanges,
