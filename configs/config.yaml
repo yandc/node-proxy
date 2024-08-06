@@ -634,6 +634,7 @@ chainData:
     "network error": NETWORK_ERROR
     "Failed to fetch": NETWORK_ERROR
     "terminating vm with exit code 36": EXPIRED_TRANSACTION
+    "GasBalanceTooLow": BALANCE_TOO_LOW
   retryCount:
     default: 0
 
