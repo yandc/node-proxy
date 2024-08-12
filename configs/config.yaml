@@ -636,7 +636,8 @@ chainData:
     "terminating vm with exit code 36": EXPIRED_TRANSACTION
     "GasBalanceTooLow": BALANCE_TOO_LOW
   retryCount:
-    default: 0
+    default: 3
+    Benfen: 3
 
 gasOracle:
   url:
