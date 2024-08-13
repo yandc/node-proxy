@@ -558,22 +558,28 @@ func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoRe
 	params := make([][]interface{}, 0, len(addressInfos))
 	addressMap := make(map[string]string, len(addressInfos))
 	for _, addressInfo := range addressInfos {
+		var tempTokenInfo *models.TokenInfo
+		err := c.db.Where("chain = ? and address = ?", addressInfo.Chain, addressInfo.Address).Find(&tempTokenInfo).Error
+		if err != nil {
+			c.log.Error("get token list error:", err)
+			continue
+		}
 		key := addressInfo.Chain + ":" + addressInfo.Address
-		tokenInfo := utils.GetRedisTokenInfo(c.redisClient, REDIS_TOKEN_KEY+key)
-		if tokenInfo != nil {
-			tokenInfos = append(tokenInfos, tokenInfo)
+		//tokenInfo := utils.GetRedisTokenInfo(c.redisClient, REDIS_TOKEN_KEY+key)
+		if tempTokenInfo != nil && tempTokenInfo.ID > 0 {
+			tokenInfos = append(tokenInfos, &v1.GetTokenInfoResp_Data{
+				Chain:    tempTokenInfo.Chain,
+				Address:  tempTokenInfo.Address,
+				Symbol:   tempTokenInfo.Symbol,
+				Name:     tempTokenInfo.Name,
+				LogoURI:  tempTokenInfo.LogoURI,
+				Decimals: tempTokenInfo.Decimals,
+			})
 			continue
 		}
 		chain := utils.GetChainNameByChain(addressInfo.Chain)
 		address := utils.GetUnificationAddress(chain, addressInfo.Address)
 
-		//if strings.HasPrefix(addressInfo.Address, "0x") && chain != utils.STARCOIN_CHAIN &&
-		//	chain != utils.APTOS_CHAIN && !strings.Contains(chain, "SUI") {
-		//	address = strings.ToLower(addressInfo.Address)
-		//} else if (strings.Contains(chain, utils.COSMOS_CHAIN) || strings.Contains(chain, utils.OSMOSIS_CHAIN)) &&
-		//	strings.Contains(address, "/") {
-		//	address = "ibc/" + strings.ToUpper(strings.Split(address, "/")[1])
-		//}
 		params = append(params, []interface{}{chain, address})
 		addressMap[chain+":"+address] = key
 	}
@@ -615,10 +621,6 @@ func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoRe
 					Decimals: 0,
 				})
 				if err.Error() != utils3.ERC20_TYPE_ERR {
-					//alarmMsg := fmt.Sprintf("请注意：%s链查询代币信息失败，tokenAddress:%s\n错误消息：%s", chain, address, err)
-					//alarmOpts := lark.WithMsgLevel("FATAL")
-					//alarmOpts = lark.WithAlarmChannel("platform")
-					//lark.LarkClient.NotifyLark(alarmMsg, alarmOpts)
 					tokenInfoLark := &models.NodeProxyLark{
 						Chain:   chain,
 						Address: address,
@@ -633,9 +635,17 @@ func GetTokenInfo(addressInfos []*v1.GetTokenInfoReq_Data) ([]*v1.GetTokenInfoRe
 				continue
 			}
 			if tokenInfo != nil {
-				if err := utils.SetRedisTokenInfo(c.redisClient, REDIS_TOKEN_KEY+value, tokenInfo); err != nil {
-					c.log.Error("set redis token info error.", err)
-					continue
+				//存入数据库
+				dbTokenInfo := &models.TokenInfo{
+					Chain:    tokenInfo.Chain,
+					Address:  tokenInfo.Address,
+					Symbol:   tokenInfo.Symbol,
+					Name:     tokenInfo.Name,
+					Decimals: tokenInfo.Decimals,
+					LogoURI:  tokenInfo.LogoURI,
+				}
+				if err := c.db.Create(dbTokenInfo).Error; err != nil {
+					c.log.Error("create db token info error:", err)
 				}
 				tokenInfos = append(tokenInfos, tokenInfo)
 			}

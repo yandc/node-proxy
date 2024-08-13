@@ -160,7 +160,8 @@ func main() {
 		TestParseContractABI()
 	case "uploadChainList":
 		TestUploadChainList()
-
+	case "parseTokenInfo":
+		TestParseTokenInfo()
 	default:
 		TestGetContractAbi()
 	}
@@ -695,4 +696,23 @@ func TestUploadChainList() {
 	utils.InitConfig(bc)
 	chainlist.InitChainList(db, client, logger)
 	chainlist.UpLoadChainList2CDN()
+}
+
+func TestParseTokenInfo() {
+	keys, _ := client.Keys("tokenlist:tokeninfo:*").Result()
+	fmt.Println("keys length:", len(keys))
+	for _, key := range keys {
+		tokenInfo, err := client.Get(key).Result()
+		if err != nil {
+			fmt.Println("redis get error:", err)
+		}
+		if tokenInfo != "" {
+			var dbTokenInfo *models.TokenInfo
+			json.Unmarshal([]byte(tokenInfo), &dbTokenInfo)
+			if err := db.Create(dbTokenInfo).Error; err != nil {
+				fmt.Println("TestParseTokenInfo create db error:", err)
+			}
+		}
+	}
+
 }
