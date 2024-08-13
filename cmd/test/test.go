@@ -30,6 +30,7 @@ import (
 	"gitlab.bixin.com/mili/node-proxy/pkg/utils"
 	"google.golang.org/grpc"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -701,6 +702,8 @@ func TestUploadChainList() {
 func TestParseTokenInfo() {
 	keys, _ := client.Keys("tokenlist:tokeninfo:*").Result()
 	fmt.Println("keys length:", len(keys))
+	dbLimit := 5000
+	dbTokenInfoList := make([]*models.TokenInfo, 0, dbLimit)
 	for _, key := range keys {
 		tokenInfo, err := client.Get(key).Result()
 		if err != nil {
@@ -709,9 +712,25 @@ func TestParseTokenInfo() {
 		if tokenInfo != "" {
 			var dbTokenInfo *models.TokenInfo
 			json.Unmarshal([]byte(tokenInfo), &dbTokenInfo)
-			if err := db.Create(dbTokenInfo).Error; err != nil {
+			dbTokenInfoList = append(dbTokenInfoList, dbTokenInfo)
+		}
+		if len(dbTokenInfoList) > dbLimit {
+			if err := db.Clauses(clause.OnConflict{
+				Columns:   []clause.Column{{Name: "address"}, {Name: "chain"}},
+				DoNothing: true,
+			}).Create(&dbTokenInfoList).Error; err != nil {
 				fmt.Println("TestParseTokenInfo create db error:", err)
 			}
+			dbTokenInfoList = make([]*models.TokenInfo, 0, dbLimit)
+		}
+
+	}
+	if len(dbTokenInfoList) > 0 {
+		if err := db.Clauses(clause.OnConflict{
+			Columns:   []clause.Column{{Name: "address"}, {Name: "chain"}},
+			DoNothing: true,
+		}).Create(&dbTokenInfoList).Error; err != nil {
+			fmt.Println("TestParseTokenInfo create db error:", err)
 		}
 	}
 
