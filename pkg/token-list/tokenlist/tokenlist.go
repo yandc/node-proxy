@@ -106,7 +106,7 @@ func updateCreatePrice(priceChains []string) {
 			cgIds = append(cgIds, priceChain)
 			continue
 		}
-		addressInfo := strings.Split(priceChain, "_")
+		addressInfo := strings.SplitN(priceChain, "_", 2)
 		chain := utils.GetChainNameByPlatform(addressInfo[0])
 		address := utils.GetUnificationAddress(chain, addressInfo[1])
 		//if strings.HasPrefix(address, "0x") && chain != utils.STARCOIN_CHAIN && chain != utils.APTOS_CHAIN && !strings.Contains(chain, "SUI") {

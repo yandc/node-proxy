@@ -85,6 +85,7 @@ func (r *tokenListRepo) GetTokenTop20(ctx context.Context, chain string) ([]*v1.
 
 func (r *tokenListRepo) IsFakeResp(ctx context.Context, chain, symbol, address string) *v1.IsFakeResp_Data {
 	r.log.WithContext(ctx).Infof("IsFakeResp", chain, symbol, address)
+	symbol = strings.Trim(symbol, " ")
 	fakeCoinWhiteList, err := tokenlist.GetFakeCoinWhiteListBySymbol(chain, symbol)
 	if err != nil || fakeCoinWhiteList == nil {
 		return &v1.IsFakeResp_Data{IsFake: false}
