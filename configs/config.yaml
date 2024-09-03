@@ -559,16 +559,25 @@ platform:
     chainId: 0
     rpcURL:
       - https://testrpc.benfen.org
+    gasDefaults:
+      gasLimit: 20_000
+      gasPrice: 3_000
   - chain: BenfenAlphaTEST
     type: SUI
     chainId: 0
     rpcURL:
       - https://rpc1.benfen.org
+    gasDefaults:
+      gasLimit: 20_000
+      gasPrice: 3_000
   - chain: Benfen
     type: SUI
     chainId: 0
     rpcURL:
       - https://rpc1.benfen.org
+    gasDefaults:
+      gasLimit: 20_000
+      gasPrice: 3_000
 
 
 defaultAbiList:
