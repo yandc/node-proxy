@@ -12,6 +12,7 @@ import (
 	v12 "gitlab.bixin.com/mili/node-proxy/api/tokenlist/v1"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/types"
 	"gitlab.bixin.com/mili/node-proxy/pkg/platform/utils"
+	utils2 "gitlab.bixin.com/mili/node-proxy/pkg/utils"
 	"math"
 	"sort"
 	"strconv"
@@ -303,13 +304,14 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 	if err := json.Unmarshal(result, &objectReads); err != nil {
 		return nil, err
 	}
+	gasDefaultLimit := int(utils2.GetGasDefault(chain).GasLimit)
 	gasLimit := 3000
 	if IsBenfenChain(chain) {
-		gasLimit = 500000
+		gasLimit = gasDefaultLimit
 	}
 	if value, ok := paramsMap["gasLimit"]; ok {
 		tempGasLimit, err := strconv.Atoi(value)
-		if err == nil && tempGasLimit != 3000 && tempGasLimit != 20000 {
+		if err == nil && tempGasLimit != 3000 && tempGasLimit != gasDefaultLimit {
 			gasLimit = tempGasLimit
 		}
 	}
@@ -405,7 +407,7 @@ func analysisTxParams(params string, result json.RawMessage) (interface{}, error
 	if len(objectReads) == 0 && coinKey == "" {
 		return nil, errors.New("insufficiency of balance")
 	}
-	if IsBenfenChain(chain) && gasToken != "" && gasLimit == 20000 {
+	if IsBenfenChain(chain) && gasToken != "" && gasLimit == gasDefaultLimit {
 		//代付不用改变原来的gasLimit
 		gasLimit = 3000
 	}
@@ -461,7 +463,10 @@ func analysisGasLimitPretreatment(params string, result json.RawMessage) (interf
 		objectIds = append(objectIds, payment.ObjectID)
 	}
 	if out.Effects.Status.Status == "failure" {
-		gasLimit = 500000
+		//gasDefaultLimit := int(utils2.GetGasDefault(chain).GasLimit)
+		if gasDefault := utils2.GetGasDefault(chain); gasDefault != nil {
+			gasLimit = int(gasDefault.GasLimit)
+		}
 	}
 	return map[string]interface{}{
 		"balanceChange": out.BalanceChanges,

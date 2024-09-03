@@ -50,3 +50,12 @@ func GetQiNiuConfig() *conf.TokenList_QiNiu {
 func GetTokenListConfig() *conf.TokenList {
 	return bc.TokenList
 }
+
+func GetGasDefault(chain string) *conf.GasDefaults {
+	for _, platForm := range bc.Platform {
+		if platForm.Chain == chain {
+			return platForm.GasDefaults
+		}
+	}
+	return nil
+}
