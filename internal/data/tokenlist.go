@@ -51,9 +51,9 @@ func (r *tokenListRepo) GetTokenList(ctx context.Context, chain string) ([]*v1.G
 
 func (r *tokenListRepo) AutoUpdateTokenList(ctx context.Context) {
 	r.log.WithContext(ctx).Infof("AutoUpdateTokenList")
-	tokenlist.UpdateTokenListByMarket()
+	//tokenlist.UpdateTokenListByMarket()
 	//tokenlist.AutoUpdateCGTokenList([]string{})
-	//tokenlist.AutoUpdateTokenList(true, true, true)
+	tokenlist.AutoUpdateTokenList(true, true, true)
 }
 
 func (r *tokenListRepo) AutoUpdateTokenPrice(ctx context.Context) {
