@@ -46,11 +46,11 @@ func (uc *TokenListUsecase) GetTokenList(ctx context.Context, chain string) ([]*
 
 func (uc *TokenListUsecase) AutoUpdateTokenList(ctx context.Context) {
 	transactionPlan := time.NewTicker(24 * time.Hour)
-	//uc.repo.AutoUpdateTokenList(ctx)
+	uc.repo.AutoUpdateTokenList(ctx)
 	for true {
 		select {
 		case <-transactionPlan.C:
-			//uc.repo.AutoUpdateTokenList(ctx)
+			uc.repo.AutoUpdateTokenList(ctx)
 		}
 	}
 }

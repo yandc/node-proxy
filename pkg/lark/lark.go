@@ -48,6 +48,9 @@ type Content struct {
 }
 
 func (lark *Lark) NotifyLark(msg string, opts ...AlarmOption) {
+        if lark.conf.LarkHost == "" {
+                return
+        }
 	lark.lock.Lock(msg)
 	defer func() {
 		lark.lock.Unlock(msg)

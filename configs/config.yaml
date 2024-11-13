@@ -5,7 +5,7 @@ server:
 data:
   database:
     driver: postgres
-    source: host=127.0.0.1 user=haobtc password=haobtc.asd dbname=mpcwallet port=5432 sslmode=disable TimeZone=Asia/Shanghai
+    source: host=127.0.0.1 user=postgres password=password dbname=wallets port=15433 sslmode=disable TimeZone=Asia/Shanghai
   redis:
     addr: 127.0.0.1:6379
     db: 9
@@ -26,10 +26,10 @@ tokenList:
       - 9f36b36d-97aa-48f5-9a20-a41bf6888396
       - dd8eb4f4-922b-43a1-bd2c-671925ca3ed3
       - 03eca6eb-77f9-4ce7-b265-ee408b424d45
-  dataCenterAddr: 10.228.125.212:9011
+  #dataCenterAddr: 10.228.125.212:9011
   qiniu:
-    accessKey: EaebIDbEDcyKefx72vRpG3-JDa5Hd9YInXYRiTst
-    secretKey: OYNl6ub3YfNI2hVOJ-h6KqRFuwPpUeL4MmVDU9Ia
+    accessKey: 
+    secretKey: 
     bucket:
       - obstatic
       - obstatic-sgaws
@@ -90,22 +90,16 @@ nftList:
 
 lark:
   larkAlarmTitle: "node-proxy 测试环境"
-  larkHost: "https://open.larksuite.com/open-apis/bot/v2/hook/1de00c8b-8b00-42e8-a4a0-111a465303d9"
-  #  larkHost: "https://open.larksuite.com/open-apis/bot/v2/hook/1de00c8b-8b00-42e8-a4a0-111a465303d9_"
-  larkSecret: "ZaIgbNX9rwSyOGhq4URhMb"
-  larkAtList: "bfe7128f"
+  larkHost: ""
+  larkSecret: ""
+  larkAtList: ""
   larkUids:
-    runhua: 98f57egg
-    qingliang: bfe7128f
+    xyz: bfe7128f
   larkSubscriptions:
     token-list:
-      uids: [ qingliang ]
+      uids: [ xyz ]
     platform:
-      uids: [ qingliang ]
-    nft-marketplace:
-      uids: [ qingliang ]
-    chain-list:
-      uids: [ qingliang ]
+      uids: [ xyz ]
   lockNum: 64
 
 platform:
@@ -653,12 +647,12 @@ gasOracle:
     gasOracleOkex: https://wallet.okex.org/v1/deposit/wallet/gas/gas_price?network=okexchain
     gasOracleETHW: https://wallet.okex.org/v1/deposit/wallet/gas/gas_price?network=ethw
     gasOracleETH: https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=CT5GUMRVZMMB94IZ34SNWSI5MEBPBXPPIK
-    gasOracleHeco: https://gheco.blockscan.com/gasapi.ashx?method=gasoracle&apikey=key
+    #gasOracleHeco: https://gheco.blockscan.com/gasapi.ashx?method=gasoracle&apikey=key
     gasOracleBsc: https://api.bscscan.com/api?module=gastracker&action=gasoracle&apikey=75TWH5YYC1XAG7M7CFPFH3KB4PY63XJT3K
     gasOraclePolygon: https://api.polygonscan.com/api?module=gastracker&action=gasoracle&apikey=H1YCT1KW18F9NIMFN1JISEBYWZZ5RS3K3W
     gasOracleFantom: https://api.ftmscan.com/api?module=gastracker&action=gasoracle&apikey=TD9MC5XCJ65X561DKUBI6GMWMGMVAMVXP5
-    gasOracleAvalanche: https://gavax.blockscan.com/gasapi.ashx?apikey=key&method=gasoracle
-    gasOraclexDai: https://ggnosis.blockscan.com/gasapi.ashx?apikey=key&method=pendingpooltxgweidata
+    #gasOracleAvalanche: https://gavax.blockscan.com/gasapi.ashx?apikey=key&method=gasoracle
+    #gasOraclexDai: https://ggnosis.blockscan.com/gasapi.ashx?apikey=key&method=pendingpooltxgweidata
     feeOracleBTC: https://mempool.space/api/v1/fees/recommended
     feeOracleLTC: https://api.blockcypher.com/v1/ltc/main
     feeOracleDOGE: https://api.blockcypher.com/v1/doge/main
